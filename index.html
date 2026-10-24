@@ -861,13 +861,16 @@ window.Sim={S,setTime,step,locate,dayCtx,qareenStrength,buildDay,cal,PNAME,trave
 </script><script>// ===== ERA SETTINGS — one place to tune the three worlds =====
 // Placeholder numbers (sensible guesses). Real facts and survey baselines will be folded in from research/eras.md.
 // rates = life events per 1,000 people per year (rough real-world levels for 1986/2006; 2026 is a FORECAST).
+// facts: ✓ = checked against a source in research/eras.md; everything else is an estimate.
+// base.attend: 2006 = 41%, 2026 = 48% (Environics, checked); 1986 = estimate. Other base numbers are still estimates (no figures in the research).
 // Every number here is SIMULATED, not real data.
 window.ERAS = {
  '1986': {
   rates:{job:30,promotion:25,marriage:7,birth:15,graduation:12,business:4,revert:0.6,layoff:12,move:20}, unemployment:'about 7% in Ontario', forecast:false,
   year:1986, label:'1986', tag:'Newspapers, TV and radio',
   paper:'The Mississauga Courier', feedName:'Letters & chatter', feedKind:'letters',
-  media:['the evening TV news','CBC Radio','the Toronto Star','the local paper','a cassette lecture'],
+  facts:{pop:'374,005 (1986 census) ✓',muslims:'about 12,000 by 1991 (2.7%) ✓ — 1986 lower (estimate)',masjids:'Jame Masjid Mississauga (IPCO, early 1980s, first at 5761 Coopers Ave) ✓; many drove to Jami Mosque, Toronto ✓; basement musallas (estimate)',wage:'$4.35/h (uncertain)',rent:'2-bed rent: CMHC series starts 1990 at $689 (Toronto) ✓',fare:'bus fare: no record found',gas:'gas ~45–50¢/L (estimate)',mayor:'Hazel McCallion ✓',attend:'no survey of Muslims this year'},
+  media:['the evening TV news (CBC, CFTO)','CHIN Radio','the Toronto Star','The Mississauga News','Citytv','a cassette lecture','the masjid newsletter'],
   platforms:['Letter to the editor','Chatter after Jumu\'ah','Phone call','Note on the masjid board'],
   screenHrs:2.2,        // average hours a day of TV (the only screen)
   newsNegativity:0.35,  // how gloomy the news diet is (0..1)
@@ -875,40 +878,48 @@ window.ERAS = {
   community:0.75,       // how much people see neighbours and family face to face
   economy:0.95,         // 1 = normal; lower = harder to find work
   police:{patrolsPerDay:14, stopsPerDay:2, trustBase:0.62, fairness:0.8, communityEvents:0.03},
-  base:{dep:0.07, anx:0.10, lone:0.14, trustP:0.60, trustI:0.62, sat:0.70, faith:0.55},
-  town:'Mississauga is a young city of about 370,000. Square One mall is the big hub; lots of farms still sit up north.',
-  world:['Oil prices drop and gas gets cheaper','A space shuttle disaster shocks the world (January)','Expo 86 opens in Vancouver','A nuclear accident in the Soviet Union worries Europe','Canada debates a free trade deal with the US','Hockey: the Montreal Canadiens win the Stanley Cup','Families collect for famine relief in Africa','Interest rates stay high and mortgages hurt'],
-  city:['A new subdivision opens in Meadowvale','The library runs a summer reading club','Canada Day fireworks at the waterfront','Fall fair at the Streetsville village','Snow ploughs work through the night','A new plaza opens on Hurontario Street'],
+  base:{attend:0.35, dep:0.07, anx:0.10, lone:0.14, trustP:0.60, trustI:0.62, sat:0.70, faith:0.55},
+  town:'Mississauga is a young city of 374,005 people (1986 census). Mayor Hazel McCallion. Square One mall is the big hub; lots of farms still sit up north.',
+  world:[{t:'Space Shuttle Challenger breaks apart after launch (28 Jan)',s:-0.5},{t:'Nuclear accident at Chernobyl in the Soviet Union (26 Apr)',s:-0.5},{t:'Expo 86 opens in Vancouver',s:0.3},{t:'US planes bomb targets in Libya (15 Apr)',s:-0.5},{t:'The Iran–Contra affair comes to light (Nov)',s:-0.3},{t:'Iran–Iraq War: fighting on the Faw Peninsula',s:-0.5},{t:'Afghanistan: Najibullah takes over as the Soviet war goes on',s:-0.4},{t:'People Power in the Philippines topples Marcos peacefully',s:0.3},{t:"Halley's Comet is back in the night sky",s:0.3},{t:'The people of Canada win the UN Nansen Refugee Award',s:0.5},{t:'Canada plays its first ever FIFA World Cup, in Mexico',s:0.3},{t:'Ontario debates full funding for Catholic high schools (Bill 30)',s:0},{t:'Families collect money for relief for Afghan refugees',s:0.2,c:1}],
+  city:['Mayor Hazel McCallion opens a new park','A new subdivision opens in Meadowvale','The library runs a summer reading club','Canada Day fireworks at the waterfront','Fall fair at the Streetsville village','Snow ploughs work through the night'],
   tech:['VCR','Walkman','pager','landline phone'],
  },
  '2006': {
   rates:{job:35,promotion:28,marriage:4.5,birth:11,graduation:16,business:5,revert:1.2,layoff:9,move:18}, unemployment:'about 6% in Ontario', forecast:false,
   year:2006, label:'2006', tag:'Early internet, forums, MSN, early Facebook and YouTube',
   paper:'The Mississauga News', feedName:'Forums & MSN', feedKind:'forum',
-  media:['MSN Messenger','an Islamic forum','early YouTube','Facebook (new!)','the Toronto Star website','a CD lecture'],
+  facts:{pop:'668,549 (2006 census) ✓',muslims:'between 6.9% (2001) and 11.9% (2011) ✓ — about 9% (estimate)',masjids:'ISNA Islamic Centre of Canada (1996) ✓, Jame Masjid / IPCO ✓, plus MAC, ISP, Dar Al-Tawheed (dates unchecked)',wage:'$7.75/h ✓',rent:'2-bed rent ~$1,067 (Toronto) ✓',fare:'bus cash fare ~$3.00 (uncertain)',gas:'gas 83–122¢/L ✓',mayor:'Hazel McCallion ✓',attend:'41% of Canadian Muslims at the masjid weekly (Environics 2006) ✓'},
+  media:['MSN Messenger','an Islamic forum','early YouTube','Facebook (new!)','the Toronto Star website','OMNI TV','ATN','Al Jazeera English (new)','a CD lecture'],
   platforms:['MSN status','Forum post','Facebook wall','YouTube comment','Blog'],
   screenHrs:4.1, newsNegativity:0.5, socialCompare:0.3, community:0.6, economy:1.05,
   police:{patrolsPerDay:20, stopsPerDay:3, trustBase:0.6, fairness:0.78, communityEvents:0.05},
-  base:{dep:0.08, anx:0.12, lone:0.17, trustP:0.58, trustI:0.55, sat:0.68, faith:0.55},
-  town:'Mississauga has about 670,000 people. Towers rise around Square One and Heartland Town Centre is busy.',
-  world:['The housing market is booming','Canada elects a new government','A big terrorism-arrest story in Toronto worries Muslim families','The World Cup takes over cafés and TVs','Gas prices climb','A war in Lebanon fills the news','Families collect for earthquake relief in Pakistan (rebuilding)','iPods are everywhere'],
-  city:['Celebration Square plans are talked about at City Hall','The Hurontario bus is packed','A mosque open house welcomes neighbours','Canada Day at the waterfront','A youth basketball league starts at the community centre','Mississauga Marathon closes some roads'],
+  base:{attend:0.41, dep:0.08, anx:0.12, lone:0.17, trustP:0.58, trustI:0.55, sat:0.68, faith:0.55},
+  town:'Mississauga has 668,549 people (2006 census). Towers rise around Square One and Heartland Town Centre is busy.',
+  world:[{t:'Toronto 18: police arrest a group accused of a bomb plot (June); Muslim leaders say the community helped and condemn violence',s:-0.5},{t:'Harper Conservatives win the federal election (23 Jan)',s:0},{t:'Protests around the world over Danish cartoons of the Prophet ﷺ',s:-0.5},{t:'Israel–Lebanon war; Canadians evacuated from Beirut',s:-0.6,c:1},{t:'Saddam Hussein executed (30 Dec)',s:-0.3},{t:'Bombing of the al-Askari shrine in Samarra, Iraq',s:-0.6},{t:'Hamas wins the Palestinian election',s:-0.1},{t:'Canadian soldiers fight in Operation Medusa, Afghanistan',s:-0.4},{t:'Arar inquiry report: Canadian officials share blame for his torture abroad',s:-0.3},{t:'Caledonia land dispute goes on',s:-0.2},{t:'Hajj stampede in Mina (12 Jan)',s:-0.6},{t:'Pluto is now called a dwarf planet',s:0.1},{t:'FIFA World Cup in Germany fills the cafés',s:0.4},{t:'Muhammad Yunus, the Muslim banker for the poor, wins the Nobel Peace Prize',s:0.6},{t:'Al Jazeera English launches (Nov)',s:0.1},{t:'Facebook opens to everyone (Sep)',s:0.1}],
+  city:['Hazel McCallion re-elected mayor of Mississauga','The Hurontario bus is packed','A mosque open house welcomes neighbours','Canada Day at the waterfront','A youth basketball league starts at the community centre','Mississauga Marathon closes some roads'],
   tech:['flip phone','MSN','iPod','dial-up turning into broadband'],
  },
  '2026': {
   rates:{job:28,promotion:22,marriage:3.8,birth:9,graduation:18,business:5,revert:2,layoff:13,move:15}, unemployment:'about 7.5% (forecast)', forecast:true,
   year:2026, label:'2026', tag:'Full social media, phones everywhere',
   paper:'Mississauga Today', feedName:'Social feed', feedKind:'social',
-  media:['TikTok','Instagram','WhatsApp groups','X','YouTube','a podcast','a local news site'],
+  facts:{pop:'717,961 (2021 census) ✓ — 2026 count not out yet',muslims:'17.0% in 2021 (120,965) ✓',masjids:'ISNA Islamic Centre (2,500+ at Jumu\'ah) ✓, Jame Masjid / IPCO ✓, MAC, ISP and many more',wage:'$17.95/h from 1 Oct 2026 ✓',rent:'2-bed rent $1,929–$2,280 in Mississauga (2025) ✓',fare:'MiWay $4.50 cash / $3.50 PRESTO, $145 monthly ✓',gas:'gas ~130–150¢/L (estimate)',mayor:'Carolyn Parrish (elected 2024) ✓',attend:'48% weekly (Environics 2016, latest found) ✓'},
+  media:['TikTok','Instagram','WhatsApp groups','X','YouTube','a Muslim podcast','insauga.com','Mississauga.com'],
   platforms:['WhatsApp group','Instagram story','TikTok','X post','YouTube comment'],
   screenHrs:6.4, newsNegativity:0.65, socialCompare:0.6, community:0.45, economy:0.97,
   police:{patrolsPerDay:26, stopsPerDay:3, trustBase:0.55, fairness:0.78, communityEvents:0.07},
-  base:{dep:0.12, anx:0.18, lone:0.22, trustP:0.55, trustI:0.45, sat:0.62, faith:0.55},
-  town:'Mississauga has about 720,000 people. The Hurontario LRT runs through the middle; rents are high.',
-  world:['Rents keep rising across the GTA','Grocery prices are a big worry','AI tools change how offices work','Elections abroad fill everyone\'s feeds','Wildfire smoke drifts over Ontario','Families collect for relief in a war zone','Interest rates come down a little','A heat wave hits Southern Ontario'],
-  city:['Music night at Celebration Square','The Hurontario LRT gets busier','Ramadan night market in Cooksville','A food bank drive at the community centre','Canada Day fireworks at Celebration Square','Library coding club for teens'],
+  base:{attend:0.48, dep:0.12, anx:0.18, lone:0.22, trustP:0.55, trustI:0.45, sat:0.62, faith:0.55},
+  town:'Mississauga had 717,961 people in 2021, 17% Muslim. Rents are high; the Hurontario LRT is opening late (forecast).',
+  world:[{t:'Forecast: US–Canada tariff fight still hits factory jobs',s:-0.4},{t:'Forecast: Gaza rebuilding after the Oct 2025 ceasefire; masjids collect for relief',s:0.1,c:1},{t:'Forecast: Canada, which recognised Palestine in Sep 2025, debates aid',s:0},{t:'Forecast: PM Mark Carney government faces a budget fight',s:-0.1},{t:'Forecast: Syria slowly rebuilds after Assad',s:0.2,c:1},{t:'Forecast: Sudan war: families raise money for relief',s:-0.4,c:1},{t:'Forecast: rents keep rising across the GTA',s:-0.4},{t:'Forecast: grocery prices a big worry',s:-0.3},{t:'Forecast: AI tools change how offices work',s:-0.1},{t:'Forecast: wildfire smoke drifts over Ontario',s:-0.3}],
+  city:['FIFA World Cup 2026 games in Toronto: watch parties at Celebration Square','Mayor Carolyn Parrish speaks at a community iftar','Hurontario LRT (Hazel McCallion Line) opening news','Ramadan night market in Cooksville','A food bank drive at the community centre','Library coding club for teens'],
   tech:['smartphone','group chats','short videos','AI chat'],
  }
+};
+// Which map masjids exist in each era (ids from world.js). name = what it was called then.
+window.ERA_MASJIDS={
+ '1986':{cooksville_m:{name:'Jame Masjid (IPCO), Coopers Ave',short:'Jame Masjid'}, malton_m:{name:'Basement musalla, Malton (estimate)',short:'Malton musalla',jumuah:false}},
+ '2006':{cooksville_m:{name:'Jame Masjid Mississauga (IPCO)',short:'Jame Masjid'}, isna:{name:'ISNA Islamic Centre of Canada'}, malton_m:{}, meadowvale_m:{}, erin_m:{}},
+ '2026':null // all of them
 };
 window.ERA_ORDER=['1986','2006','2026'];
 </script><script>// ===== Outside world, three eras, wellbeing, newspapers, feeds, surveys, saving =====
@@ -961,7 +972,7 @@ function genDay(era,bdi){ const key=era+':'+bdi; if(O.gen[key])return O.gen[key]
   const L=ctx.L, wd=ctx.wd, c=ctx.cc;
   // --- faith & calendar ---
   const men=A.filter(a=>a.gender==='m'&&a.age>=15), est=f=>A.filter((a,i)=>R.rngFor('es',era,bdi,a.id)()<f(a)).length;
-  const fasting = live?live.fast: c.ramadan? est(a=>a.age>=12?0.9:0.1) : (wd===1||wd===4)? est(a=>a.age>=12?a.habits.fastMT*0.7:0) : c.white? est(a=>a.age>=12?a.habits.white*0.7:0):0;
+  const fasting = (c.eidFitr||c.eidAdha||c.tashriq)?0: live?live.fast: c.ramadan? est(a=>a.age>=12?0.9:0.1) : (wd===1||wd===4)? est(a=>a.age>=12?a.habits.fastMT*0.7:0) : c.white? est(a=>a.age>=12?a.habits.white*0.7:0):0;
   const jum = wd===5? (live&&live.jum!=null?live.jum: est(a=>a.gender==='m'&&a.age>=15?0.55+a.tier*0.2:0)) : 0;
   const night = live?live.night: est(a=>a.age>=15?a.habits.night*0.6:0);
   if(c.eidFitr||c.eidAdha) add('front',(c.eidFitr?'Eid al-Fitr':'Eid al-Adha')+': the whole town comes out to pray','Families filled the prayer grounds in their best clothes. Kids got Eid money and sweets were shared with neighbours.',0.9,'eid');
@@ -999,7 +1010,7 @@ function genDay(era,bdi){ const key=era+':'+bdi; if(O.gen[key])return O.gen[key]
   if(r()<P.communityEvents*(c.ramadan?4:1)) { const m=R.pick(r,World.mosques.filter(x=>x.jumuah)); add('police',c.ramadan?'Police officers join iftar at '+m.name:'Officers visit '+m.name+' for a community talk',c.ramadan?'Officers broke the fast with the community and answered questions. Kids tried on a police hat.':'They talked about road safety and scams aimed at older people. Tea and samosas after.',0.6,'police',{police:0.05}); }
   add('police','Peel Police made '+patrols+' patrol passes through town','Most of '+hoodName(hood)+' was quiet. Officers mostly helped with traffic and small calls.',0.05,'police',{low:true});
   // --- wider world & city & neighbours ---
-  const wn=R.pick(r,e.world); add('world',wn,'People heard about it on '+R.pick(r,e.media)+' and talked about it at dinner.',/relief|collect/.test(wn)?0.2:/drop|win|opens|boom|down/.test(wn)?0.2:-0.35,'world',{charity:/relief|collect/.test(wn)});
+  const wo=R.pick(r,e.world), wn=wo.t||wo; add('world',wn,'People heard about it on '+R.pick(r,e.media)+' and talked about it at dinner.',wo.s!=null?wo.s:-0.2,'world',{charity:!!wo.c||/relief|collect/.test(wn)});
   if(r()<0.5) add('city',R.pick(r,e.city),'Families from all backgrounds came out. '+(r()<0.5?'Some Muslim families set up a free water and dates table.':'Neighbours said it was a good day.'),0.4,'city');
   if(r()<0.4){ const hh=R.pick(r,HH); add('neigh',R.pick(r,[hh.nb+' brought cookies to the '+hh.surname+' family',hh.nb+' was invited to dinner by the '+hh.surname+' family','The '+hh.surname+' family fed '+hh.nb+'\'s cat while they were away',hh.nb+' asked the '+hh.surname+' family about fasting']),'Small kindness between neighbours of different faiths — the Prophet ﷺ taught that the neighbour has rights.',0.6,'neigh',{aid:hh.members[0].id}); hist(era,hh.members[0],'Shared a kind moment with our neighbour '+hh.nb); }
   const out={era,bdi,et,ctx,items,fasting,jum,night,patrols};
@@ -1071,7 +1082,8 @@ function post(era,a,it,r,w){ const e=E[era]; const plat=R.pick(r,e.platforms); c
   else text = text+(r()<0.4?' '+R.pick(r,['🤲','❤️','😔','💯','🙏','😂']):'');
   return {era,aid:a.id,who:a.name,plat,text,about:it.head,date:C.local(eraTime(O._dayBase,era)).d+' '+MON[C.local(eraTime(O._dayBase,era)).m].slice(0,3)}; }
 function survey(era,bdi,date){ const st=O.st[era], w=st.w; let n=0; const s={dep:0,anx:0,lone:0,trustP:0,trustI:0,sat:0,attend:0,screen:0};
-  for(let i=0;i<A.length;i++){ const a=A[i]; if(a.age<15)continue; n++; s.dep+=w.dep[i]>0.5; s.anx+=w.anx[i]>0.5; s.lone+=w.lone[i]>0.5; s.trustP+=w.trustP[i]>0.5; s.trustI+=w.trustI[i]>0.5; s.sat+=w.sat[i]*10; s.attend+=(a.habits.fajrMosque*0.6+(a.gender==='m'?0.4:0.15)+(E[era].community-0.6)*0.4)>0.5; s.screen+=w.screen[i]; }
+  for(let i=0;i<A.length;i++){ const a=A[i]; if(a.age<15)continue; n++; s.dep+=w.dep[i]>0.5; s.anx+=w.anx[i]>0.5; s.lone+=w.lone[i]>0.5; s.trustP+=w.trustP[i]>0.5; s.trustI+=w.trustI[i]>0.5; s.sat+=w.sat[i]*10; s.attend+=w.faith[i]; s.screen+=w.screen[i]; }
+  if(st.f0==null) st.f0=s.attend/n; s.attend=E[era].base.attend*(s.attend/n)/st.f0*n;
   const res={era,bdi,date,month:st.surveys.length,n}; for(const k in s) res[k]= k==='sat'||k==='screen'? +(s[k]/n).toFixed(1) : Math.round(s[k]/n*100);
   st.surveys.push(res); }
 // ---------- hooks used by the live map ----------
@@ -1095,13 +1107,13 @@ function catchUp(toBdi){ for(const k of EO){ const st=O.st[k]; let from=st.lastD
 O.catchUp=catchUp;
 // ---------- saving & loading ----------
 O.save=function(){ try{ const pk=a=>Array.from(a,x=>Math.round(x*1000)); const eras={};
-  for(const k of EO){ const s=O.st[k]; const w={}; for(const f in s.w) w[f]=pk(s.w[f]); eras[k]={w,papers:s.papers.slice(-30).map(p=>({...p})),posts:s.posts.slice(-60),surveys:s.surveys,days:s.days,econ:s.econ,jobless:s.jobless,lastDay:s.lastDay}; }
+  for(const k of EO){ const s=O.st[k]; const w={}; for(const f in s.w) w[f]=pk(s.w[f]); eras[k]={f0:s.f0,w,papers:s.papers.slice(-30).map(p=>({...p})),posts:s.posts.slice(-60),surveys:s.surveys,days:s.days,econ:s.econ,jobless:s.jobless,lastDay:s.lastDay}; }
   const ag=A.map(a=>({h:Object.fromEntries(Object.entries(a.habits).map(([k,v])=>[k,Math.round(v*1000)])),he:Math.round(a.heart*1000),ti:a.tier,ts:Math.round(a.tierScore*1000),hi:a.hist,ta:a.tally}));
   localStorage.setItem(KEY,JSON.stringify({v:2,baseT:O.baseT,savedAt:Date.now(),speed:O.speed,era:O.era,eras,ag,estr:People.estranged.map(p=>[p.done?1:0,p.days])})); }catch(err){ console.warn('save failed',err); } };
 O.load=function(){ let d=null; try{ d=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
   const now=Date.now();
   if(d&&d.v===2){
-    for(const k of EO){ const s=O.st[k], src=d.eras[k]; if(!src)continue; for(const f in s.w) if(src.w[f]) s.w[f]=Float32Array.from(src.w[f],x=>x/1000); Object.assign(s,{papers:src.papers,posts:src.posts,surveys:src.surveys,days:src.days,econ:src.econ,jobless:src.jobless||{},lastDay:src.lastDay}); }
+    for(const k of EO){ const s=O.st[k], src=d.eras[k]; if(!src)continue; for(const f in s.w) if(src.w[f]) s.w[f]=Float32Array.from(src.w[f],x=>x/1000); Object.assign(s,{f0:src.f0,papers:src.papers,posts:src.posts,surveys:src.surveys,days:src.days,econ:src.econ,jobless:src.jobless||{},lastDay:src.lastDay}); }
     d.ag.forEach((x,i)=>{ const a=A[i]; if(!a)return; for(const k in x.h)a.habits[k]=x.h[k]/1000; a.heart=x.he/1000; a.tier=x.ti; a.tierScore=x.ts/1000; a.hist=x.hi||{}; a.tally=x.ta||a.tally; });
     (d.estr||[]).forEach((x,i)=>{ const p=People.estranged[i]; if(p){p.done=!!x[0];p.days=x[1];} });
     O.era=d.era||'2026'; O.speed=d.speed==null?1:d.speed;
@@ -1133,6 +1145,13 @@ O.bioHTML=function(a){ const hh=HH[a.hh], i=a.id, w=O.st[O.era].w, e=E[O.era]; c
     <div class="hb"><span>Trust in police</span>${bar(w.trustP[i],'#4f8fd0')}</div><div class="hb"><span>Life satisfaction</span>${bar(w.sat[i],'#f0c05a')}</div></details>
    <details><summary>Angels' tally since you started watching</summary><div class="small">✦ Good deeds written: <b>${a.tally.good}</b> · ◇ Bad deeds held: <b>${a.tally.held}</b> · erased by saying sorry in time: <b>${a.tally.erased}</b></div></details>`; };
 const HABW={prompt:'praying on time',fajrMosque:'going to the masjid',rawatib:'extra prayers',night:'night prayer',fastMT:'Monday/Thursday fasts',white:'White Days fasts',dhikrAM:'morning remembrance',dhikrPM:'evening remembrance',quran:'daily Qur\'an',sadaqa:'daily charity',duha:'Duha prayer',sleepAdab:'bedtime routine',visit:'visiting people',kahf:'reading Al-Kahf on Fridays'};
+// ---------- masjids per era ----------
+const ALLM=World.mosques.slice(), ORIGM=new Map(ALLM.map(m=>[m.id,{name:m.name,short:m.short,jumuah:m.jumuah}]));
+O.applyEra=function(){ const spec=window.ERA_MASJIDS[O.era]; World.mosques.length=0;
+  for(const m of ALLM){ const o=ORIGM.get(m.id); Object.assign(m,o); if(spec&&!spec[m.id]){ m.closed=true; continue; } m.closed=false; if(spec) Object.assign(m,spec[m.id]); World.mosques.push(m); }
+  if(!World.mosques.some(m=>m.jumuah)) World.mosques[0].jumuah=true;
+  for(const a of A){ a.mosque=World.nearestMosque(a.home.x,a.home.y).id; a.jmosque=World.nearestMosque(a.home.x,a.home.y,true).id; a.policy=World.place(a.mosque).policy; }
+  if(window.Render&&Render.repaint&&O._painted) Render.repaint(); O._painted=true; };
 O.hoodName=hoodName; O.esc=esc; O.genDay=genDay; O.MON=MON;
 })();
 </script><script>// ===== Static map painter (pre-rendered once into an offscreen canvas) =====
@@ -1484,7 +1503,8 @@ function drawLabels(t,vis,L){
 function label(x,y,txt,col,fs){ ctx.font=`600 ${fs}px "Segoe UI", sans-serif`; const w=ctx.measureText(txt).width; ctx.fillStyle='rgba(255,255,255,0.82)'; Base.roundRect(ctx,x-w/2-fs*0.4,y-fs*0.7,w+fs*0.8,fs*1.4,fs*0.4); ctx.fill(); ctx.fillStyle=col; ctx.fillText(txt,x,y+fs*0.05); }
 function pick(sx,sy){ const [wx,wy]=s2w(sx,sy); let best=null,bd=1e9; const rad=Math.max(4,14/cam.z); for(const a of A){ const p=a._p; if(!p)continue; if(p.b.act==='away'&&!p.moving)continue; if(p.b.act==='sleep'&&!p.moving)continue; const d=Math.hypot(p.x-wx,p.y-wy); if(d<bd&&d<rad){bd=d;best=a;} } return best; }
 function addFx(e){ e.t0=performance.now(); fx.push(e); if(fx.length>400)fx.splice(0,fx.length-400); }
-window.Render={init,draw,cam,opt,pick,addFx,s2w,w2s,ACT,ACTN,TIERC,lightFor,get fps(){return fps;},resize};
+function repaint(){ base=Base.paint(BS); }
+window.Render={repaint,init,draw,cam,opt,pick,addFx,s2w,w2s,ACT,ACTN,TIERC,lightFor,get fps(){return fps;},resize};
 })();
 </script><script>// ===== Controls, HUD, agent card, ticker, main loop =====
 (function(){
@@ -1504,7 +1524,7 @@ if(params.get('t')){Outside.baseT=Date.parse(params.get('t'));}
 let start=Outside.eraTime(Outside.baseT);
 if(SAVED&&SAVED.speed!=null) speed=SAVED.speed;
 if(params.get('speed')) speed=+params.get('speed');
-Sim.setTime(start);
+Outside.applyEra(); Sim.setTime(start);
 Render.init();
 if(params.get('z')){Render.cam.z=+params.get('z');} if(params.get('x')){Render.cam.x=+params.get('x');Render.cam.y=+params.get('y');}
 // ---------- ticker ----------
@@ -1682,7 +1702,7 @@ App.fly=function(x,y,z,ms=2500){ const cam=Render.cam; cam.follow=null; const s=
 const O=Outside, A=People.agents, E=ERAS, EO=ERA_ORDER, $=id=>document.getElementById(id), esc=O.esc;
 const P={}; window.Panels=P; const COL={'1986':'#c8964a','2006':'#4a90d9','2026':'#2e9d74'};
 // ---------- era switcher ----------
-function setEra(k,quiet){ O.era=k; O.switching=true; Sim.setTime(O.eraTime(O.baseT)); O.switching=false;
+function setEra(k,quiet){ const ch=O.era!==k||!P._e; P._e=1; O.era=k; if(ch) O.applyEra(); O.switching=true; Sim.setTime(O.eraTime(O.baseT)); O.switching=false;
   document.body.dataset.era=k; document.querySelectorAll('[data-era]').forEach(b=>b.classList.toggle('on',b.dataset.era===k));
   if(UI.selected) UI.select(UI.selected,false); if(!quiet&&window.pushTicker) pushTicker('Now watching Mississauga in '+k+' — '+E[k].tag,'sky'); refresh(); }
 P.setEra=setEra;
@@ -1716,7 +1736,7 @@ function paper(){ const era=pEra||O.era, st=O.st[era], e=E[era]; const ps=st.pap
    <h2 ${p.lead.aid!=null?`data-pid="${p.lead.aid}" class="lnk"`:''}>${esc(p.lead.head)}</h2><p class="leadp">${esc(p.lead.body)}</p>
    <div class="facts"><span>🌙 ${p.fasting} fasting</span>${p.jum?`<span>🕌 ${p.jum} at Jumu'ah</span>`:''}<span>⭐ ${p.night} up for night prayer</span><span>🚓 ${p.patrols} patrol passes</span>${p.good!=null?`<span>✦ ${p.good} good deeds written</span>`:''}</div>
    <div class="cols">${sec('Good news',x=>x.topic==='life'&&x.s>0||x.topic==='heart')}${sec('Faith',x=>['faith','jumuah','fast','ramadan','eid'].includes(x.topic))}${sec('Police notes (Peel Regional Police)',x=>x.topic==='police')}${sec('Money & jobs',x=>x.topic==='econ')}${sec('Around Mississauga',x=>['city','neigh'].includes(x.topic)||x.topic==='life'&&x.s<=0)}${sec('The wider world',x=>x.topic==='world')}${sec('Weather & moon',x=>x.topic==='weather')}</div>
-   <div class="dim small">Made up by the simulation from what happened in town today. Not real news.</div></div>
+   <div class="small">💵 ${esc(e.facts.wage)} · ${esc(e.facts.rent)} · ${esc(e.facts.fare)} · ${esc(e.facts.gas)}</div><div class="dim small">Made up by the simulation from what happened in town today. Not real news.</div></div>
   <div class="arch"><span class="small dim">Past issues:</span> ${ps.map((x,j)=>`<button class="pi ${j===i?'on':''}" data-pi="${j}">${x.date.split(' ').slice(1,3).join(' ')}</button>`).reverse().join('')}</div>`;
   el.querySelectorAll('[data-pe]').forEach(b=>b.onclick=()=>{pEra=b.dataset.pe;pIdx=null;paper();}); el.querySelectorAll('[data-pi]').forEach(b=>b.onclick=()=>{pIdx=+b.dataset.pi;paper();}); }
 // ---------- feed ----------
@@ -1734,6 +1754,7 @@ function survey(){ const el=$('survey'); const last=k=>O.st[k].surveys[O.st[k].s
   <p class="small">A pretend poll in the style of Ipsos or Pew, asked of everyone 15+ once a month in each era. <b>All numbers are simulated</b>, not real survey results. Arrows show change since last month.${E['2026'].forecast?' 2026 is a forecast.':''}</p>
   <table class="sv"><tr><th></th>${EO.map(k=>`<th style="color:${COL[k]}">${k}<div class="small dim">month ${last(k)?last(k).month+1:0}</div></th>`).join('')}</tr>${MET.map(m=>`<tr><td>${m[1]}</td>${EO.map(k=>cell(k,m)).join('')}</tr>`).join('')}</table>
   <div class="charts">${MET.map(m=>`<div class="ch1"><div class="small">${m[1]}</div><canvas data-m="${m[0]}" width="300" height="110"></canvas></div>`).join('')}</div>
+  <details open><summary>Real facts behind each era (✓ = checked, rest are estimates)</summary><table class="sv">${['pop','muslims','masjids','wage','rent','fare','gas','mayor','attend'].map(f=>`<tr><td>${{pop:'People',muslims:'Muslims',masjids:'Masjids',wage:'Minimum wage',rent:'Rent',fare:'Bus fare',gas:'Gas',mayor:'Mayor',attend:'Weekly masjid (real survey)'}[f]}</td>${EO.map(k=>`<td class="small">${esc(E[k].facts[f])}</td>`).join('')}</tr>`).join('')}</table></details>
   <details><summary>Archive (every month)</summary>${EO.map(k=>`<div class="small"><b>${k}</b>: ${O.st[k].surveys.map(s=>`${s.date.split(' ').slice(1,3).join(' ')} — low mood ${s.dep}%, lonely ${s.lone}%, trust police ${s.trustP}%`).join(' · ')}</div>`).join('')}</details>`;
   el.querySelectorAll('canvas[data-m]').forEach(cv=>{ const m=cv.dataset.m, c=cv.getContext('2d'); const all=EO.flatMap(k=>O.st[k].surveys.map(s=>s[m])); const mx=Math.max(1,...all)*1.15; const n=Math.max(2,...EO.map(k=>O.st[k].surveys.length));
     c.strokeStyle='rgba(255,255,255,0.15)'; c.beginPath(); c.moveTo(0,100);c.lineTo(300,100);c.stroke();
