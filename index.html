@@ -1,0 +1,1759 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>Sunnah World — Mississauga</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#1b2433;font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;color:#f4f1ea}
+#world{position:fixed;inset:0;touch-action:none;cursor:grab}
+.glass{background:rgba(18,26,40,0.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.25)}
+#top{position:fixed;top:12px;left:12px;right:330px;display:flex;align-items:center;gap:18px;padding:10px 16px;flex-wrap:wrap}
+.brand{font-weight:700;letter-spacing:.5px}.dim{opacity:.65}.small{font-size:12px}
+#clock{font-size:30px;font-weight:700;font-variant-numeric:tabular-nums;min-width:120px}
+.col{display:flex;flex-direction:column;font-size:13px;gap:2px}.next{font-weight:600;color:#9be8c6}
+#tags{display:flex;gap:6px;flex-wrap:wrap}.tag{background:rgba(242,193,78,0.18);border:1px solid rgba(242,193,78,0.5);color:#ffe09a;border-radius:20px;padding:2px 10px;font-size:12px}
+#sky{position:fixed;top:12px;right:12px;width:306px;height:130px;padding:0}
+#stats{position:fixed;top:152px;right:12px;width:306px;padding:10px 14px;font-size:13px;line-height:1.55}
+#controls{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);padding:8px 10px;display:flex;flex-direction:column;gap:6px;align-items:center;max-width:96vw}
+.grp{display:flex;gap:5px;align-items:center;flex-wrap:wrap;justify-content:center}.lab{font-size:11px;opacity:.6;text-transform:uppercase;letter-spacing:1px;margin-right:4px}
+button,select{background:rgba(255,255,255,0.1);color:#f4f1ea;border:1px solid rgba(255,255,255,0.18);border-radius:9px;padding:5px 10px;font:inherit;font-size:13px;cursor:pointer}
+select option{color:#111}button:hover{background:rgba(255,255,255,0.2)}button.on{background:#2e9d74;border-color:#2e9d74}
+label{font-size:13px;display:flex;align-items:center;gap:4px;margin:0 4px}
+#ticker{position:fixed;left:12px;bottom:120px;width:420px;display:flex;flex-direction:column;gap:4px;pointer-events:auto}
+.tk{background:rgba(18,26,40,0.66);backdrop-filter:blur(6px);border-radius:10px;padding:5px 10px;font-size:12.5px;border-left:3px solid #6c7a90;cursor:default;animation:in .5s}
+.tk[data-id]{cursor:pointer}.tk .tt{opacity:.6;font-variant-numeric:tabular-nums;margin-right:4px}
+.tk.adhan{border-color:#5fe0a8}.tk.angels{border-color:#ffd678}.tk.moon{border-color:#e9e4ff}.tk.good{border-color:#ffd678}.tk.left{border-color:#a9c6ff}.tk.q{border-color:#9b72cf}.tk.eid{border-color:#f39c12}.tk.heart{border-color:#ff8fb1}.tk.janazah{border-color:#bbb}.tk.night{border-color:#f2c14e}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+#legend{position:fixed;left:12px;top:90px;width:300px;padding:12px 14px;font-size:12.5px;display:none;line-height:1.45}#legend.open{display:block}
+#legend hr{border:0;border-top:1px solid rgba(255,255,255,0.15)}#legend>div{margin:5px 0}
+.sd{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:middle}
+.orb{display:inline-block;width:14px;height:14px;border-radius:50%;vertical-align:middle}.orb.q{background:radial-gradient(#4e3468,rgba(60,40,85,0))}.orb.r{background:radial-gradient(#fff3c4,#ffd678 50%,rgba(255,214,120,0))}.orb.l{background:radial-gradient(#eef4ff,#a9c6ff 50%,rgba(169,198,255,0))}
+#card{position:fixed;right:12px;top:152px;bottom:12px;width:372px;padding:14px;overflow-y:auto;font-size:13px;display:none}#card.open{display:block}
+.ch{display:flex;justify-content:space-between;gap:8px}.nm{font-size:20px;font-weight:700}.sub{font-size:12px;opacity:.75;line-height:1.4}
+.now{margin:10px 0;padding:8px 10px;background:rgba(255,255,255,0.08);border-radius:10px;font-weight:600}
+.row{display:flex;gap:10px;align-items:center}.tier{border-radius:20px;padding:3px 12px;font-weight:700;font-size:12px;white-space:nowrap}.t0{background:#d9534f}.t1{background:#e09a2f}.t2{background:#27a35f}
+.flags{margin:8px 0;padding:6px 10px;border-radius:10px;background:rgba(242,193,78,0.12);font-size:12.5px;line-height:1.5}
+.traits{margin:8px 0}.hb{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:3px 0;font-size:12.5px}
+.bar{display:inline-block;width:120px;height:7px;border-radius:5px;background:rgba(255,255,255,0.12);overflow:hidden;flex:none}.bar i{display:block;height:100%;border-radius:5px}
+details{margin-top:8px;background:rgba(255,255,255,0.04);border-radius:10px;padding:6px 8px}summary{cursor:pointer;font-weight:600;font-size:13px}
+.sb{padding:3px 0;font-size:12px;opacity:.85;display:flex;gap:6px;align-items:flex-start}.sb.past{opacity:.45}.sb.now{opacity:1;color:#9be8c6;font-weight:600}
+.st{font-variant-numeric:tabular-nums;opacity:.6;min-width:58px;flex:none}
+.rc,.ql{font-size:12px;padding:3px 0;line-height:1.4;display:block}.rc.right{color:#ffe7a8}.rc.left{color:#c8d9ff}.ql{color:#d9c8f0}.ql.shield{color:#9be8c6}
+.er{color:#9be8c6;font-size:11px}.pd{color:#ffd0a0;font-size:11px}.wr{color:#ff9e9e;font-size:11px}
+.btns{display:flex;gap:8px;margin-top:10px}
+#cx{padding:2px 9px}
+#about{position:fixed;inset:0;background:rgba(10,14,24,0.55);display:none;align-items:center;justify-content:center;z-index:10}#about.open{display:flex}
+#about .box{max-width:560px;background:#141c2b;border-radius:18px;padding:24px 28px;line-height:1.55;border:1px solid rgba(255,255,255,0.15)}#about h2{margin-top:0}
+@media (max-width:900px){#top{right:12px}#sky,#stats{display:none}#card{left:12px;width:auto;top:auto;height:55vh}#ticker{width:auto;right:12px;bottom:150px}}
+.erabar{display:flex;gap:4px;align-items:center}.erabar button.on{background:#c79a3c;border-color:#c79a3c;color:#111;font-weight:700}
+body[data-era="1986"] #world{filter:sepia(.45) saturate(.8) contrast(.95)}body[data-era="2006"] #world{filter:saturate(.85) hue-rotate(-8deg)}
+.panel{position:fixed;left:12px;top:90px;bottom:120px;width:min(560px,calc(100vw - 24px));background:#141c2b;border:1px solid rgba(255,255,255,0.15);border-radius:14px;padding:12px 14px;overflow-y:auto;display:none;z-index:6;font-size:13.5px;line-height:1.45}.panel.open{display:block}
+.ph{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;position:sticky;top:-12px;background:#141c2b;padding:6px 0;z-index:2}
+.ph button.on,.pi.on{background:#2e9d74;border-color:#2e9d74}
+#dq{width:100%;padding:9px 12px;border-radius:10px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.08);color:#fff;font:inherit;margin-bottom:6px}#dh{width:100%;margin-bottom:6px}
+.pr{display:flex;gap:10px;padding:7px 4px;border-bottom:1px solid rgba(255,255,255,.07);cursor:pointer}.pr:hover{background:rgba(255,255,255,.06)}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:5px;flex:none}.dot.t0{background:#d9534f}.dot.t1{background:#e09a2f}.dot.t2{background:#27a35f}
+.lnk{cursor:pointer;text-decoration:underline dotted}
+.news{background:#f3ecdc;color:#1d1a16;border-radius:8px;padding:14px 16px;font-family:Georgia,"Times New Roman",serif}
+.news .mast{font-size:30px;font-weight:900;text-align:center;border-bottom:3px double #1d1a16;padding-bottom:4px;letter-spacing:.5px}
+.news .dateline{text-align:center;font-size:12px;border-bottom:1px solid #1d1a16;padding:3px 0;margin-bottom:8px}
+.news h2{font-size:24px;line-height:1.15;margin:6px 0}.leadp{font-size:14px}
+.news .facts{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}.news .facts span{background:rgba(0,0,0,.07);border-radius:6px;padding:2px 8px;font-size:12px;font-family:system-ui,sans-serif}
+.news .cols{columns:2 230px;column-gap:18px}.news .sec{break-inside:avoid;margin-bottom:10px}.news h4{margin:6px 0 3px;font-size:12px;text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid #1d1a16}
+.news .story{margin:5px 0;font-size:13px}.news .dim{color:#5a5248;opacity:1}
+.news.n2006{background:#f4f7fb;font-family:Verdana,Tahoma,sans-serif}.news.n2006 .mast{color:#1f4e8c;font-family:Verdana,sans-serif;border-color:#1f4e8c}
+.news.n2026{background:#ffffff;font-family:"Avenir Next",system-ui,sans-serif;border-radius:14px}.news.n2026 .mast{font-family:system-ui,sans-serif;color:#0d6b4f;border:0;text-align:left;font-size:26px}.news.n2026 .dateline{text-align:left;border:0}.news.n2026 h4{border:0;color:#0d6b4f}
+.arch{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}.arch button{font-size:11px;padding:3px 7px}
+.feed .post{background:rgba(255,255,255,.06);border-radius:10px;padding:8px 10px;margin:6px 0}.feed.f1986 .post{background:#efe6d2;color:#222;font-family:Georgia,serif;border-radius:3px}.feed.f2006 .post{background:#e9f0fa;color:#123;font-family:Verdana,sans-serif;font-size:12px;border-radius:4px}
+.sv{width:100%;border-collapse:collapse;font-size:13px}.sv td,.sv th{padding:5px 4px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left}.up{color:#ff9e9e;font-size:11px}.dn{color:#9be8c6;font-size:11px}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:8px;margin:10px 0}.ch1 canvas{width:100%;height:auto;background:rgba(255,255,255,.04);border-radius:8px}
+.bio p{margin:5px 0}.hist{margin-top:6px}
+@media (max-width:900px){.panel{top:auto;bottom:0;left:0;width:100vw;height:72vh;border-radius:16px 16px 0 0}#controls{bottom:6px}#top{gap:8px;padding:8px 10px}#clock{font-size:22px;min-width:0}}
+#card{z-index:5}
+</style></head><body>
+<canvas id="world"></canvas>
+<div id="top" class="glass">
+  <div class="brand">Sunnah World <span class="dim">· Mississauga</span></div>
+  <div id="clock">--</div><div class="col"><div id="date"></div><div id="hijri"></div></div>
+  <div class="col"><div id="next" class="next"></div><div id="moon" class="dim small"></div></div>
+  <div id="eras" class="erabar"></div><div id="tags"></div>
+</div>
+<canvas id="sky" class="glass"></canvas>
+<div id="stats" class="glass"></div>
+<div id="controls" class="glass">
+  <div class="grp"><span class="lab">Speed</span><button data-sp="0">❚❚</button><button data-sp="1">Real time</button><button data-sp="60">60×</button><button data-sp="600">600×</button><button data-sp="3600">1h/s</button></div>
+  <div class="grp"><span class="lab">Jump to</span><button id="jPrayer">Next adhan</button><button id="jNight">Night prayer</button><button id="jFri">Friday</button><button id="jWhite">White Days</button><button id="jRam">Ramadan</button><button id="jEid">Eid</button><button id="jNow">Now</button></div>
+  <div class="grp"><label><input type="checkbox" id="o_qareen"> Qareen</label><label><input type="checkbox" id="o_angels"> Angels</label><label><input type="checkbox" id="o_labels"> Labels</label>
+   <select id="colorBy"><option value="doing">Colour: what they're doing</option><option value="tier">Colour: practice level</option><option value="fasting">Colour: fasting</option></select>
+   <select id="find"><option value="">Show me someone…</option><option value="tahajjud">praying at night</option><option value="mosque">at a masjid</option><option value="fasting">fasting today</option><option value="qareen">just whispered to by the Qareen</option><option value="repent">who repented in time</option><option value="ill">who is ill</option><option value="phone">on their phone</option><option value="estranged">not speaking to someone</option><option value="sabiq">"racing ahead"</option><option value="zalim">struggling</option><option value="disabled">with a disability</option><option value="child">a child</option><option value="working">at work</option></select>
+   <button id="peopleBtn">👥 People</button><button id="paperBtn">📰 Newspaper</button><button id="feedBtn">💬 Talk</button><button id="surveyBtn">📊 Survey</button><button id="legendBtn">Key</button><button id="aboutBtn">About</button></div>
+</div>
+<div id="ticker"></div>
+<div id="legend" class="glass"><b>Key</b><div id="legRows"></div><hr>
+ <div><span class="orb q"></span> <b>Qareen</b> — a dark violet haze at the shoulder. Bigger and darker = stronger pull. It can only <i>delay</i>, <i>diminish</i> or <i>divert</i>; the person always chooses. It shrinks at the adhan, in congregation, after the morning remembrance, after Ayat al-Kursi, and to a third in Ramadan.</div>
+ <div><span class="orb r"></span> <b>Right angel</b> writes good deeds — even ones only intended.</div>
+ <div><span class="orb l"></span> <b>Left angel</b> holds its pen up to 6 hours (a ring counts down). Saying sorry to Allah, or a good deed, in that time erases it.</div>
+ <div class="dim small">Lit windows at night = someone awake (gold = praying, blue = phone). Small gold moon on a person = fasting.</div>
+</div>
+<div id="card" class="glass"></div>
+<div id="dir" class="panel"></div>
+<div id="paper" class="panel"></div>
+<div id="feed" class="panel"></div>
+<div id="survey" class="panel"></div>
+<div id="about"><div class="box"><h2>Sunnah World</h2>
+<p>A make-believe town shaped like Mississauga, where about 750 people live by the Sunnah clock. The sky drives everything: real sunrise, sunset and prayer times for Mississauga, the real moon phase, and the Islamic (Hijri) date, which starts at sunset.</p>
+<p>Each person is different: their practice level (from Surah Fatir 35:32), their habits, health, honesty, phone habits, mood, disabilities, job and family. They wake, pray, fast, work, visit neighbours, argue, make up and sleep. Some do really well; some struggle.</p>
+<p><b>Three eras:</b> switch between Mississauga in 1986, 2006 and 2026 at the top. Each era repeats its year forever, on the same date as today. All three keep living, even when this page is closed — when you come back it catches up. Every night each era prints its own newspaper, people talk about it (letters in 1986, forums and MSN in 2006, social media in 2026), and once a month a pretend survey checks how everyone is feeling. 2026 is a forecast. All numbers are simulated.</p>
+<p><b>Drag</b> to move · <b>scroll or pinch</b> to zoom · <b>click a person</b> to open their day · <b>space</b> to pause.</p>
+<p class="dim small">This is a simulation, not a fatwa. It never judges anyone's soul or works out reward. The Qareen and angels are shown as soft lights with no faces, only to picture the rules in the source sheets. Places are inspired by real Mississauga; positions are approximate. Times use the ISNA 15° method, and Hijri dates use the Umm al-Qura calculation (with local-sighting masjids sometimes one day behind).</p>
+<button id="aboutClose">Start watching</button></div></div>
+<script>(function(){
+function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
+function hash(...xs){let h=2166136261>>>0;for(const x of xs){const s=String(x);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}h^=0x9e37;h=Math.imul(h,16777619);}return h>>>0;}
+function rngFor(...xs){return mulberry32(hash(...xs));}
+function pick(r,a){return a[Math.floor(r()*a.length)];}
+function clamp(x,a=0,b=1){return x<a?a:x>b?b:x;}
+window.R={mulberry32,hash,rngFor,pick,clamp};
+})();
+</script><script>// ===== Clock & calendar: the sky is the clock, the moon is the calendar =====
+(function(){
+const LAT = 43.589, LON = -79.644, TZ = 'America/Toronto';
+const D2R = Math.PI/180, R2D = 180/Math.PI;
+const sin=d=>Math.sin(d*D2R), cos=d=>Math.cos(d*D2R), tan=d=>Math.tan(d*D2R);
+const asin=x=>R2D*Math.asin(x), acos=x=>R2D*Math.acos(Math.max(-1,Math.min(1,x))), atan2=(y,x)=>R2D*Math.atan2(y,x), acot=x=>R2D*Math.atan(1/x);
+const fix=(a,b)=>{a=a-b*Math.floor(a/b);return a<0?a+b:a;};
+
+// Timezone offset (minutes, local = utc + off) cached per hour
+const offCache = new Map();
+const dtf = new Intl.DateTimeFormat('en-US',{timeZone:TZ,hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit'});
+function tzOffset(ms){
+  const k=Math.floor(ms/3600000); if(offCache.has(k)) return offCache.get(k);
+  const p={}; for(const x of dtf.formatToParts(new Date(k*3600000))) p[x.type]=x.value;
+  const asUTC=Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute,+p.second);
+  const off=Math.round((asUTC-k*3600000)/60000); offCache.set(k,off); return off;
+}
+// local parts
+function local(ms){ const d=new Date(ms+tzOffset(ms)*60000);
+  return {y:d.getUTCFullYear(),m:d.getUTCMonth(),d:d.getUTCDate(),wd:d.getUTCDay(),h:d.getUTCHours(),mi:d.getUTCMinutes(),min:d.getUTCHours()*60+d.getUTCMinutes()+d.getUTCSeconds()/60};}
+// UTC ms of local midnight of the local date containing ms
+function localMidnight(ms){ const L=local(ms); let g=Date.UTC(L.y,L.m,L.d); return g - tzOffset(g+12*3600000)*60000; }
+function dayIndex(ms){ const L=local(ms); return Math.round(Date.UTC(L.y,L.m,L.d)/86400000); }
+
+// --- Sun ---
+function julian(ms){ return ms/86400000 + 2440587.5; }
+function sunPos(jd){ const D=jd-2451545.0; const g=fix(357.529+0.98560028*D,360), q=fix(280.459+0.98564736*D,360);
+  const L=fix(q+1.915*sin(g)+0.020*sin(2*g),360); const e=23.439-0.00000036*D;
+  const RA=fix(atan2(cos(e)*sin(L),cos(L))/15,24); const decl=asin(sin(e)*sin(L));
+  let eqt=q/15-RA; eqt=eqt-24*Math.round(eqt/24); return {decl,eqt}; }
+function sunAltitude(ms){ const jd=julian(ms); const {decl,eqt}=sunPos(jd);
+  const utcH=((ms/3600000)%24+24)%24; const solarT=utcH+LON/15+eqt; const ha=(solarT-12)*15;
+  return asin(sin(LAT)*sin(decl)+cos(LAT)*cos(decl)*cos(ha)); }
+
+// Prayer times for the local date of `ms`. Returns minutes after local midnight (+ ms values)
+const ptCache=new Map();
+function prayerTimes(ms){
+  const mid=localMidnight(ms); if(ptCache.has(mid)) return ptCache.get(mid);
+  const off=tzOffset(mid+12*3600000)/60; // hours
+  const jd0=julian(mid+12*3600000);
+  function tAt(angle, after){ // hours local; angle = sun altitude target (negative below)
+    let t= after?18:6; for(let i=0;i<3;i++){ const {decl,eqt}=sunPos(jd0+(t-12)/24); const noon=12-LON/15-eqt+off;
+      const h=acos((sin(angle)-sin(LAT)*sin(decl))/(cos(LAT)*cos(decl)))/15; t= after?noon+h:noon-h; } return t; }
+  function asrT(f){ let t=15; for(let i=0;i<3;i++){const {decl,eqt}=sunPos(jd0+(t-12)/24); const noon=12-LON/15-eqt+off; const ang=-acot(f+tan(Math.abs(LAT-decl))); const h=acos((sin(-ang)-sin(LAT)*sin(decl))/(cos(LAT)*cos(decl)))/15; t=noon+h;} return t; }
+  const {eqt}=sunPos(jd0); const noon=12-LON/15-eqt+off;
+  const H={ fajr:tAt(-15,false), sunrise:tAt(-0.833,false), dhuhr:noon+2/60, asr:asrT(1), asrHanafi:asrT(2), maghrib:tAt(-0.833,true)+1/60, isha:tAt(-15,true) };
+  const r={}; for(const k in H) r[k]=Math.round(H[k]*60);
+  r.yellow = r.maghrib-35;               // sun turning yellow: disliked to delay Asr to here
+  r.duha = r.sunrise+18;                  // "a spear's length"
+  r.zawalNoPray = r.dhuhr-10;
+  const night = (r.fajr+1440)-r.maghrib;  // tonight (approx using today's times)
+  r.midnight = r.maghrib + night/2;       // Islamic midnight (not 00:00)
+  r.lastThirdMorning = r.fajr - night/3;  // last third of the night that ends this morning
+  r.base=mid; ptCache.set(mid,r); return r;
+}
+
+// --- Moon ---
+const SYN=29.530588853, NEW0=Date.UTC(2000,0,6,18,14)/86400000;
+function moonAgeDays(ms){ return fix(ms/86400000-NEW0,SYN); }
+function moonIllum(ms){ const a=moonAgeDays(ms)/SYN; return (1-Math.cos(2*Math.PI*a))/2; }
+function lastConjunction(ms){ return (ms/86400000 - moonAgeDays(ms))*86400000; }
+
+// Hijri date (Umm al-Qura calculation from the browser's built-in calendar). Islamic day turns at Maghrib.
+const hdtf=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura',{timeZone:'UTC',day:'numeric',month:'numeric',year:'numeric'});
+const MONTHS=['Muharram','Safar','Rabi al-Awwal','Rabi al-Thani','Jumada al-Ula','Jumada al-Akhirah','Rajab','Shaban','Ramadan','Shawwal','Dhul-Qadah','Dhul-Hijjah'];
+const hCache=new Map();
+function hijriCivil(dayIdx){ if(hCache.has(dayIdx)) return hCache.get(dayIdx); const p={}; for(const x of hdtf.formatToParts(new Date(dayIdx*86400000+12*3600000))) p[x.type]=x.value;
+  const r={d:parseInt(p.day),m:parseInt(p.month)-1,y:parseInt(p.year)}; hCache.set(dayIdx,r); return r; }
+// policy: 'calc' = calculation/national authority; 'sight' = local sighting (often one day later)
+function hijri(ms, policy){
+  const pt=prayerTimes(ms); const L=local(ms); let di=dayIndex(ms);
+  if(L.min>=pt.maghrib) di+=1; // new Islamic day begins at sunset
+  let h=hijriCivil(di);
+  if(policy==='sight'){ // local sighting lags a calculated start when the crescent was too young at sunset
+    const startDi = di-(h.d-1); const eve=(startDi-1)*86400000+43200000;
+    const sunsetMs = localMidnight(eve)+prayerTimes(eve).maghrib*60000;
+    const age=(sunsetMs-lastConjunction(sunsetMs))/3600000;
+    if(age<20 || age>24*25){ const p=hijriCivil(di-1); h = (h.d===1 && p.d===29)?{d:30,m:p.m,y:p.y}:p; }
+  }
+  return {...h, name:MONTHS[h.m]};
+}
+
+window.Clock={LAT,LON,TZ,tzOffset,local,localMidnight,dayIndex,sunAltitude,prayerTimes,moonAgeDays,moonIllum,hijri,hijriCivil,MONTHS,SYN};
+})();
+</script><script>// ===== The Mississauga / GTA replica (stylised; 1 unit = 10 m; x east, y south) =====
+(function(){
+const W=2600,H=1700;
+const r=R.rngFor('world-v1');
+// Lake Ontario shoreline (south-east); points from west to east
+const shore=[[0,1640],[300,1600],[600,1560],[900,1520],[1150,1470],[1380,1420],[1500,1395],[1560,1405],[1700,1360],[1900,1290],[2100,1220],[2300,1150],[2600,1060]];
+function shoreY(x){for(let i=0;i<shore.length-1;i++){const a=shore[i],b=shore[i+1];if(x>=a[0]&&x<=b[0]){const t=(x-a[0])/(b[0]-a[0]);return a[1]+t*(b[1]-a[1]);}}return 1640;}
+// Credit River: north (Meadowvale) -> Streetsville -> Erindale -> Port Credit mouth
+const river=[[420,0],[470,150],[560,300],[650,430],[720,560],[790,660],[860,760],[930,880],[1010,980],[1100,1080],[1220,1190],[1340,1290],[1440,1360],[1500,1400]];
+const highways=[
+ {name:'401',pts:[[0,230],[700,240],[1300,250],[1900,270],[2600,300]]},
+ {name:'403',pts:[[0,1060],[500,920],[900,800],[1250,700],[1700,640],[2100,600],[2600,560]]},
+ {name:'QEW',pts:[[0,1500],[600,1440],[1100,1360],[1500,1300],[1900,1180],[2300,1060],[2600,980]]},
+ {name:'407',pts:[[0,120],[600,110],[1200,90],[1700,60],[2600,40]]},
+ {name:'410',pts:[[1450,0],[1470,120],[1500,250],[1520,420],[1560,560],[1600,640]]},
+ {name:'427',pts:[[2520,0],[2510,400],[2490,800],[2470,1080]]},
+];
+const arterials=[
+ {name:'Hurontario St',pts:[[1340,0],[1380,400],[1420,800],[1460,1100],[1500,1390]]},
+ {name:'Mississauga Rd',pts:[[640,0],[700,400],[800,800],[900,1200],[960,1500]]},
+ {name:'Erin Mills Pkwy',pts:[[420,250],[480,600],[560,1000],[620,1520]]},
+ {name:'Winston Churchill',pts:[[250,0],[260,500],[300,1000],[340,1580]]},
+ {name:'Mavis Rd',pts:[[1080,0],[1120,500],[1170,1000],[1210,1440]]},
+ {name:'Cawthra Rd',pts:[[1640,450],[1660,900],[1680,1360]]},
+ {name:'Dixie Rd',pts:[[1840,0],[1860,600],[1890,1290]]},
+ {name:'Derry Rd',pts:[[0,330],[2600,370]]},
+ {name:'Britannia Rd',pts:[[0,480],[2000,500]]},
+ {name:'Eglinton Ave',pts:[[0,700],[2600,690]]},
+ {name:'Burnhamthorpe Rd',pts:[[400,860],[2600,840]]},
+ {name:'Dundas St',pts:[[200,1080],[1000,1020],[1600,990],[2600,960]]},
+ {name:'Lakeshore Rd',pts:[[0,1610],[600,1530],[1150,1440],[1500,1380],[2000,1250],[2600,1070]]},
+];
+const goLines=[
+ {name:'Milton GO line',pts:[[0,470],[400,520],[760,610],[1100,800],[1420,980],[1800,1020],[2600,1000]], stations:[['Meadowvale GO',[400,520]],['Streetsville GO',[760,610]],['Erindale GO',[1100,800]],['Cooksville GO',[1420,980]],['Dixie GO',[1800,1020]]]},
+ {name:'Lakeshore West GO line',pts:[[0,1560],[600,1480],[1100,1395],[1480,1350],[1900,1230],[2300,1110],[2600,1020]], stations:[['Clarkson GO',[1000,1410]],['Port Credit GO',[1480,1350]],['Long Branch GO',[2300,1110]]]},
+];
+// Neighbourhoods
+const hoods=[
+ {id:'meadowvale',name:'Meadowvale',x:400,y:380,w:300,h:220,kind:'houses'},
+ {id:'streetsville',name:'Streetsville',x:690,y:520,w:220,h:180,kind:'village'},
+ {id:'erinmills',name:'Erin Mills',x:380,y:820,w:330,h:260,kind:'houses'},
+ {id:'malton',name:'Malton',x:1960,y:180,w:240,h:200,kind:'houses'},
+ {id:'citycentre',name:'City Centre',x:1240,y:650,w:260,h:200,kind:'towers'},
+ {id:'cooksville',name:'Cooksville',x:1380,y:900,w:260,h:200,kind:'apartments'},
+ {id:'portcredit',name:'Port Credit',x:1400,y:1260,w:220,h:110,kind:'village'},
+ {id:'clarkson',name:'Clarkson',x:850,y:1280,w:280,h:140,kind:'houses'},
+ {id:'heartland',name:'Heartland',x:1150,y:330,w:240,h:130,kind:'plaza'},
+];
+// Landmarks / places
+const places=[];
+function P(id,name,kind,x,y,extra={}){const p={id,name,kind,x,y,...extra};places.push(p);return p;}
+// Mosques (inspired by real centres; positions approximate)
+P('isna','ISNA Canada Masjid','mosque',1020,1240,{size:2.1,jumuah:true,policy:'calc',short:'ISNA'});
+P('meadowvale_m','Meadowvale Islamic Centre','mosque',520,470,{size:1.8,jumuah:true,policy:'calc',short:'Meadowvale'});
+P('malton_m','Malton Masjid','mosque',2070,260,{size:1.7,jumuah:true,policy:'sight',short:'Malton'});
+P('cooksville_m','Cooksville Jame Masjid','mosque',1520,960,{size:1.8,jumuah:true,policy:'sight',short:'Cooksville'});
+P('streets_m','Streetsville Musalla','mosque',780,590,{size:1.3,jumuah:false,policy:'calc',short:'Streetsville'});
+P('erin_m','Erin Mills Masjid (MAC)','mosque',560,930,{size:1.8,jumuah:true,policy:'calc',short:'Erin Mills'});
+P('cc_m','City Centre Musalla','mosque',1300,820,{size:1.3,jumuah:true,policy:'calc',short:'City Centre'});
+P('pc_m','Port Credit Prayer Room','mosque',1470,1300,{size:1.2,jumuah:false,policy:'calc',short:'Port Credit'});
+// Work & life
+P('squareone','Square One mall','mall',1370,730,{w:110,h:70});
+P('cityhall','Civic Centre','civic',1290,780,{w:40,h:30});
+P('towers','The curvy towers','towers',1440,690,{});
+P('pearson','Pearson Airport','airport',2280,300,{w:420,h:300});
+P('warehouses','Malton warehouses','industry',1880,420,{w:260,h:150});
+P('meadowpark','Meadowvale business park','office',230,330,{w:180,h:110});
+P('cvh','Credit Valley Hospital','hospital',700,800,{w:60,h:45});
+P('trillium','Trillium Hospital','hospital',1560,1180,{w:60,h:45});
+P('utm','University (UTM)','campus',960,960,{w:120,h:90});
+P('sheridan','Sheridan College','campus',1300,620,{w:60,h:45});
+P('heartland_p','Heartland plazas','plaza',1270,390,{w:200,h:100});
+P('halal_cooks','Halal market, Cooksville','market',1450,1060,{w:60,h:40});
+P('halal_malton','Halal market, Malton','market',1930,330,{w:55,h:40});
+P('halal_erin','Erin Mills plaza','market',640,1050,{w:60,h:40});
+P('streets_main','Queen St shops, Streetsville','market',760,650,{w:70,h:30});
+P('pc_shops','Port Credit shops','market',1520,1330,{w:60,h:25});
+P('cityoffices','City Centre offices','office',1230,700,{w:70,h:60});
+P('lighthouse','Port Credit lighthouse','lighthouse',1555,1395,{});
+P('riverwood','Riverwood park','park',680,720,{w:110,h:90});
+P('jackdarling','Jack Darling park','park',1700,1320,{w:110,h:40});
+P('celebration','Celebration Square','square',1330,760,{w:45,h:30});
+P('erindale','Erindale park','park',1040,1000,{w:90,h:70});
+// Schools: one per neighbourhood
+for(const h of hoods){ if(h.kind==='plaza')continue; P('school_'+h.id,h.name+' school','school',h.x+h.w-40,h.y+30,{w:44,h:30}); }
+// Eid prayer ground (open field) – Mississauga Celebration Square style
+const eidGround=P('eidground','Eid prayer ground','eidground',1180,880,{w:140,h:90});
+
+// Homes: generated in neighbourhoods
+const homes=[];
+function inRiver(x,y){for(const p of river){if(Math.hypot(p[0]-x,p[1]-y)<35)return true;}return false;}
+function nearRoad(x,y){for(const a of arterials){for(let i=0;i<a.pts.length-1;i++){if(distSeg(x,y,a.pts[i],a.pts[i+1])<12)return true;}}for(const a of highways){for(let i=0;i<a.pts.length-1;i++){if(distSeg(x,y,a.pts[i],a.pts[i+1])<16)return true;}}return false;}
+function distSeg(x,y,a,b){const dx=b[0]-a[0],dy=b[1]-a[1];const t=Math.max(0,Math.min(1,((x-a[0])*dx+(y-a[1])*dy)/(dx*dx+dy*dy)));return Math.hypot(x-a[0]-t*dx,y-a[1]-t*dy);}
+function blocked(x,y,pad=10){ if(y>shoreY(x)-20)return true; if(inRiver(x,y))return true; if(nearRoad(x,y))return true;
+  for(const p of places){const w=(p.w||30)/2+pad,h=(p.h||30)/2+pad;if(Math.abs(p.x-x)<w&&Math.abs(p.y-y)<h)return true;} return false;}
+const localStreets=[];
+const roofPal=['#b55b4a','#8d6e63','#6d7b8a','#a0705a','#7a5c4f','#c98a5e','#5f6b78','#9c6b5c'];
+for(const h of hoods){
+  if(h.kind==='plaza') continue;
+  const tower=h.kind==='towers'||h.kind==='apartments';
+  const step=tower?30:14;
+  // local streets
+  for(let yy=h.y+8; yy<h.y+h.h; yy+=step*2) localStreets.push([[h.x,yy],[h.x+h.w,yy]]);
+  for(let xx=h.x+8; xx<h.x+h.w; xx+=step*3) localStreets.push([[xx,h.y],[xx,h.y+h.h]]);
+  for(let yy=h.y+8+step*0.5; yy<h.y+h.h; yy+=step){ if(((yy-h.y-8)/step)%2<0.6)continue;
+    for(let xx=h.x+14; xx<h.x+h.w-6; xx+=step*(tower?1.5:1)){
+      if(((xx-h.x-8)%(step*3))<6) continue;
+      const jx=xx+(r()-0.5)*2, jy=yy+(r()-0.5)*2; if(blocked(jx,jy,4)) continue;
+      const kind= tower ? (r()<0.75?'tower':'house') : (h.kind==='village'&&r()<0.25?'row':'house');
+      homes.push({id:'h'+homes.length,x:jx,y:jy,hood:h.id,kind,roof:R.pick(r,roofPal),w:kind==='tower'?22:9+r()*3,h:kind==='tower'?22:8+r()*2,floors:kind==='tower'?(h.kind==='towers'?14+Math.floor(r()*20):6+Math.floor(r()*8)):1+(r()<0.6?1:0),units:kind==='tower'?6:1,occ:0});
+    }
+  }
+}
+// Filler city fabric (decor only): the rest of Mississauga's suburbs
+const filler=[];
+const fr=R.rngFor('filler');
+function noise(x,y){return Math.sin(x*0.011+1.3)*Math.cos(y*0.013+0.7)+Math.sin(x*0.0047-y*0.0061)*0.8;}
+const noGo=[[2040,130,2560,470],[1730,330,2020,520],[60,260,420,420]];
+for(let y=150;y<1640;y+=13){ for(let x=10;x<2590;x+=12){
+  if(((y/13)|0)%3===2) continue; // street rows
+  if(((x/12)|0)%8===7) continue;
+  if(noise(x,y)<-0.55) continue;
+  if(noGo.some(b=>x>b[0]&&x<b[2]&&y>b[1]&&y<b[3])) continue;
+  if(hoods.some(h=>x>h.x-14&&x<h.x+h.w+14&&y>h.y-14&&y<h.y+h.h+14)) continue;
+  let nr=false; for(const p of river){if(Math.hypot(p[0]-x,p[1]-y)<75){nr=true;break;}} if(nr) continue;
+  if(blocked(x,y,8)) continue;
+  filler.push({gx:x,gy:y,x:x+(fr()-0.5)*1.5,y:y+(fr()-0.5)*1.5,w:7+fr()*2.5,h:6+fr()*2,roof:R.pick(fr,roofPal),floors:fr()<0.7?1:2,kind:'house'});
+}}
+// Trees & parks
+const trees=[];
+for(let i=0;i<5200;i++){const x=r()*W,y=r()*H; if(y>shoreY(x)-8)continue; let ok=false;
+  for(const p of river){if(Math.hypot(p[0]-x,p[1]-y)<90&&!inRiver(x,y)){ok=r()<0.9;break;}}
+  if(!ok){ for(const h of hoods){ if(x>h.x&&x<h.x+h.w&&y>h.y&&y<h.y+h.h){ok=r()<0.25;break;} } }
+  if(!ok) ok=r()<0.06;
+  if(ok&&!nearRoad(x,y)) trees.push({x,y,s:3+r()*4,c:r()});
+}
+for(const p of places) if(p.kind==='park') for(let i=0;i<70;i++){trees.push({x:p.x+(r()-0.5)*p.w,y:p.y+(r()-0.5)*p.h,s:3+r()*5,c:r()});}
+
+const mosques=places.filter(p=>p.kind==='mosque');
+const QIBLA_DEG = 54; // from Mississauga, clockwise from north (great-circle to Makkah)
+function nearestMosque(x,y,needJumuah){let b=null,bd=1e9;for(const m of mosques){if(needJumuah&&!m.jumuah)continue;const d=Math.hypot(m.x-x,m.y-y);if(d<bd){bd=d;b=m;}}return b;}
+function place(id){return places.find(p=>p.id===id);}
+window.World={W,H,shore,shoreY,river,highways,arterials,goLines,hoods,places,homes,trees,localStreets,filler,mosques,nearestMosque,place,eidGround,QIBLA_DEG,distSeg};
+})();
+</script><script>// ===== Agent model: people, households, traits =====
+(function(){
+const r=R.rngFor('people-v1');
+const SUR=['Khan','Ahmed','Hussain','Ali','Siddiqui','Qureshi','Abdullahi','Warsame','Hassan','Mohamed','Rahman','Chowdhury','Haddad','Nasser','Saleh','Karimi','Popal','Haidari','Begović','Hodžić','Yilmaz','Demir','Osman','Farah','Abdi','Malik','Sheikh','Butt','Mirza','Rizvi','Ansari','Elsayed','Mansour','Ibrahim','Yusuf','Diallo','Bah','Islam','Uddin','Baig','Iqbal','Jaber','Darwish','Kamara','Taylor','Williams','Fernandes','Hamid','Tahir','Shah'];
+const MN=['Muhammad','Ahmad','Yusuf','Ibrahim','Omar','Ali','Hamza','Bilal','Zayd','Khalid','Tariq','Imran','Faisal','Hassan','Hussein','Abdullah','Abdirahman','Mustafa','Idris','Ismail','Salman','Usman','Adam','Musa','Harun','Kareem','Nabil','Rashid','Sami','Anwar','Daud','Ayaan','Rayyan','Zain','Emir','Kerem','Jamal','Malik','Idrees','Luqman'];
+const FN=['Aisha','Fatima','Maryam','Khadija','Zainab','Amina','Hafsa','Sumayya','Ruqayya','Safiya','Asma','Hana','Layla','Noor','Sara','Yasmin','Huda','Iman','Salma','Rania','Farah','Sana','Mariam','Nadia','Hibah','Zahra','Ayesha','Hawa','Fadumo','Ilhan','Amira','Lina','Dina','Esra','Merve','Selma','Amal','Samira','Rukhsana','Shabnam'];
+const SKIN=['#f1d3b6','#e8c09a','#d9a77c','#c68e5f','#a8714a','#8a5a3b','#6e4630','#55372a'];
+const CLOTH=['#3f5f8a','#6b8f71','#8a5a7a','#b07d48','#4f6d7a','#7d6b9e','#a3524b','#2f6f6f','#5b6c3a','#9a7b5c','#365a7a','#7a4e3a','#47597a'];
+const HIJAB=['#2e4057','#7b3f61','#3e6259','#8c6d4f','#5a4a7a','#a14f4f','#2d5d7b','#6b705c','#b9895a','#44355b','#e0d6c8','#1f2a33'];
+const HAIR=['#1b1410','#2b1d14','#3a2a1c','#4a3424','#6a5a4a','#cfcfcf'];
+const OCC={
+ office:{label:'office worker',place:()=>R.pick(r,['cityoffices','meadowpark']),start:540,end:1020},
+ retail:{label:'shop assistant at the mall',place:()=>R.pick(r,['squareone','heartland_p']),start:600,end:1080},
+ warehouse:{label:'warehouse worker',place:()=>'warehouses',start:420,end:930,labour:true},
+ airport:{label:'airport worker',place:()=>'pearson',start:360,end:870,labour:true},
+ nurse:{label:'nurse',place:()=>R.pick(r,['cvh','trillium']),start:420,end:1140},
+ doctor:{label:'doctor',place:()=>R.pick(r,['cvh','trillium']),start:480,end:1080},
+ shop:{label:'shop owner',place:null,start:540,end:1200,trader:true},
+ driver:{label:'taxi / rideshare driver',place:()=>R.pick(r,['squareone','pearson','cityoffices','pc_shops','halal_cooks']),start:600,end:1140,roam:true},
+ teacher:{label:'school teacher',place:null,start:480,end:960},
+ uni:{label:'university student',place:()=>R.pick(r,['utm','sheridan']),start:600,end:960},
+ engineer:{label:'engineer',place:()=>R.pick(r,['meadowpark','cityoffices']),start:510,end:1020},
+ builder:{label:'construction worker',place:()=>R.pick(r,['towers','cityoffices','heartland_p']),start:420,end:930,labour:true},
+ imam:{label:'imam',place:null,start:0,end:0},
+ home:{label:'looks after the home',place:null,start:0,end:0},
+ retired:{label:'retired',place:null,start:0,end:0},
+};
+const hoodWeights={malton:30,meadowvale:26,erinmills:24,cooksville:28,citycentre:22,streetsville:10,portcredit:6,clarkson:10};
+const agents=[],households=[];
+const homesBy={};for(const h of World.homes){(homesBy[h.hood]=homesBy[h.hood]||[]).push(h);}
+function wpick(w){let s=0;for(const k in w)s+=w[k];let x=r()*s;for(const k in w){x-=w[k];if(x<=0)return k;}return Object.keys(w)[0];}
+function tierFor(){const x=r();return x<0.22?0:x<0.78?1:2;}
+const TIERN=['Wrongs himself','Middle way','Racing ahead'];
+let aid=0;
+function mk(hh,role,gender,age,surname){
+  const name=(gender==='m'?R.pick(r,MN):R.pick(r,FN))+' '+surname;
+  const tier = age<7?1:tierFor();
+  const a={id:aid++,name,first:name.split(' ')[0],gender,age,role,hh:hh.id,home:hh.home,tier,
+    madhhab:R.pick(r,['Hanafi','Hanafi','Shafii','Shafii','Maliki','Hanbali']),
+    honesty:R.clamp(0.55+r()*0.5-(tier===0?0.2:0)), phone:R.clamp(r()*(age<30?1:0.7)+(age>12&&age<35?0.2:0)), anger:r()*0.6, generosity:R.clamp(0.3+r()*0.6+tier*0.1), pride:r()*0.6, humility:r(),
+    heart:R.clamp(0.35+tier*0.25+(r()-0.5)*0.2),
+    skin:hh.skin, cloth:R.pick(r,CLOTH), hijab:R.pick(r,HIJAB), hair:age>62?'#d8d8d8':R.pick(r,HAIR.slice(0,5)), kufi:r()<0.45, beard:gender==='m'&&age>18&&r()<0.7,
+    disability:null, mood:'calm', health:'healthy', chronic:false, pregnant:false,
+    cycle0:Math.floor(r()*28), cycleLen:6+Math.floor(r()*2), owedFasts:0,
+    wealth:hh.wealth*(0.5+r()), log:[], records:[], qlog:[], habits:{}, stats:{}, slot:0, tierScore:0};
+  const H=a.habits, b=[0.12,0.5,0.88][tier], j=()=>R.clamp(b+(r()-0.5)*0.3);
+  for(const k of ['prompt','fajrMosque','rawatib','night','fastMT','white','dhikrAM','dhikrPM','quran','sadaqa','duha','sleepAdab','visit','kahf']) H[k]=j();
+  a.tierScore=[0.15,0.5,0.85][tier];
+  // individual differences
+  const x=r(); if(age>60&&x<0.25){a.disability=R.pick(r,['wheelchair','cane'])} else if(x<0.03)a.disability='wheelchair'; else if(x<0.045)a.disability='blind'; else if(x<0.06)a.disability='deaf';
+  const m=r(); a.mood = m<0.1?'anxious':m<0.16?'low':m<0.19?'grieving':m<0.45?'cheerful':'calm';
+  if(age>55&&r()<0.35){a.chronic=true;a.health='chronic';}
+  if(gender==='f'&&age>=20&&age<=40&&role==='mother'&&r()<0.12){a.pregnant=true;a.health='pregnant';}
+  if(age<7) a.legal='young child'; else if(age<15) a.legal='learning child (7+, being trained)'; else a.legal='adult (accountable)';
+  a.nisabDay = a.wealth>40 ? {m:Math.floor(r()*12),d:1+Math.floor(r()*28)} : null;
+  agents.push(a); hh.members.push(a); return a;
+}
+const HH_COUNT=215;
+for(let i=0;i<HH_COUNT;i++){
+  const hood=wpick(hoodWeights); const list=homesBy[hood]; let home=null;
+  for(let k=0;k<30;k++){const c=R.pick(r,list);const cap=c.kind==='tower'?6:1; if(c.occ<cap){home=c;break;}}
+  if(!home) continue; home.occ++;
+  const sur=R.pick(r,SUR), skin=R.pick(r,SKIN);
+  const hh={id:households.length,home,hood,surname:sur,skin,members:[],wealth: home.kind==='tower'? 10+r()*40 : 30+r()*80, unit:home.occ-1};
+  households.push(hh);
+  const t=r();
+  if(t<0.62){ // family
+    const fa=30+Math.floor(r()*25), mo=fa-Math.floor(r()*6)-1;
+    mk(hh,'father','m',fa,sur); mk(hh,'mother','f',mo,sur);
+    const n=Math.floor(r()*4)+ (r()<0.5?1:0); for(let c=0;c<n;c++){const ag=Math.max(0,Math.min(mo-19,1+Math.floor(r()*17)));mk(hh,'child',r()<0.5?'m':'f',ag,sur);}
+    if(r()<0.18) mk(hh,'grandparent',r()<0.5?'m':'f',66+Math.floor(r()*18),sur);
+  } else if(t<0.74){ mk(hh,'single','m',19+Math.floor(r()*12),sur); if(r()<0.5) mk(hh,'roommate','m',19+Math.floor(r()*12),R.pick(r,SUR)); }
+  else if(t<0.82){ mk(hh,'single','f',21+Math.floor(r()*14),sur); }
+  else if(t<0.92){ const a=62+Math.floor(r()*18); mk(hh,'grandparent','m',a,sur); mk(hh,'grandparent','f',a-2,sur); }
+  else { const mo=28+Math.floor(r()*15); mk(hh,'mother','f',mo,sur); for(let c=0;c<1+Math.floor(r()*3);c++)mk(hh,'child',r()<0.5?'m':'f',1+Math.floor(r()*15),sur); }
+}
+// occupations & workplaces
+const imamMosques=World.mosques.filter(m=>m.jumuah).map(m=>m.id); let imamI=0;
+for(const a of agents){
+  let occ;
+  if(a.age<5) occ='toddler'; else if(a.age<18) occ='pupil';
+  else if(a.age>=65) occ='retired';
+  else if(a.age<25&&r()<0.6) occ='uni';
+  else if(a.gender==='m'&&a.age>35&&imamI<imamMosques.length&&r()<0.12&&a.tier>0) {occ='imam'; a.tier=2; a.tierScore=0.9; for(const k in a.habits)a.habits[k]=R.clamp(a.habits[k]+0.35);}
+  else occ = a.gender==='m' ? wpick({office:14,retail:6,warehouse:10,airport:6,nurse:2,doctor:3,shop:8,driver:9,teacher:3,engineer:8,builder:6}) : wpick({office:12,retail:8,nurse:9,doctor:4,shop:3,teacher:8,engineer:4,home:22,driver:1});
+  a.occ=occ; const O=OCC[occ];
+  if(occ==='toddler'){a.job='little one at home';}
+  else if(occ==='pupil'){a.job=a.age<14?'school pupil':'high-school student'; a.work='school_'+World.homes.find(h=>h===a.home).hood; if(!World.place(a.work)) a.work='school_cooksville'; a.ws=510;a.we=915;}
+  else { a.job=O.label; a.ws=O.start;a.we=O.end; a.labour=!!O.labour; a.trader=!!O.trader; a.roam=!!O.roam;
+    if(occ==='imam'){a.work=imamMosques[imamI++];}
+    else if(occ==='shop'){const hood=a.home.hood; a.work={malton:'halal_malton',cooksville:'halal_cooks',erinmills:'halal_erin',streetsville:'streets_main',portcredit:'pc_shops'}[hood]||R.pick(r,['halal_cooks','halal_malton','halal_erin','streets_main','heartland_p']);}
+    else if(occ==='teacher'){a.work='school_'+a.home.hood; if(!World.place(a.work))a.work='school_erinmills';}
+    else if(O.place) a.work=O.place();
+    if(occ==='nurse'&&r()<0.3){a.night=true;a.ws=1140;a.we=420;a.job='night-shift nurse';}
+  }
+  a.mosque=World.nearestMosque(a.home.x,a.home.y).id; a.jmosque=World.nearestMosque(a.home.x,a.home.y,true).id;
+  a.policy=World.place(a.mosque).policy;
+  a.car = a.age>=18 && (r()<0.8);
+  a.carColor=R.pick(r,['#c9ccd1','#2b2f36','#8b1e2a','#e8e8e8','#24456b','#5d6d5b','#9a9fa6']);
+}
+// neighbours & kin graph, estrangements
+for(const a of agents){ a.neigh=[]; }
+for(const hh of households){ const near=households.filter(o=>o!==hh&&Math.hypot(o.home.x-hh.home.x,o.home.y-hh.home.y)<45).slice(0,6); hh.neigh=near; }
+// kin: link some households by same surname across town
+for(const hh of households){ hh.kin=households.filter(o=>o!==hh&&o.surname===hh.surname).slice(0,3); }
+const estranged=[];
+for(let i=0;i<14;i++){ const hh=R.pick(r,households); const o=hh.neigh[0]||hh.kin[0]; if(!o)continue;
+  const a=hh.members.find(m=>m.age>=18), b=o.members.find(m=>m.age>=18); if(!a||!b||a.estr||b.estr)continue;
+  const pair={a,b,days:1+Math.floor(r()*6),why:R.pick(r,['a parking argument','a loud party','a money loan','an inheritance dispute','a misunderstanding at a wedding','a fence between the gardens'])};
+  a.estr=pair;b.estr=pair;estranged.push(pair); }
+// slots inside home
+for(const hh of households) hh.members.forEach((m,i)=>m.slot=i);
+window.People={agents,households,estranged,TIERN,OCC};
+})();
+</script><script>// ===== Scheduler + spiritual layer (Qareen, recording angels, habits, heart) =====
+(function(){
+const C=Clock, A=People.agents, HH=People.households;
+const SEED='sunnah-world-1';
+const T=(tier,arr)=>arr[tier];
+const PNAME={fajr:'Fajr',dhuhr:'Dhuhr',asr:'Asr',maghrib:'Maghrib',isha:'Isha'};
+const IQ={fajr:20,dhuhr:15,asr:10,maghrib:5,isha:10};
+const MT=['lowest','middle','highest'];
+
+// ---------- Calendar flags ----------
+function cal(h){ const m=h.m,d=h.d; return {
+  ramadan:m===8, lastTen:m===8&&d>=20, eidFitr:m===9&&d===1, eidAdha:m===11&&d===10, tashriq:m===11&&d>=11&&d<=13,
+  arafah:m===11&&d===9, firstTen:m===11&&d<=9, white:d>=13&&d<=15&&!(m===11&&d===13), ashura:m===0&&(d===9||d===10),
+  shawwal:m===9&&d>=2, shaban:m===7, sacred:[0,6,10,11].includes(m), hijama:[17,19,21].includes(d) };}
+function dayCtx(dayMs){
+  const mid=C.localMidnight(dayMs), pt=C.prayerTimes(mid+43200000), L=C.local(mid+43200000), di=C.dayIndex(mid+43200000);
+  const noon=mid+43200000; const hc=C.hijri(noon,'calc'), hs=C.hijri(noon,'sight');
+  const doy=(Date.UTC(L.y,L.m,L.d)-Date.UTC(L.y,0,1))/86400000;
+  const wr=R.rngFor(SEED,'wx',di); const temp=Math.round(8-14*Math.cos((doy-20)/365*2*Math.PI)+(wr()-0.5)*8);
+  const rain=wr()<0.28, snow=rain&&temp<1, cloud=rain||wr()<0.35;
+  return {mid,pt,L,di,wd:L.wd,hc,hs,cc:cal(hc),cs:cal(hs),temp,rain,snow,cloud,doy,hot:temp>27,cold:temp<0,winter:temp<3};
+}
+
+// ---------- helpers ----------
+function insert(list,b){const out=[];for(const x of list){if(x.e<=b.s||x.s>=b.e)out.push(x);else{if(x.s<b.s)out.push({...x,e:b.s});if(x.e>b.e)out.push({...x,s:b.e});}}out.push(b);out.sort((p,q)=>p.s-q.s);return out;}
+function at(list,t){for(const x of list)if(t>=x.s&&t<x.e)return x;return list[list.length-1];}
+function pidXY(a,pid){ if(pid==='home')return a.home; if(pid==='away')return {x:2600,y:300}; return World.place(pid)||a.home; }
+function dist(p,q){return Math.hypot(p.x-q.x,p.y-q.y);}
+function menstruating(a,di){ if(a.gender!=='f'||a.age<13||a.age>50||a.pregnant)return false; return ((di-a.cycle0)%28+28)%28<a.cycleLen; }
+function illness(a,di){ if(a.age<1)return null; for(let k=0;k<6;k++){const rr=R.rngFor(SEED,'ill',a.id,di-k)(); const p=0.0035*(a.age>60?2:1)*(a.chronic?1.6:1); if(rr<p){const len=2+Math.floor(R.rngFor(SEED,'ilen',a.id,di-k)()*4); if(k<len)return {kind:R.pick(R.rngFor(SEED,'ik',a.id,di-k),['the flu','a bad cold','a fever','a back injury','a stomach bug']),day:k+1,len};}} return null; }
+function travel(a,di,ctx){ if(a.age<18)return null; for(let k=0;k<5;k++){const rr=R.rngFor(SEED,'trv',a.id,di-k)(); if(rr<0.0025*(a.occ==='driver'||a.occ==='engineer'?2:1)){const len=2+Math.floor(R.rngFor(SEED,'tl',a.id,di-k)()*3); if(k<len)return {to:R.pick(R.rngFor(SEED,'tt',a.id,di-k),['Ottawa','Montreal','Detroit','Calgary','New York','Chicago']),day:k+1,len};}}
+  const c=a.policy==='sight'?ctx.hs:ctx.hc; if(a.hajj&&c.m===11&&c.d>=1&&c.d<=15) return {to:'Makkah for Hajj',hajj:true}; return null; }
+
+// ---------- Qareen ----------
+// strength at a moment: base pressure x amplifiers x suppressors. A scripted pressure, not a planner.
+function qareenStrength(a,ctx,o={}){
+  let s=0.55*(1.35-a.heart);
+  if(a.anger>0.45) s*=1+a.anger*0.5;
+  if(o.night&&o.alone) s*=1.25;
+  if(a.phone>0.6) s*=1+(a.phone-0.6);
+  if(a._noMosqueDays>5) s*=1.2;          // the wolf takes the stray sheep
+  if(a.mood==='low'||a.mood==='grieving') s*=1.15;
+  if(o.morningHundred) s*=0.55;          // protection until evening
+  if(o.kursi) s*=0.3;                    // guarded till morning
+  if(o.congregation) s*=0.6;
+  if(o.adhan) s*=0.4;                    // it flees the adhan
+  const c=a.policy==='sight'?ctx.cs:ctx.cc; if(c.ramadan) s*=0.3; // devils chained; the nafs remains
+  return R.clamp(s,0,1);
+}
+const QTXT={
+ fajr_divert:['"You have a long night, so sleep."','Ties three knots: "sleep a bit more."'],
+ fajr_late:['"There is still time before sunrise."'],
+ dhuhr_delay:['"Finish this meeting first."','"The lunch rush is busy — later."','"After this task."'],
+ asr_delay:['"There is still time…" (pushing Asr toward the yellow sun)','"Just one more thing before Asr."'],
+ maghrib_delay:['"Dinner first, then pray."'],
+ isha_delay:['"Watch one more video, then Isha."','"You can pray it later tonight."'],
+ isha_divert:['"Scroll a bit more." (phone)','"Chat a little longer."'],
+ back_to_sleep:['"Go back to sleep after Fajr."'],
+ rush:['Rushed the remembrance after prayer — counted without attention.','Mind wandering during prayer (seek refuge, then refocus).'],
+ fast_divert:['"You\'re hungry — fast another day."','"Accept the lunch invitation."'],
+ give_later:['"Give later, money is tight." (promising poverty)'],
+ visit_delay:['"They\'ll be better soon — visit another day."'],
+ witr:['"You\'ll pray witr when you wake." (and doesn\'t)'],
+ anger:['Anger rising — the Qareen\'s widest door.'],
+ pride:['Pride: "Let them say salam first."'],
+ jumuah_late:['"No rush, you\'ll make the khutbah." (arrives at the end)'],
+ defect:['"Just this once — don\'t mention the scratch."'],
+};
+
+// ---------- Day plan builder ----------
+function buildDay(a,ctx){
+  const rnd=R.rngFor(SEED,'day',a.id,ctx.di); const pt=ctx.pt, mid=ctx.mid;
+  const ev=[]; // {t(min),type,side,kind,text}
+  const rec=(t,side,kind,text,extra={})=>ev.push({t,type:'rec',side,kind,text,...extra});
+  const qe=(t,move,key,extra={})=>ev.push({t,type:'qareen',move,text:R.pick(rnd,QTXT[key]),...extra});
+  const note=(t,text)=>ev.push({t,type:'note',text});
+  const c=a.policy==='sight'?ctx.cs:ctx.cc; const h=a.policy==='sight'?ctx.hs:ctx.hc;
+  const wd=ctx.wd, friday=wd===5, weekend=wd===0||wd===6;
+  const adult=a.age>=15, child=a.age<7;
+  const out={blocks:[],ev,fast:null,flags:{}};
+  const done={};
+  // -- away / ill / period
+  const trv=travel(a,ctx.di,ctx);
+  if(trv){ out.blocks=[{s:0,e:1440,act:'away',pid:'away',txt:'Travelling to '+trv.to}]; out.flags.travel=trv;
+    rec(pt.dhuhr,'right','habit','Travelling: prays Dhuhr & Asr shortened and joined (2+2 rak\'ahs)');
+    rec(pt.maghrib+5,'right','habit','Habitual good deeds keep being written as if done at home (Bukhari)');
+    for(const k in a.habits)done[k]=null; out.done=done; return out; }
+  const ill=illness(a,ctx.di); out.flags.ill=ill;
+  const period=menstruating(a,ctx.di); out.flags.period=period;
+  const qs0=qareenStrength(a,ctx); a._qs=qs0;
+
+  // -- fasting decision
+  let fast=null; const elig=adult&&!ill&&!period&&!a.pregnant&&!(a.chronic&&a.age>70);
+  const prohibited=c.eidFitr||c.eidAdha||c.tashriq;
+  if(c.ramadan){ if(elig) fast='Ramadan fast'; else if(a.age>=10&&a.age<15&&rnd()<0.6) fast='trying a Ramadan fast (child)'; else if(adult){ if(period) {a.owedFasts++; out.flags.owed=true;} } }
+  else if(!prohibited && elig){
+    const T0=a.tier; let p=0, why='';
+    if(wd===1||wd===4){p=T(T0,[0.02,0.18,0.7])*(0.4+0.8*a.habits.fastMT); why=wd===1?'Monday fast':'Thursday fast';}
+    if(c.white){const q=T(T0,[0.03,0.35,0.85])*(0.4+0.8*a.habits.white); if(q>p){p=q;why='White Day fast (full moon, '+h.d+' '+h.name+')';}}
+    if(c.ashura){p=Math.max(p,T(T0,[0.15,0.6,0.95]));why='Ashura fast';}
+    if(c.arafah){p=Math.max(p,T(T0,[0.2,0.7,0.97]));why='Day of Arafah fast';}
+    if(c.shawwal){const q=T(T0,[0.01,0.1,0.25]);if(q>p){p=q;why='one of the six days of Shawwal';}}
+    if(c.shaban){ if(a.owedFasts>0){p=Math.max(p,0.6);why='making up a missed Ramadan fast';} else {const q=T(T0,[0.01,0.08,0.4]); if(q>p){p=q;why='Shaban fast';}} }
+    if(c.firstTen&&!c.arafah){const q=T(T0,[0,0.05,0.35]);if(q>p){p=q;why='first ten of Dhul-Hijjah';}}
+    if(a.labour&&ctx.hot) p*=0.45;
+    if(p>0&&rnd()<p){ fast=why; if(why.startsWith('making')) a.owedFasts=Math.max(0,a.owedFasts-1); }
+    else if(p>0.15&&rnd()<qs0*0.6){ out.flags.fastIntent=why; }
+  }
+  out.fast=fast;
+
+  // -- night & waking
+  const night=(pt.fajr+1440)-pt.maghrib; const winterMod=night>720?1.25:night<560?0.7:1;
+  let pNight=T(a.tier,[0.01,0.15,0.8])*(0.4+0.8*a.habits.night)*winterMod*(1-0.45*a.phone);
+  if(c.lastTen) pNight=Math.min(0.95,pNight*2.5+0.35); else if(c.ramadan) pNight*=1.3;
+  if(!adult) pNight*= a.age>=10&&c.lastTen?0.5:0;
+  if(ill) pNight*=0.2;
+  const tahajjud=rnd()<pNight; out.flags.tahajjud=tahajjud;
+  let wake;
+  const nightShift=a.night&&!weekend;
+  if(nightShift){ wake=pt.fajr-10; }
+  else if(tahajjud){ wake=Math.max(pt.lastThirdMorning+rnd()*45, 60); }
+  else wake=null;
+  // Base skeleton
+  let B=[{s:0,e:1440,act:'home',pid:'home',txt:'At home'}];
+  const add=(s,e,act,pid,txt,o={})=>{s=Math.max(0,Math.round(s));e=Math.min(1440,Math.round(e));if(e>s)B=insert(B,{s,e,act,pid,txt,...o});};
+  // Bed time tonight
+  let bed = child?1200+rnd()*40 : a.age<12?1230+rnd()*40 : 1350+a.phone*110+(a.tier===2?-35:0)+(rnd()-0.5)*40;
+  if(c.ramadan&&adult) bed=Math.max(bed,pt.isha+110);
+  bed=Math.min(Math.max(bed,pt.isha+35),1439);
+  // Work / school
+  const workToday = a.work && a.ws!=null && (a.occ==='pupil'||a.occ==='teacher'||a.occ==='uni' ? !weekend : a.occ==='retail'||a.occ==='driver'||a.occ==='shop' ? wd!==0 : (a.occ==='nurse'||a.occ==='doctor'||a.occ==='airport') ? (R.rngFor(SEED,'shift',a.id,ctx.di)()<0.62) : !weekend) && !c.eidFitr && !c.eidAdha && !ill;
+  let ws=a.ws, we=a.we; if(c.ramadan&&workToday&&adult&&a.occ!=='pupil') we-=60;
+  if(a.occ==='imam'){ add(pt.duha+60,pt.dhuhr-30,'learn',a.work,'Teaching a Qur\'an class'); }
+  else if(workToday&&!a.night){ const act=a.occ==='pupil'?'school':a.occ==='uni'?'learn':'work'; add(ws,we,act,a.work,a.occ==='pupil'?'At school':'Working — '+a.job); out.flags.work=true; }
+  else if(workToday&&a.night){ add(0,we,'work',a.work,'Night shift — '+a.job); add(ws,1440,'work',a.work,'Night shift — '+a.job); add(we+30,we+30+420,'sleep','home','Sleeping after the night shift'); }
+  // Sleep
+  const fajrWin={s:pt.fajr,e:pt.sunrise};
+  if(!nightShift){ add(0, wake??pt.fajr, 'sleep','home', child?'Asleep':'Asleep (right side, after the sleep remembrance)'); }
+  add(bed,1440,'sleep','home','Asleep');
+  if(tahajjud&&!nightShift){ add(wake,pt.fajr-(fast?35:5),'tahajjud','home','Night prayer in the last third of the night — light on, house quiet'); rec(wake+8,'right','done','Rose for night prayer (Tahajjud) in the last third'); done.night=1; }
+  else if(adult&&a.habits.night>0.35&&!nightShift){ rec(pt.fajr-30,'right','intent','Intended to wake for night prayer but slept through — the intention is written, and the sleep counts as charity (al-Nasa\'i)'); done.night=0.4; }
+  else done.night=0;
+  if(fast&&!nightShift){ add(pt.fajr-35,pt.fajr-8,'eat','home','Suhoor — the pre-dawn meal (it has blessing)'); }
+  // Child rules
+  if(child){ add(pt.maghrib-5,bed,'home','home','Indoors at dusk with the family (dusk rule)'); }
+
+  // ---------- prayers ----------
+  const prayers=['fajr','dhuhr','asr','maghrib','isha'];
+  const windows={fajr:[pt.fajr,pt.sunrise],dhuhr:[pt.dhuhr,(a.madhhab==='Hanafi'?pt.asrHanafi:pt.asr)],asr:[(a.madhhab==='Hanafi'?pt.asrHanafi:pt.asr),pt.maghrib],maghrib:[pt.maghrib,pt.isha],isha:[pt.isha,Math.min(1439,pt.midnight)]};
+  let missedCount=0, mosqueCount=0;
+  out.prayers={};
+  for(const p of prayers){
+    let [ws0,we0]=windows[p];
+    if(friday&&p==='dhuhr'&&adult&&a.gender==='m'&&!ill){ continue; } // Jumu'ah handled below
+    if(a.age<7){ continue; }
+    if(period){ add(ws0+8,ws0+18,'dhikr','home','Remembering Allah at '+PNAME[p]+' time (no prayer during her period — leaving it is obedience, not a miss)'); if(p==='dhuhr')rec(ws0+10,'right','done','Kept her remembrance; leaving prayer during her period is obedience'); out.prayers[p]='excused'; continue; }
+    if(ill){ const t=ws0+10+rnd()*30; add(t,t+12,'pray','home','Praying '+PNAME[p]+' sitting in bed (illness)',{post:'sit'}); out.prayers[p]='sitting'; if(p==='asr')rec(t+5,'right','habit','Ill: prays sitting; habitual deeds still written as if done (Bukhari)'); continue; }
+    const cur=at(B,ws0+5);
+    const nightCtx=p==='isha'||p==='fajr';
+    const qs=qareenStrength(a,ctx,{night:nightCtx,alone:B.length<4,morningHundred:done.dhikrAM&&p!=='fajr'&&p!=='isha',adhan:false});
+    let pPray=T(a.tier,[0.45,0.92,0.995])*(0.88+0.24*a.habits.prompt)*(1-0.12*qs);
+    if(a.age<10) pPray*=0.55; else if(a.age<15) pPray*=0.85;
+    if(p==='fajr'&&!tahajjud&&!nightShift){ pPray*= (1-0.25*a.phone)*(ctx.cold?0.92:1); }
+    const prays=rnd()<Math.min(0.998,pPray);
+    if(!prays){
+      missedCount++; out.prayers[p]='missed';
+      if(p==='fajr'){ qe(pt.fajr+5,'divert','fajr_divert'); const t=pt.sunrise+30+rnd()*60; add(t,t+10,'pray','home','Woke late — praying Fajr as soon as he/she woke (making it up)'); rec(t,'left','missed','Slept through Fajr — made it up on waking',{pending:true,erase:rnd()<0.4+a.tier*0.25}); }
+      else { qe(ws0+(we0-ws0)*0.5,'divert',p==='isha'?'isha_divert':p+'_delay'); if(adult) rec(we0-5,'left','missed','Let '+PNAME[p]+' pass without praying',{pending:true,erase:rnd()<0.35+a.tier*0.3}); }
+      continue;
+    }
+    let first=T(a.tier,[0.1,0.4,0.85])*(0.6+0.8*a.habits.prompt)*(1-0.35*qs);
+    if(p==='maghrib') first=Math.max(first,0.75);
+    const prompt=rnd()<first;
+    // where?
+    let place='home', loc=pidXY(a,cur.pid), atWork=cur.act==='work'||cur.act==='school'||cur.act==='learn';
+    if(cur.pid!=='home'&&!atWork) place=cur.pid;
+    let mosque=null;
+    if(adult&&a.disability!=='wheelchair'||rnd()<0.2){
+      const m=World.nearestMosque(loc.x,loc.y); const d=dist(m,loc);
+      let pm=T(a.tier,[0.08,0.45,0.9])*(0.4+0.9*a.habits.fajrMosque);
+      if(p!=='fajr') pm=T(a.tier,[0.06,0.3,0.75])*(0.5+0.8*a.habits.fajrMosque);
+      if(a.gender==='f') pm*= (p==='fajr'||p==='isha')?0.18:0.1;
+      if(atWork) pm*= a.occ==='pupil'?0:0.55;
+      const df=d<70?1:d<160?0.7:d<380&&a.car?0.4:0; pm*=df;
+      if(ctx.snow) pm*=0.6;
+      if(a.occ==='imam'){pm=1;}
+      if(rnd()<pm){ mosque=a.occ==='imam'?World.place(a.work):m; }
+    }
+    let t;
+    if(mosque){ const iq=ws0+IQ[p]; t=prompt?iq-4-rnd()*8:iq+ (p==='fajr'?0:0); if(!prompt){ t=iq+2; out.flags.lateJoin=true; } }
+    else t= prompt? ws0+2+rnd()*15 : (p==='asr'? pt.yellow-8+rnd()*12 : ws0+(we0-ws0)*(0.45+0.4*rnd()));
+    if(!prompt){ qe(t-15,'delay',p==='fajr'?'fajr_late':p==='isha'?'isha_delay':p+'_delay'); }
+    if(p==='maghrib'&&fast){ add(pt.maghrib-1,pt.maghrib+9,'eat','home','Iftar! Breaking the fast with dates and water'); t=Math.max(t,pt.maghrib+10); rec(pt.maghrib,'right','done','Broke the fast on time — the first of the fasting person\'s two joys'); }
+    const raw = rnd()<a.habits.rawatib; const dur=(mosque?14:9)+(raw?6:0);
+    const stay = rnd()<a.habits.dhikrAM*(1-0.4*qs);
+    const pid= mosque? mosque.id : (atWork? cur.pid : place);
+    const where= mosque? 'at '+mosque.name : atWork? (a.occ==='pupil'?'in the school prayer room':'in a quiet room at work') : pid==='home'?'at home':'nearby';
+    const ss=Math.max(ws0,t);
+    add(ss,ss+dur+(stay?6:0),'pray',pid,'Praying '+PNAME[p]+' '+where+(mosque?' with the congregation':'')+(prompt?'':' (late in its time)'),{post:'pray',cong:!!mosque,prayer:p,start:ws0+IQ[p]});
+    if(mosque){ mosqueCount++; }
+    out.prayers[p]= mosque?'mosque':prompt?'on time':'late';
+    rec(ss+dur,'right','done','Prayed '+PNAME[p]+(mosque?' in congregation':'')+(prompt?' early in its time':' late in its time')+(raw?' + its sunnah prayers':''));
+    if(!stay&&adult) qe(ss+dur,'diminish','rush'); else if(adult){ out.flags['adhkar_'+p]=ss+dur; }
+    if(p==='fajr'){ done.fajrMosque=mosque?1:0; }
+    done.prompt=(done.prompt||0)+(prompt?0.2:0.05); if(raw)done.rawatib=(done.rawatib||0)+0.2;
+  }
+  // Fajr aftermath: sitting until sunrise / morning hundred / back to sleep
+  if(adult&&!ill&&out.prayers.fajr&&out.prayers.fajr!=='missed'){
+    const fb=B.find(b=>b.prayer==='fajr');
+    const free=!(a.ws!=null&&a.ws<pt.sunrise+30&&workToday);
+    if(fb&&fb.pid!=='home'&&free&&rnd()<T(a.tier,[0,0.08,0.45])*(a.occ==='retired'||a.occ==='imam'?2:1)){
+      add(fb.e,pt.sunrise+20,'dhikr',fb.pid,'Sitting in remembrance until the sun rises, then two rak\'ahs (graded variously)'); rec(pt.sunrise+20,'right','done','Sat until sunrise in remembrance, then prayed two rak\'ahs'); done.dhikrAM=1;
+    } else if(rnd()<a.habits.dhikrAM){ const t=(fb?fb.e:pt.fajr+20); add(t,t+12,'dhikr',fb?fb.pid:'home','Morning remembrance: the "hundred" (protection until evening)'); done.dhikrAM=1; ev.push({t:t+12,type:'shield',kind:'morning',text:'Morning hundred said — Qareen weakened until evening'}); }
+    else done.dhikrAM=0;
+    if(!workToday||a.ws>pt.sunrise+120){ if(rnd()<qs0*0.7&&!(c.ramadan&&!fast)){ const t=(fb?fb.e:pt.fajr+20)+15; qe(t,'divert','back_to_sleep'); add(t,Math.min(t+90,pt.sunrise+150),'sleep','home','Back to sleep after Fajr'); } }
+  }
+  // Duha
+  if(adult&&!ill&&!period&&rnd()<a.habits.duha*0.9){ const cur=at(B,pt.duha+90); const t=Math.min(pt.dhuhr-25,pt.duha+60+rnd()*120); add(t,t+6,'pray',cur.pid==='away'?'home':cur.pid,'Two rak\'ahs of Duha (charity for every joint)',{post:'pray'}); done.duha=1; } else done.duha=0;
+
+  // Jumu'ah
+  if(friday&&!ill&&a.age>=10){
+    const men= a.gender==='m'&&adult; const go = men ? true : rnd()<(a.gender==='f'?0.2:0.4)*(a.tier+0.5)*(workToday?0.3:1);
+    if(go){
+      const cur=at(B,pt.dhuhr); const loc=pidXY(a,cur.pid); const m=World.nearestMosque(loc.x,loc.y,true);
+      let arrive=T(a.tier,[pt.dhuhr+20,pt.dhuhr-5,pt.dhuhr-35])+(rnd()-0.5)*10;
+      let qsJ=qareenStrength(a,ctx,{});
+      if(men&&rnd()<qsJ*0.45){ arrive=pt.dhuhr+24; qe(pt.dhuhr-10,'delay','jumuah_late'); }
+      const skip= men && a.tier===0 && rnd()<0.25+0.3*(workToday?1:0)*qsJ;
+      if(a.occ==='imam') arrive=pt.dhuhr-30;
+      if(skip){ a._jumuahMiss=(a._jumuahMiss||0)+1; rec(pt.dhuhr+40,'left','missed','Missed Jumu\'ah (work and "next week")',{pending:true,erase:false}); qe(pt.dhuhr-15,'divert','jumuah_late'); if(adult){const t=pt.dhuhr+70;add(t,t+10,'pray',cur.pid,'Praying Dhuhr alone instead of Jumu\'ah',{post:'pray'});} }
+      else { a._jumuahMiss=0; add(arrive,pt.dhuhr+58,'jumuah',m.id,a.occ==='imam'?'Giving the Friday khutbah':'Jumu\'ah: '+(arrive<pt.dhuhr?'arrived early, sitting silently for the khutbah':'arrived late, at the end of the khutbah'),{post:'pray',cong:true,prayer:'jumuah',start:pt.dhuhr+40});
+        rec(pt.dhuhr+58,'right','done','Prayed Jumu\'ah'+(arrive<pt.dhuhr-20?' — came early (the "camel" hour reward)':'')); mosqueCount++; out.prayers.dhuhr='jumuah'; }
+      if(men&&a.trader&&!skip) note(pt.dhuhr+5,a.first+' shuts the shop for the Friday adhan (62:9)');
+    }
+    if(adult&&rnd()<a.habits.kahf) {rec(pt.asr+20,'right','done','Read Surat al-Kahf on Friday (light between the two Fridays)'); }
+  }
+  // Meals
+  if(!fast&&!child){ add(pt.sunrise+(a.ws&&workToday?a.ws-pt.sunrise-50:60),pt.sunrise+(a.ws&&workToday?a.ws-pt.sunrise-30:85),'eat','home','Breakfast — "bismillah", right hand'); }
+  if(!fast){ const cur=at(B,750); add(735,765,'eat',cur.pid==='away'?'home':cur.pid,'Lunch — said bismillah (no share for the Qareen)'); }
+  else if(out.flags.work){ const cur=at(B,750); note(750,a.first+' is fasting: no lunch today'); }
+  if(out.flags.fastIntent&&!fast){ qe(745,'divert','fast_divert'); rec(745,'right','intent','Intended a voluntary fast ('+out.flags.fastIntent+') — intention written as a good deed'); }
+  if(fast) rec(pt.fajr+1,'right','done','Fasting today: '+fast);
+  // Dinner
+  const dinner= fast ? pt.maghrib+25 : Math.max(1080,Math.min(pt.maghrib+20,1170));
+  if(!c.eidAdha||true) add(dinner,dinner+35,'eat','home','Family dinner — eating together, food of two suffices four');
+
+  // Ramadan nights: taraweeh / i'tikaf / iftar at mosque
+  if(c.ramadan&&adult&&!ill&&!period){
+    const pT=T(a.tier,[0.15,0.55,0.92])*(a.gender==='f'?0.6:1)*(c.lastTen?1.3:1);
+    if(rnd()<pT){ const m=World.place(a.mosque); add(pt.isha+5,pt.isha+95,'taraweeh',m.id,'Taraweeh night prayer in congregation',{post:'pray',cong:true,prayer:'taraweeh',start:pt.isha+15}); rec(pt.isha+95,'right','done','Stood the Ramadan night prayer (Taraweeh)'); bed=Math.max(bed,pt.isha+110); }
+    if(c.lastTen&&a.gender==='m'&&a.tier===2&&rnd()<0.35&&!workToday){ add(pt.isha+95,1440,'itikaf',a.mosque,'I\'tikaf: staying in the mosque for the last ten nights',{post:'pray',cong:true}); out.flags.itikaf=true; }
+    if(a.age<30&&a.role!=='father'&&rnd()<0.35){ add(pt.maghrib-15,pt.maghrib+20,'eat',a.mosque,'Community iftar at the masjid',{cong:true}); }
+  }
+  // Eid
+  if(c.eidFitr||c.eidAdha){
+    const t0=pt.sunrise+45; add(t0,t0+75,'eid','eidground',(c.eidFitr?'Eid al-Fitr':'Eid al-Adha')+' prayer on the open ground — takbir, best clothes'+(c.eidFitr?' (ate an odd number of dates first)':' (ate nothing before the prayer)'),{post:'pray',cong:true,prayer:'eid',start:t0+30});
+    if(c.eidFitr&&adult&&a.role!=='child') rec(t0-10,'right','done','Paid Zakat al-Fitr before the Eid prayer');
+    if(c.eidAdha&&(a.role==='father'||a.role==='grandparent'&&a.gender==='m')) rec(t0+150,'right','done','Udhiyah: sacrifice bought for the family — meat shared with the poor and neighbours');
+    const kin=(HH[a.hh].kin[0]||HH[a.hh].neigh[0]); if(kin) add(t0+180,t0+330,'visit','hh'+kin.id,'Eid visit to '+(HH[a.hh].kin[0]?'family':'neighbours')+' — "Taqabbal Allahu minna wa minkum"');
+  }
+
+  // Evening & weekend activities
+  const eveStart=Math.max(dinner+40, out.flags.work? a.we+40 : 960), eveEnd=Math.max(eveStart+30,Math.min(bed-20,pt.isha-5>eveStart?pt.isha+90:bed-20));
+  if(!child&&!c.eidFitr&&!c.eidAdha&&!ill){
+    const hh=HH[a.hh]; const o=rnd();
+    const sickContact= [...hh.neigh,...hh.kin].map(x=>x.members).flat().find(m=>m!==a&&illness(m,ctx.di));
+    if(a.estr&&adult){ a.estr._today=true; }
+    if(sickContact&&adult&&o<a.habits.visit*0.8){ const qv=rnd()<qs0*0.5; if(qv){qe(eveStart,'delay','visit_delay');} else { add(eveStart,eveStart+35,'visit','hh'+sickContact.hh,'Visiting '+sickContact.first+' who is ill — "no harm, a purification, God willing"'); rec(eveStart+35,'right','done','Visited the sick ('+sickContact.first+') — angels pray for the visitor (Tirmidhi)'); done.visit=1; } }
+    else if(wd===4&&adult&&o<T(a.tier,[0.03,0.25,0.65])){ add(pt.maghrib+15,pt.maghrib+70,'learn',a.mosque,'Weekly Thursday reminder circle (halaqah)',{cong:true}); rec(pt.maghrib+70,'right','done','Attended the weekly circle of knowledge — angels surround such gatherings'); }
+    else if(adult&&o<0.15+a.generosity*0.2&&hh.neigh.length){ const n=hh.neigh[Math.floor(rnd()*hh.neigh.length)]; add(eveStart,eveStart+25,'visit','hh'+n.id,'Taking food to the '+n.surname+' family next door (add water to the broth and share)'); rec(eveStart+25,'right','done','Shared food with a neighbour'); done.visit=1; }
+    else if(adult&&a.phone>0.55&&o<0.7){ const s=Math.max(eveStart,pt.isha+20); add(s,Math.min(bed,s+60+a.phone*60),'phone','home','Scrolling on the phone'); qe(s+10,'divert','isha_divert'); }
+    else if(weekend&&o<0.75){ const tgt=R.pick(rnd,['halal_cooks','halal_malton','halal_erin','squareone','riverwood','jackdarling','pc_shops','erindale','celebration','streets_main']); const s=600+rnd()*240; add(s,s+120,'outing',tgt,'Family outing — '+World.place(tgt).name); }
+    else if(a.role==='mother'||a.occ==='home'){ add(eveStart,eveStart+40,'home','home','Helping the children with homework'); }
+    if(a.age>=7&&a.age<15&&!weekend){ const pk=ctx.winter?null:R.pick(rnd,['riverwood','erindale','jackdarling']); if(pk&&dist(World.place(pk),a.home)<350) add(a.we+20,Math.min(pt.maghrib-10,a.we+100),'play',pk,'Playing in the park after school'); else add(a.we+20,a.we+90,'play','home','Playing outside near home'); }
+  }
+  // Homemakers / retired daytime
+  if((a.occ==='home'||a.occ==='retired')&&!ill&&!c.eidFitr){
+    const o=rnd();
+    if(o<0.45){ const mk=R.pick(rnd,['halal_cooks','halal_malton','halal_erin','streets_main','pc_shops','heartland_p']); const s=600+rnd()*120; add(s,s+75,'market',mk,'Shopping for groceries at '+World.place(mk).name); }
+    else if(o<0.6&&a.occ==='retired'){ add(pt.dhuhr-60,pt.dhuhr-15,'learn',a.mosque,'Reading Qur\'an at the masjid'); }
+    else if(o<0.75){ add(840,900,'outing',R.pick(rnd,['riverwood','erindale','jackdarling']),'A walk by the Credit River'); }
+    if(a.occ==='home'&&HH[a.hh].members.some(m=>m.occ==='pupil'&&m.age<11)){ const sc='school_'+a.home.hood; if(World.place(sc)) add(905,925,'walk',sc,'Picking the children up from school'); }
+  }
+  // Saturday: visit a second mosque / teacher (Quba generalised)
+  if(wd===6&&adult&&a.tier===2&&rnd()<0.4){ const ms=World.mosques.filter(m=>m.id!==a.mosque); const m=ms[Math.floor(rnd()*ms.length)]; add(pt.duha+60,pt.duha+110,'learn',m.id,'Saturday visit to another masjid to pray two rak\'ahs and learn (like the Prophet\'s weekly visit to Quba)'); rec(pt.duha+110,'right','done','Saturday visit to a second masjid'); }
+  // Weekend Qur'an school for children (a modern institution — later custom)
+  if(wd===0&&a.age>=6&&a.age<15&&rnd()<0.6){ add(600,750,'learn',a.mosque,'Weekend Qur\'an class (a modern institution)'); }
+
+  // Trade honesty (shop owners, drivers, retail)
+  if(out.flags.work&&(a.trader||a.occ==='retail'||a.occ==='driver')&&adult){
+    const t=a.ws+90+rnd()*240; const pTempt=0.35;
+    if(rnd()<pTempt){ const qsT=qareenStrength(a,ctx,{morningHundred:done.dhikrAM}); qe(t-3,'divert','defect');
+      if(rnd()<a.honesty*(1-0.5*qsT)+0.1){ rec(t,'right','leftfor','Was tempted to hide a defect, but told the customer — a bad deed left for Allah\'s sake is written as a good one'); }
+      else rec(t,'left','sin','Hid a defect from a customer ("whoever cheats is not of us")',{pending:true,erase:rnd()<0.3+a.tier*0.3}); }
+  }
+  // Anger at home / speech
+  if(adult&&!child){ const t=dinner+10; const hot=(fast?0.15:0)+(ctx.hot?0.1:0)+a.anger*0.5; if(rnd()<hot*0.35){ qe(t-2,'divert','anger'); if(rnd()<a.heart*0.8){ rec(t,'right','leftfor','Got angry, but sat down, sought refuge and stayed quiet'); } else rec(t,'left','sin','Snapped harshly at family in anger',{pending:true,erase:rnd()<0.45+a.tier*0.25}); } }
+  // Daily charity
+  if(adult){ const g=T(a.tier,[0.2,0.6,0.95])*(0.6+0.6*a.habits.sadaqa); if(rnd()<g){ const t=600+rnd()*500; rec(t,'right','done',R.pick(rnd,a.wealth>50?['Gave money to a charity appeal at the masjid','Sponsored an orphan\'s monthly support','Paid for a stranger\'s groceries']:['Smiled and said a kind word (a smile is charity)','Moved litter off the sidewalk (removing harm from the road)','Helped a neighbour carry shopping','Gave a few coins to someone in need'])); done.sadaqa=1; } else { done.sadaqa=0; if(rnd()<0.3) qe(700,'divert','give_later'); } }
+  // Zakat anniversary
+  if(a.nisabDay&&a.nisabDay.m===h.m&&a.nisabDay.d===h.d){ if(rnd()<qs0*0.5){qe(780,'delay','give_later');} else rec(780,'right','done','Zakat anniversary: paid 2.5% of savings through a local charity'); }
+  // Evening remembrance & Quran
+  if(adult&&rnd()<a.habits.dhikrPM){ const t=pt.asr+40; rec(t,'right','done','Evening remembrance (Sayyid al-istighfar)'); done.dhikrPM=1; ev.push({t,type:'istighfar'}); } else done.dhikrPM=0;
+  if(adult&&rnd()<a.habits.quran*(c.ramadan?1.5:1)){ rec(pt.fajr+40,'right','done',c.ramadan?'Read a juz\' of Qur\'an (aiming to finish it this Ramadan)':'Read the daily portion of Qur\'an'); done.quran=1; } else done.quran=0;
+  // Sleep etiquette
+  if(adult){ if(rnd()<a.habits.sleepAdab){ rec(bed-2,'right','done','Before sleep: wudu, Ayat al-Kursi, the three Quls, lay on the right side'); ev.push({t:bed-1,type:'shield',kind:'kursi',text:'Ayat al-Kursi — guarded until morning'}); done.sleepAdab=1; } else { done.sleepAdab=0; } if(!tahajjud&&rnd()<0.5&&a.habits.night<0.4) qe(bed-5,'delay','witr'); }
+  // Istighfar after prayers erases pending left entries within 6 hours (graded variously) — or a good deed following
+  for(const e of ev){ if(e.type==='rec'&&e.side==='left'){ if(e.erase){ const later=ev.filter(x=>x.type==='rec'&&x.side==='right'&&x.t>e.t&&x.t<e.t+360); if(later.length){ e.erasedAt=Math.round(later[0].t+5); } } } }
+  out.blocks=B; out.done=done; out.missed=missedCount; out.mosque=mosqueCount; out.bed=bed;
+  return out;
+}
+
+// ---------- Sim state ----------
+const S={t:0,speed:60,day:null,ctx:null,plans:new Map(),events:[],fired:0,seed:SEED,houseLit:new Map()};
+function planDay(dayMs){
+  const ctx=dayCtx(dayMs); S.ctx=ctx; S.day=ctx.di;
+  const evs=[];
+  for(const a of A){ const p=buildDay(a,ctx); a.plan=p; a.dayMid=ctx.mid;
+    // household coupling: spouse wakes the other for night prayer
+    for(const e of p.ev){ evs.push({...e,a,t:ctx.mid+e.t*60000}); }
+    a.today=p; }
+  for(const hh of HH){ const t=hh.members.filter(m=>m.plan.flags.tahajjud); if(t.length&&t.length<hh.members.filter(m=>m.age>=15).length){ const other=hh.members.find(m=>m.age>=15&&!m.plan.flags.tahajjud&&(m.role==='father'||m.role==='mother')); if(other&&R.rngFor(SEED,'wake',other.id,ctx.di)()<0.35){ const pt=ctx.pt; other.plan.blocks=insert(other.plan.blocks,{s:Math.round(pt.fajr-45),e:Math.round(pt.fajr-8),act:'tahajjud',pid:'home',txt:'Woken by '+t[0].first+' for night prayer (a sprinkle of water!)'}); evs.push({t:ctx.mid+(pt.fajr-44)*60000,type:'note',a:other,text:t[0].first+' woke '+other.first+' for night prayer'}); other.plan.flags.tahajjud=true; } } }
+  // Global events
+  const pt=ctx.pt, G=(min,text,kind='sky')=>evs.push({t:ctx.mid+min*60000,type:'global',kind,text});
+  for(const p of ['fajr','dhuhr','asr','maghrib','isha']){ if(p==='dhuhr'&&ctx.wd===5) G(pt.dhuhr,'Adhan for Jumu\'ah — trade stops, men head to the masjids','adhan'); else G(pt[p],'Adhan for '+PNAME[p]+' rings out from the masjids','adhan'); }
+  G(pt.fajr+1,'Angels of the night and the day change shift at Fajr','angels'); G(pt.asr+1,'Angels change shift again at Asr','angels');
+  G(pt.sunrise,'Sunrise — a short time when voluntary prayer pauses'); G(pt.dhuhr-10,'Zawal: the sun reaches its highest point');
+  G(pt.yellow,'The sun is turning yellow — late for Asr'); G(pt.maghrib-1,'Sunset — a new Islamic day begins'+(ctx.cc.ramadan?' and the fast ends: iftar!':''));
+  G(pt.lastThirdMorning,'The last third of the night begins — lit windows across the dark town','night');
+  if(ctx.wd===1||ctx.wd===4) G(pt.fajr+60,'Monday/Thursday: deeds are presented — every believer is forgiven except two who are estranged ("leave these two until they reconcile")','angels');
+  const c=ctx.cc, h=ctx.hc;
+  if(c.white) G(pt.fajr,'White Days ('+h.d+' '+h.name+'): full-moon fasting — many people are fasting today','moon');
+  if(ctx.hc.d!==ctx.hs.d) G(pt.maghrib-2,'Moon-sighting split: masjids that follow local sighting are one day behind those using calculation ('+ctx.hs.d+' vs '+ctx.hc.d+')','moon');
+  if(c.ramadan&&h.d===1) G(pt.fajr,'Ramadan has begun — the devils are chained (Qareen pressure ×0.3)','moon');
+  if(c.eidFitr) G(pt.sunrise+30,'Eid al-Fitr! Families head to the prayer ground — takbir on the way','eid');
+  if(c.eidAdha) G(pt.sunrise+30,'Eid al-Adha! Prayer first, then the sacrifice','eid');
+  // estrangements
+  for(const pr of People.estranged){ if(pr.done)continue; pr.days++; const rr=R.rngFor(SEED,'rec',pr.a.id,ctx.di)(); const hum=Math.max(pr.a.humility*(pr.a.tier+1),pr.b.humility*(pr.b.tier+1))/3;
+    if(pr.days>=3&&rr<hum*0.5){ pr.done=true; const first=pr.a.humility>pr.b.humility?pr.a:pr.b, other=first===pr.a?pr.b:pr.a; const s=Math.max(first.plan.bed?0:0,1110);
+      first.plan.blocks=insert(first.plan.blocks,{s:1115,e:1150,act:'visit',pid:'hh'+other.hh,txt:'Going to make up with '+other.first+' after '+pr.days+' days ('+pr.why+') — greeting first'});
+      evs.push({t:ctx.mid+1150*60000,type:'rec',side:'right',kind:'done',a:first,text:'Reconciled with '+other.first+' and said salam first — "the better of the two is the one who greets first"'});
+      evs.push({t:ctx.mid+1150*60000,type:'global',kind:'heart',text:first.first+' and '+other.first+' made up after '+pr.days+' days apart'}); }
+    else if(pr.days>3) evs.push({t:ctx.mid+(pt.dhuhr+30)*60000,type:'qareen',move:'divert',a:pr.a,text:'Pride: still not speaking to '+pr.b.first+' ('+pr.days+' days, over '+pr.why+')'});
+  }
+  // janazah (a community member) some days
+  if(R.rngFor(SEED,'jan',ctx.di)()<0.1){ const m=R.pick(R.rngFor(SEED,'janm',ctx.di),World.mosques.filter(x=>x.jumuah)); G(pt.dhuhr+20,'Janazah prayer for a community member after Dhuhr at '+m.name+' — those who attend earn a qirat','janazah');
+    for(const a of A){ if(a.gender==='m'&&a.age>=18&&!a.plan.flags.travel&&!a.plan.flags.ill&&dist(a.home,m)<500&&R.rngFor(SEED,'ja',a.id,ctx.di)()<0.15+a.tier*0.2){ a.plan.blocks=insert(a.plan.blocks,{s:Math.round(pt.dhuhr+5),e:Math.round(pt.dhuhr+45),act:'jumuah',pid:m.id,txt:'Attending a janazah (funeral prayer) — a community duty',post:'pray',cong:true,prayer:'janazah',start:pt.dhuhr+25}); evs.push({t:ctx.mid+(pt.dhuhr+45)*60000,type:'rec',side:'right',kind:'done',a,text:'Prayed the janazah — a community duty (fard kifayah) fulfilled'}); } } }
+  if(window.Outside) Outside.plan(ctx,evs,insert);
+  evs.sort((x,y)=>x.t-y.t); S.events=evs; S.fired=0; while(S.fired<evs.length&&evs[S.fired].t<=S.t)S.fired++;
+  // mark which records are already visible
+  for(const a of A){ a.records=[]; a.qlog=[]; }
+  for(const e of evs) if(e.a){ if(e.type==='rec') e.a.records.push(e); else if(e.type==='qareen'||e.type==='note'||e.type==='shield'||e.type==='istighfar') e.a.qlog.push(e); }
+}
+// End-of-day: habits grow with streaks (consistency), heart clarity, tier movement
+function endDay(){
+  for(const a of A){ const p=a.plan; if(!p||!p.done)continue; if(p.flags&&(p.flags.travel||p.flags.ill)) continue; // record continuity: habits held
+    for(const k in a.habits){ if(!(k in p.done)) continue; const d=p.done[k]; if(d==null)continue; const v=Math.min(1,d); a.habits[k]=R.clamp(a.habits[k]+0.025*(v-0.45)*(v>0.45?(1-a.habits[k]):a.habits[k]*1.5)); }
+    let hc=0; for(const r of a.records){ if(r.side==='left'&&!r.erasedAt) hc-=0.02; if(r.side==='right'&&r.kind==='done') hc+=0.003; }
+    if(p.mosque>0) a._noMosqueDays=0; else a._noMosqueDays=(a._noMosqueDays||0)+1;
+    if((a._jumuahMiss||0)>=3) hc-=0.08; // three missed Jumu'ahs: a heavy heart-clarity penalty
+    a.heart=R.clamp(a.heart+hc);
+    let m=0,n=0; for(const k in a.habits){m+=a.habits[k];n++;} a.tierScore=a.tierScore*0.97+0.03*(m/n*0.7+a.heart*0.3);
+    const old=a.tier; a.tier=a.tierScore<0.28?0:a.tierScore>0.72?2:1; if(a.age<7)a.tier=1;
+    if(old!==a.tier) a._tierChange={from:old,to:a.tier,day:S.day};
+  }
+}
+function setTime(ms,full){ const newDay=C.dayIndex(ms); const oldDay=S.day; S.t=ms;
+  if(oldDay==null||newDay!==oldDay){ if(oldDay!=null&&newDay>oldDay){ if(window.Outside) Outside.simDayEnd(); const steps=newDay-oldDay; for(let i=0;i<Math.min(steps,1);i++)endDay(); if(steps>1) for(let i=1;i<Math.min(steps,60);i++) drift(); } planDay(ms); } }
+function drift(){ for(const a of A){ for(const k in a.habits){ const target=[0.15,0.5,0.85][a.tier]; a.habits[k]+= (target-a.habits[k])*0.01; } } }
+function step(dtMs){ const nt=S.t+dtMs; if(C.dayIndex(nt)!==S.day){ setTime(nt); } else S.t=nt; const fired=[]; while(S.fired<S.events.length&&S.events[S.fired].t<=S.t){fired.push(S.events[S.fired]);S.fired++;} return fired; }
+
+// ---------- Position as a pure function of time ----------
+const WALK=7.8, CAR=60; // units per minute
+function travelMin(p,q,a){ const d=Math.abs(p.x-q.x)+Math.abs(p.y-q.y); if(d<55||!a.car&&d<200) return {m:Math.max(1,d/WALK*(a.disability==='cane'||a.age>70?1.5:1)),mode:'walk'}; return {m:3+d/CAR,mode:a.car?'car':'bus'}; }
+function slotXY(a,b){ // where inside the place
+  const pid=b.pid; const r=R.rngFor('slot',a.id,pid);
+  if(pid==='home'){ const h=a.home; const n=HH[a.hh].members.length; const ang=(a.slot/n)*Math.PI*2+(h.kind==='tower'?HH[a.hh].unit:0); const rad=h.kind==='tower'?11:3.2; return {x:h.x+Math.cos(ang)*rad,y:h.y+Math.sin(ang)*rad*0.8}; }
+  if(pid==='away') return {x:2280,y:300};
+  if(pid.startsWith('hh')){ const hh=HH[+pid.slice(2)]; return {x:hh.home.x+(r()-0.5)*7,y:hh.home.y+(r()-0.5)*6}; }
+  const p=World.place(pid); if(!p) return a.home;
+  if(p.kind==='mosque'){ return null; } // assigned by mosque rows
+  const w=(p.w||30)*0.8,hh=(p.h||24)*0.8; return {x:p.x+(r()-0.5)*w,y:p.y+(r()-0.5)*hh};
+}
+function locate(a,t){ // returns {x,y,b,moving,mode,dir}
+  const p=a.plan; if(!p) return null; const tm=(t-a.dayMid)/60000; const B=p.blocks;
+  let i=0; for(;i<B.length;i++) if(tm<B[i].e) break; if(i>=B.length) i=B.length-1;
+  const b=B[i]; const nb=B[i+1];
+  const here=a._slot(b);
+  // traveling toward next block?
+  if(nb&&nb.pid!==b.pid){ const there=a._slot(nb); const tr=travelMin(here,there,a); const dep=nb.s-tr.m; if(tm>=dep){ const f=R.clamp((tm-dep)/tr.m); return {...lpath(here,there,f),b:nb,moving:true,mode:tr.mode,from:b}; } }
+  return {x:here.x,y:here.y,b,moving:false};
+}
+function lpath(p,q,f){ // L-shaped route (roads)
+  const dx=q.x-p.x,dy=q.y-p.y, L=Math.abs(dx)+Math.abs(dy)||1, k=Math.abs(dx)/L;
+  if(f<k){const g=f/k;return {x:p.x+dx*g,y:p.y,dir:dx>0?0:Math.PI};} const g=(f-k)/(1-k||1); return {x:q.x,y:p.y+dy*g,dir:dy>0?Math.PI/2:-Math.PI/2};
+}
+for(const a of A){ a._slot=(b)=>{ if(!b._xy) b._xy=new Map(); let v=b._xy.get(a.id); if(!v){ v=slotXY(a,b)||Mosq.slot(a,b); b._xy.set(a.id,v);} return v; }; }
+
+// Mosque prayer rows (facing the qibla, ~54° east of north)
+const Mosq={ count:new Map(), slot(a,b){ const m=World.place(b.pid); const k=m.id+'|'+(b.prayer||b.act)+'|'+S.day; let n=this.count.get(k)||0; this.count.set(k,n+1);
+  const perRow=Math.round(6.5*m.size), row=Math.floor(n/perRow), col=n%perRow; const q=(World.QIBLA_DEG)*Math.PI/180; const fx=Math.sin(q),fy=-Math.cos(q); const rx=-fy,ry=fx; const sp=2.3;
+  const women=a.gender==='f'; const back = women? 9*m.size+row*2.6 : row*2.6;
+  return {x:m.x+fx*(5*m.size-back)+rx*(col-(perRow-1)/2)*sp*0.95, y:m.y+fy*(5*m.size-back)+ry*(col-(perRow-1)/2)*sp*0.95}; } };
+
+window.Sim={S,setTime,step,locate,dayCtx,qareenStrength,buildDay,cal,PNAME,travelMin,Mosq};
+})();
+</script><script>// ===== ERA SETTINGS — one place to tune the three worlds =====
+// Placeholder numbers (sensible guesses). Real facts and survey baselines will be folded in from research/eras.md.
+// rates = life events per 1,000 people per year (rough real-world levels for 1986/2006; 2026 is a FORECAST).
+// Every number here is SIMULATED, not real data.
+window.ERAS = {
+ '1986': {
+  rates:{job:30,promotion:25,marriage:7,birth:15,graduation:12,business:4,revert:0.6,layoff:12,move:20}, unemployment:'about 7% in Ontario', forecast:false,
+  year:1986, label:'1986', tag:'Newspapers, TV and radio',
+  paper:'The Mississauga Courier', feedName:'Letters & chatter', feedKind:'letters',
+  media:['the evening TV news','CBC Radio','the Toronto Star','the local paper','a cassette lecture'],
+  platforms:['Letter to the editor','Chatter after Jumu\'ah','Phone call','Note on the masjid board'],
+  screenHrs:2.2,        // average hours a day of TV (the only screen)
+  newsNegativity:0.35,  // how gloomy the news diet is (0..1)
+  socialCompare:0.05,   // pressure from comparing your life to others online
+  community:0.75,       // how much people see neighbours and family face to face
+  economy:0.95,         // 1 = normal; lower = harder to find work
+  police:{patrolsPerDay:14, stopsPerDay:2, trustBase:0.62, fairness:0.8, communityEvents:0.03},
+  base:{dep:0.07, anx:0.10, lone:0.14, trustP:0.60, trustI:0.62, sat:0.70, faith:0.55},
+  town:'Mississauga is a young city of about 370,000. Square One mall is the big hub; lots of farms still sit up north.',
+  world:['Oil prices drop and gas gets cheaper','A space shuttle disaster shocks the world (January)','Expo 86 opens in Vancouver','A nuclear accident in the Soviet Union worries Europe','Canada debates a free trade deal with the US','Hockey: the Montreal Canadiens win the Stanley Cup','Families collect for famine relief in Africa','Interest rates stay high and mortgages hurt'],
+  city:['A new subdivision opens in Meadowvale','The library runs a summer reading club','Canada Day fireworks at the waterfront','Fall fair at the Streetsville village','Snow ploughs work through the night','A new plaza opens on Hurontario Street'],
+  tech:['VCR','Walkman','pager','landline phone'],
+ },
+ '2006': {
+  rates:{job:35,promotion:28,marriage:4.5,birth:11,graduation:16,business:5,revert:1.2,layoff:9,move:18}, unemployment:'about 6% in Ontario', forecast:false,
+  year:2006, label:'2006', tag:'Early internet, forums, MSN, early Facebook and YouTube',
+  paper:'The Mississauga News', feedName:'Forums & MSN', feedKind:'forum',
+  media:['MSN Messenger','an Islamic forum','early YouTube','Facebook (new!)','the Toronto Star website','a CD lecture'],
+  platforms:['MSN status','Forum post','Facebook wall','YouTube comment','Blog'],
+  screenHrs:4.1, newsNegativity:0.5, socialCompare:0.3, community:0.6, economy:1.05,
+  police:{patrolsPerDay:20, stopsPerDay:3, trustBase:0.6, fairness:0.78, communityEvents:0.05},
+  base:{dep:0.08, anx:0.12, lone:0.17, trustP:0.58, trustI:0.55, sat:0.68, faith:0.55},
+  town:'Mississauga has about 670,000 people. Towers rise around Square One and Heartland Town Centre is busy.',
+  world:['The housing market is booming','Canada elects a new government','A big terrorism-arrest story in Toronto worries Muslim families','The World Cup takes over cafés and TVs','Gas prices climb','A war in Lebanon fills the news','Families collect for earthquake relief in Pakistan (rebuilding)','iPods are everywhere'],
+  city:['Celebration Square plans are talked about at City Hall','The Hurontario bus is packed','A mosque open house welcomes neighbours','Canada Day at the waterfront','A youth basketball league starts at the community centre','Mississauga Marathon closes some roads'],
+  tech:['flip phone','MSN','iPod','dial-up turning into broadband'],
+ },
+ '2026': {
+  rates:{job:28,promotion:22,marriage:3.8,birth:9,graduation:18,business:5,revert:2,layoff:13,move:15}, unemployment:'about 7.5% (forecast)', forecast:true,
+  year:2026, label:'2026', tag:'Full social media, phones everywhere',
+  paper:'Mississauga Today', feedName:'Social feed', feedKind:'social',
+  media:['TikTok','Instagram','WhatsApp groups','X','YouTube','a podcast','a local news site'],
+  platforms:['WhatsApp group','Instagram story','TikTok','X post','YouTube comment'],
+  screenHrs:6.4, newsNegativity:0.65, socialCompare:0.6, community:0.45, economy:0.97,
+  police:{patrolsPerDay:26, stopsPerDay:3, trustBase:0.55, fairness:0.78, communityEvents:0.07},
+  base:{dep:0.12, anx:0.18, lone:0.22, trustP:0.55, trustI:0.45, sat:0.62, faith:0.55},
+  town:'Mississauga has about 720,000 people. The Hurontario LRT runs through the middle; rents are high.',
+  world:['Rents keep rising across the GTA','Grocery prices are a big worry','AI tools change how offices work','Elections abroad fill everyone\'s feeds','Wildfire smoke drifts over Ontario','Families collect for relief in a war zone','Interest rates come down a little','A heat wave hits Southern Ontario'],
+  city:['Music night at Celebration Square','The Hurontario LRT gets busier','Ramadan night market in Cooksville','A food bank drive at the community centre','Canada Day fireworks at Celebration Square','Library coding club for teens'],
+  tech:['smartphone','group chats','short videos','AI chat'],
+ }
+};
+window.ERA_ORDER=['1986','2006','2026'];
+</script><script>// ===== Outside world, three eras, wellbeing, newspapers, feeds, surveys, saving =====
+// Everything is worked out right here in the page with fixed random seeds. No server, no AI.
+(function(){
+const A=People.agents, HH=People.households, C=Clock, E=window.ERAS, EO=window.ERA_ORDER;
+const KEY='sunnahWorld.v2', DAY=86400000;
+const EPOCH=Date.UTC(2026,0,1,17); // the world "started" on 1 Jan 2026 — first open fast-forwards from here, so there is already a history
+const O={speed:1, era:'2026', baseT:Date.now(), switching:false, live:{}, st:{}, gen:{}};
+window.Outside=O;
+const clamp=R.clamp, esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const MON=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const WD=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const hoodName=id=>(World.hoods.find(h=>h.id===id)||{name:id}).name;
+// ---------- era clocks: same month & day, era year ----------
+function eraTime(base,era){ era=era||O.era; const y=E[era].year; const d=new Date(base); const off=C.tzOffset(base)*60000; const L=new Date(base+off);
+  let t=Date.UTC(y,L.getUTCMonth(),Math.min(L.getUTCDate(),y%4?28+(L.getUTCMonth()===1?0:3):31),L.getUTCHours(),L.getUTCMinutes(),L.getUTCSeconds(),L.getUTCMilliseconds());
+  if(L.getUTCMonth()!==1&&L.getUTCDate()>28){ const dim=new Date(Date.UTC(y,L.getUTCMonth()+1,0)).getUTCDate(); t=Date.UTC(y,L.getUTCMonth(),Math.min(L.getUTCDate(),dim),L.getUTCHours(),L.getUTCMinutes(),L.getUTCSeconds()); }
+  return t-C.tzOffset(t)*60000; }
+O.eraTime=eraTime;
+O.unEra=ms=>{ const y=new Date(O.baseT).getUTCFullYear(); const L=C.local(ms); const t=Date.UTC(y,L.m,L.d,0,0)+L.min*60000; return t-C.tzOffset(t)*60000; };
+const bday=t=>C.dayIndex(t); // base day index (a real calendar day)
+// ---------- people extras (fixed per person) ----------
+const ORIG=['Pakistan','India','Bangladesh','Somalia','Egypt','Syria','Lebanon','Iraq','Afghanistan','Bosnia','Turkey','Nigeria','Guyana','Trinidad','Iran','Palestine','Jordan','Morocco','Sudan','Eritrea'];
+const CHAR=[['patient','quick-tempered'],['generous','careful with money'],['funny','serious'],['shy','chatty'],['hard-working','laid-back'],['gentle','blunt'],['curious','set in their ways'],['tidy','messy'],['a good listener','a big talker'],['brave','cautious']];
+const LIKES=['football','cricket','cooking biryani','gardening','reading','basketball','drawing','fixing cars','long walks by the lake','poetry','video games','sewing','fishing at the river','baking','board games','calligraphy','running','photography'];
+for(const a of A){ const r=R.rngFor('bio',a.id); const hh=HH[a.hh];
+  if(hh.origin==null){ hh.origin=R.pick(r,ORIG); hh.since=Math.floor(r()*40); hh.conv=r()<0.04; }
+  a.bornHere = a.age<=hh.since+0 || r()<0.2;
+  a.traits=CHAR.map(p=>r()<0.5?p[0]:p[1]).filter(()=>r()<0.35).slice(0,3); if(!a.traits.length)a.traits=[CHAR[a.id%CHAR.length][0]];
+  a.likes=(a.age<7?[R.pick(r,['building blocks','bath time','the swings','picture books','chasing pigeons'])]:[R.pick(r,LIKES),R.pick(r,LIKES)]).filter((x,i,s)=>s.indexOf(x)===i);
+  a.hist={}; a.tally={good:0,erased:0,held:0}; }
+// non-Muslim neighbours (named, era-free)
+const NN=['Dave Thompson','Maria Silva','Grace Okafor','Raj Patel','Linda Chen','Tony Russo','Priya Sharma','Bill MacDonald','Joanna Kowalski','Sunil Fernando','Carmen Lopez','Kevin O\'Brien','Mei Wong','Gurpreet Singh','Anne Tremblay','Marcus Brown','Sofia Petrovic','Hiroshi Tanaka','Diane Wilson','Paolo Ricci','Harpreet Gill','Ruth Campbell','Lucas Santos','Ivan Horvat','Nadine Joseph','Steve Murphy','Esther Cohen','Arjun Mehta','Teresa Nowak','Frank Di Marco'];
+for(const hh of HH){ const r=R.rngFor('nn',hh.id); hh.nb=R.pick(r,NN); }
+// ---------- era state ----------
+function newEra(k){ const e=E[k], n=A.length, r=R.rngFor('wb0',k); const w={dep:new Float32Array(n),anx:new Float32Array(n),lone:new Float32Array(n),trustP:new Float32Array(n),trustI:new Float32Array(n),sat:new Float32Array(n),faith:new Float32Array(n),screen:new Float32Array(n),d0:new Float32Array(n),a0:new Float32Array(n),l0:new Float32Array(n),p0:new Float32Array(n),i0:new Float32Array(n)};
+  const draw=p=>{ const x=r(); return x<p? 0.52+r()*0.4 : r()*0.48; };
+  for(let i=0;i<n;i++){ const a=A[i]; w.d0[i]=w.dep[i]=draw(e.base.dep); w.a0[i]=w.anx[i]=draw(e.base.anx); w.l0[i]=w.lone[i]=draw(e.base.lone+(a.age>65?0.08:0));
+    w.p0[i]=w.trustP[i]=clamp(e.police.trustBase+(r()-0.5)*0.5); w.i0[i]=w.trustI[i]=clamp(e.base.trustI+(r()-0.5)*0.5); w.sat[i]=clamp(e.base.sat+(r()-0.5)*0.4); w.faith[i]=habMean(a); w.screen[i]=e.screenHrs*(0.4+a.phone*1.2)*(a.age<5?0.3:1); }
+  return {w, papers:[], posts:[], surveys:[], days:0, econ:e.economy, jobless:{}, lastDay:null}; }
+function habMean(a){ let s=0,n=0; for(const k in a.habits){s+=a.habits[k];n++;} return n?s/n:0.5; }
+for(const k of EO) O.st[k]=newEra(k);
+// ---------- one era-day of outside life (deterministic) ----------
+const PRIO={eid:10,ramadan:9,jumuah:6,police:5,life:5,weather:4,heart:5,world:3,city:3,neigh:3,econ:4,fast:5,survey:6};
+function genDay(era,bdi){ const key=era+':'+bdi; if(O.gen[key])return O.gen[key];
+  const e=E[era], st=O.st[era], r=R.rngFor('day',era,bdi); const noonBase=Date.UTC(1970,0,1)+bdi*DAY+16*3600000; const et=eraTime(noonBase,era);
+  const ctx=Sim.dayCtx(et); const items=[]; const add=(sec,head,body,s,topic,extra={})=>items.push({sec,head,body,s,topic,...extra});
+  const live=O.live[key];
+  const L=ctx.L, wd=ctx.wd, c=ctx.cc;
+  // --- faith & calendar ---
+  const men=A.filter(a=>a.gender==='m'&&a.age>=15), est=f=>A.filter((a,i)=>R.rngFor('es',era,bdi,a.id)()<f(a)).length;
+  const fasting = live?live.fast: c.ramadan? est(a=>a.age>=12?0.9:0.1) : (wd===1||wd===4)? est(a=>a.age>=12?a.habits.fastMT*0.7:0) : c.white? est(a=>a.age>=12?a.habits.white*0.7:0):0;
+  const jum = wd===5? (live&&live.jum!=null?live.jum: est(a=>a.gender==='m'&&a.age>=15?0.55+a.tier*0.2:0)) : 0;
+  const night = live?live.night: est(a=>a.age>=15?a.habits.night*0.6:0);
+  if(c.eidFitr||c.eidAdha) add('front',(c.eidFitr?'Eid al-Fitr':'Eid al-Adha')+': the whole town comes out to pray','Families filled the prayer grounds in their best clothes. Kids got Eid money and sweets were shared with neighbours.',0.9,'eid');
+  if(c.ramadan) add('front',ctx.hc.d===1?'Ramadan begins: first fast of the month':'Ramadan day '+ctx.hc.d+': iftar tables full across Mississauga',fasting+' people fasted today. Masjids served iftar and the night prayers were packed.',0.6,'ramadan');
+  if(wd===5) add('faith',"Jumu'ah: "+jum+" men and boys at Friday prayer",'The masjids were busy at midday. Imams spoke about '+R.pick(r,['keeping family ties','being honest at work','patience in hard times','looking after neighbours','the blessing of Friday','controlling anger'])+'.',0.4,'jumuah');
+  if(!c.ramadan&&fasting>15) add('faith',fasting+' people fasted today',(c.white?'It was one of the White Days, when the moon is full.':'It was a '+WD[wd]+', a sunnah fasting day.')+' Many broke their fast together at sunset.',0.4,'fast');
+  if(night>20) add('faith',night+' people woke for night prayer','In the last third of the night, lit windows dotted the dark streets.',0.3,'faith');
+  if(live&&live.heart&&live.heart.length) for(const h of live.heart.slice(0,2)) add('community','Made up: '+h,'Two neighbours who had not been speaking said salam and patched things up.',0.7,'heart');
+  // --- weather & moon ---
+  const ill=Math.round(C.moonIllum(et)*100);
+  const wx=ctx.snow?'Snow day':ctx.rain?'Rain':ctx.hot?'Hot':ctx.cold?'Cold snap':'Fair';
+  add('weather',wx+': '+ctx.temp+'°C',(ctx.snow?'Neighbours shovelled each other\'s driveways. ':ctx.rain?'Umbrellas out; fewer people walked to the masjid. ':ctx.hot?'Parks and splash pads were full. ':'')+'Moon '+ill+'% lit. Hijri date: '+ctx.hc.d+' '+ctx.hc.name+' '+ctx.hc.y+'.',ctx.snow||ctx.rain?-0.1:0.1,'weather');
+  if(ctx.snow&&r()<0.6){ const hh=R.pick(r,HH); add('neigh',hh.nb+' and the '+hh.surname+' family cleared the street together','A non-Muslim neighbour and a Muslim family took turns with the snow shovel, then had tea.',0.6,'neigh',{aid:hh.members[0].id}); }
+  // --- economy ---
+  st.econ=clamp(st.econ+(r()-0.5)*0.02+(e.economy-st.econ)*0.05,0.7,1.3);
+  if(r()<0.18) add('money',st.econ<0.95?'Jobs harder to find this month':'Shops and warehouses are hiring','Unemployment is '+e.unemployment+'. '+(st.econ<0.95?'Some families are watching every dollar.':'Some people moved to better jobs.'),st.econ<0.95?-0.3:0.3,'econ');
+  // --- life events (good and hard), at era rates ---
+  const n=A.length, rate=e.rates, lifeKinds=['job','promotion','marriage','birth','graduation','business','revert','layoff','move'];
+  for(const k of lifeKinds){ const exp=rate[k]*n/1000/365*(k==='layoff'?(2-st.econ):k==='job'?st.econ:1); let cnt=0; let x=r(); while(x<exp*Math.exp(-0)&&cnt<3){cnt++; x=r()*cnt*1.5;} // small Poisson-ish
+    for(let j=0;j<cnt;j++) lifeEvent(era,k,r,add); }
+  // --- police ---
+  const P=e.police; const patrols=Math.round(P.patrolsPerDay*(0.8+r()*0.4));
+  const hood=R.pick(r,World.hoods).id;
+  const nStops=Math.floor(P.stopsPerDay*r()*1.3);
+  const drivers=A.filter(a=>a.car&&a.age>=18);
+  for(let j=0;j<nStops;j++){ const a=R.pick(r,drivers); const why=R.pick(r,['going a bit over the speed limit','a broken tail light','rolling through a stop sign','a routine check','an expired sticker']);
+    const fair=r()<P.fairness; const out=r()<0.55?'got a warning':'got a ticket';
+    add('police','Traffic stop: '+a.first+' '+out,a.name+' was pulled over on '+R.pick(r,['Hurontario Street','Dundas Street','Eglinton Avenue','Mavis Road','Erin Mills Parkway','Airport Road'])+' for '+why+'. '+(fair?'The officer was polite and '+a.first+' was polite back.':a.first+' felt the stop was rushed and not explained well.')+(a.honesty>0.7?' '+a.first+' admitted the mistake honestly.':''),fair?0:-0.3,'police',{aid:a.id,police:fair?0.01:-0.06,minute:600+Math.floor(r()*600),rec:a.honesty>0.7?'Was honest with the police officer about '+why:null});
+    hist(era,a,'Pulled over for '+why+' — '+out+(fair?'; the officer was fair':'')); }
+  const incR=r();
+  if(incR<0.12) { const hh=R.pick(r,HH); add('police','Car stolen from a driveway in '+hoodName(hh.home.hood),'The '+hh.surname+' family reported their car missing in the morning. Peel Regional Police are looking into it and remind people to lock up.',-0.3,'police',{aid:hh.members[0].id,police:0}); hist(era,hh.members[0],'Our car was stolen from the driveway; reported it to the police'); }
+  else if(incR<0.2) add('police','Break-in at a plaza in '+hoodName(hood),'A shop was broken into overnight. No one was hurt. Police checked the cameras.',-0.2,'police');
+  else if(incR<0.28) { const a=R.pick(r,A.filter(x=>x.age<10)); if(a) add('police','Lost child found safe at the mall',a.first+' wandered off at Square One. A police officer and a shop worker helped find the family within 20 minutes.',0.6,'police',{aid:a.id,police:0.04}); }
+  else if(incR<0.31) add('police','Small crash on the highway, no one badly hurt','Traffic was slow for an hour while police cleared the road.',-0.1,'police');
+  if(r()<P.communityEvents*(c.ramadan?4:1)) { const m=R.pick(r,World.mosques.filter(x=>x.jumuah)); add('police',c.ramadan?'Police officers join iftar at '+m.name:'Officers visit '+m.name+' for a community talk',c.ramadan?'Officers broke the fast with the community and answered questions. Kids tried on a police hat.':'They talked about road safety and scams aimed at older people. Tea and samosas after.',0.6,'police',{police:0.05}); }
+  add('police','Peel Police made '+patrols+' patrol passes through town','Most of '+hoodName(hood)+' was quiet. Officers mostly helped with traffic and small calls.',0.05,'police',{low:true});
+  // --- wider world & city & neighbours ---
+  const wn=R.pick(r,e.world); add('world',wn,'People heard about it on '+R.pick(r,e.media)+' and talked about it at dinner.',/relief|collect/.test(wn)?0.2:/drop|win|opens|boom|down/.test(wn)?0.2:-0.35,'world',{charity:/relief|collect/.test(wn)});
+  if(r()<0.5) add('city',R.pick(r,e.city),'Families from all backgrounds came out. '+(r()<0.5?'Some Muslim families set up a free water and dates table.':'Neighbours said it was a good day.'),0.4,'city');
+  if(r()<0.4){ const hh=R.pick(r,HH); add('neigh',R.pick(r,[hh.nb+' brought cookies to the '+hh.surname+' family',hh.nb+' was invited to dinner by the '+hh.surname+' family','The '+hh.surname+' family fed '+hh.nb+'\'s cat while they were away',hh.nb+' asked the '+hh.surname+' family about fasting']),'Small kindness between neighbours of different faiths — the Prophet ﷺ taught that the neighbour has rights.',0.6,'neigh',{aid:hh.members[0].id}); hist(era,hh.members[0],'Shared a kind moment with our neighbour '+hh.nb); }
+  const out={era,bdi,et,ctx,items,fasting,jum,night,patrols};
+  O.gen[key]=out; return out; }
+function lifeEvent(era,k,r,add){ const e=E[era]; const st=O.st[era];
+  const adults=A.filter(a=>a.age>=18&&a.age<65);
+  let a;
+  if(k==='job'){ const pool=Object.keys(st.jobless).map(Number); a=pool.length&&r()<0.7?A[pool[Math.floor(r()*pool.length)]]:R.pick(r,A.filter(x=>x.age>=18&&x.age<26)); if(!a)return; delete st.jobless[a.id];
+    const j=R.pick(r,['a warehouse','a bank','a hospital','an IT company','a school','the airport','a dental clinic','a grocery chain']); add('life','New job: '+a.first+' starts at '+j,a.name+' got the call today. The family made chai to celebrate.',0.7,'life',{aid:a.id,good:true}); hist(era,a,'Got a new job at '+j); }
+  else if(k==='promotion'){ a=R.pick(r,adults.filter(x=>!['home','retired','uni','pupil','toddler'].includes(x.occ))); if(!a)return; add('life',a.first+' '+a.name.split(' ').slice(-1)+' gets a promotion','After years as a '+a.job+', '+a.first+' was moved up. "Alhamdulillah," '+(a.gender==='m'?'he':'she')+' said.',0.6,'life',{aid:a.id,good:true}); hist(era,a,'Promoted at work'); }
+  else if(k==='marriage'){ const m=R.pick(r,A.filter(x=>x.gender==='m'&&x.age>=21&&x.age<36)), f=R.pick(r,A.filter(x=>x.gender==='f'&&x.age>=20&&x.age<34&&x.hh!==(m&&m.hh))); if(!m||!f)return; a=m; add('life','Wedding! '+m.first+' and '+f.first+' get married','A simple nikah at the masjid, then a walima for family and neighbours. '+(e.year<2000?'Photos taken on film.':'Photos all over '+R.pick(r,e.platforms)+'.'),0.9,'life',{aid:m.id,good:true}); hist(era,m,'Married '+f.name); hist(era,f,'Married '+m.name); }
+  else if(k==='birth'){ a=R.pick(r,A.filter(x=>x.gender==='f'&&x.age>=21&&x.age<42&&x.role==='mother')); if(!a)return; const g=r()<0.5?'boy':'girl'; add('life','Welcome, baby! The '+HH[a.hh].surname+' family has a new '+g,a.first+' and the baby are healthy. The adhan was whispered in the baby\'s ear.',0.9,'life',{aid:a.id,good:true}); hist(era,a,'Had a baby '+g); }
+  else if(k==='graduation'){ a=R.pick(r,A.filter(x=>x.age>=17&&x.age<26)); if(!a)return; const s=a.age<19?'high school':R.pick(r,['UTM','Sheridan College','a nursing course','an apprenticeship']); add('life',a.first+' graduates from '+s,'The family cheered from the back. Next step: '+R.pick(r,['work','university','an apprenticeship','helping in the family shop'])+'.',0.7,'life',{aid:a.id,good:true}); hist(era,a,'Graduated from '+s); }
+  else if(k==='business'){ a=R.pick(r,adults); if(!a)return; const b=R.pick(r,['a bakery','a barbershop','a tutoring centre','a halal butcher','a phone repair shop','a small café','a cleaning company']); add('life',a.first+' opens '+b+' in '+hoodName(a.home.hood),'Opening day was busy with friends and neighbours. "Honest trade is a blessing," '+a.first+' said.',0.7,'life',{aid:a.id,good:true}); hist(era,a,'Opened '+b); }
+  else if(k==='revert'){ const hh=R.pick(r,HH); add('life',hh.nb+"'s friend takes the shahada at the masjid",'After months of questions over tea with the '+hh.surname+' family, they became Muslim. The whole masjid said takbir.',0.9,'life',{aid:hh.members[0].id,good:true}); hist(era,hh.members[0],'Our friend became Muslim after many talks over tea'); }
+  else if(k==='layoff'){ a=R.pick(r,A.filter(x=>x.labour||x.occ==='retail'||x.occ==='office')); if(!a)return; st.jobless[a.id]=1; add('money',a.first+' loses '+(a.gender==='m'?'his':'her')+' job at the '+a.job.replace(/ worker| assistant.*/,'')+' site','Cuts at work. Friends from the masjid are passing on job leads.',-0.5,'econ',{aid:a.id}); hist(era,a,'Lost my job (cuts at work); looking for a new one'); }
+  else if(k==='move'){ a=R.pick(r,adults); if(!a)return; add('life','The '+HH[a.hh].surname+' family plans a move',R.pick(r,['Looking for a bigger place for the kids.','Rent went up; looking at Brampton and Milton.','Moving closer to the masjid.']),0,'life',{aid:a.id,low:true}); }
+}
+function hist(era,a,t){ (a.hist[era]=a.hist[era]||[]); const h=a.hist[era]; const L=C.local(eraTime(O._dayBase||O.baseT,era)); h.push({d:L.d+' '+MON[L.m].slice(0,3)+' '+E[era].year,t}); if(h.length>12)h.shift(); }
+// ---------- end of an era-day: reactions, wellbeing, paper, posts, survey ----------
+function advance(era,bdi){ const st=O.st[era]; if(st.lastDay!=null&&bdi<=st.lastDay)return; st.lastDay=bdi; st.days++;
+  O._dayBase=Date.UTC(1970,0,1)+bdi*DAY+16*3600000;
+  const g=genDay(era,bdi), e=E[era], w=st.w, n=A.length; const items=g.items;
+  const neg=items.reduce((s,x)=>s+Math.min(0,x.s),0), pos=items.reduce((s,x)=>s+Math.max(0,x.s),0);
+  const polImpact=items.reduce((s,x)=>s+(x.police||0),0);
+  const r=R.rngFor('wb',era,bdi); const live=O.live[era+':'+bdi];
+  // reference so the town average stays near the era baseline unless events push it
+  for(let i=0;i<n;i++){ const a=A[i]; if(a.age<10){continue;}
+    const fa=habMean(a); w.faith[i]+= (clamp(fa*0.8+a.heart*0.2)-w.faith[i])*0.08;
+    const expo=clamp(w.screen[i]/8); const contact=clamp(e.community*(0.5+a.habits.visit*0.6)+(HH[a.hh].members.length>2?0.1:-0.1));
+    const jobless=st.jobless[i]?1:0;
+    const stress = 0.25*jobless + expo*e.newsNegativity*(-neg)*0.05 + e.socialCompare*a.phone*0.15 + (1-st.econ)*0.3 - pos*0.01;
+    const support = 0.3*w.faith[i] + 0.25*contact + 0.1*a.heart;
+    const noise=(r()-0.5)*0.04;
+    w.dep[i]=clamp(w.dep[i]+ (w.d0[i]+ (stress-support+0.2)*0.4 - w.dep[i])*0.05 + noise);
+    w.anx[i]=clamp(w.anx[i]+ (w.a0[i]+ (stress*1.2-support*0.8+0.15)*0.4 - w.anx[i])*0.05 + noise);
+    w.lone[i]=clamp(w.lone[i]+ (w.l0[i]+ (0.35-contact)*0.5 + e.socialCompare*0.08 - w.lone[i])*0.05 + noise);
+    w.trustP[i]=clamp(w.trustP[i]+ polImpact*(0.3+expo)*0.12 + (w.p0[i]-w.trustP[i])*0.03);
+    w.trustI[i]=clamp(w.trustI[i]+ neg*0.0008*e.newsNegativity*(0.5+expo) + (w.i0[i]-w.trustI[i])*0.03);
+    w.sat[i]=clamp(w.sat[i]+ (e.base.sat+ (support-stress)*0.3 - w.dep[i]*0.2 - w.sat[i])*0.04);
+  }
+  // direct hits: people in the news
+  for(const it of items){ if(it.aid==null)continue; const i=it.aid; w.sat[i]=clamp(w.sat[i]+it.s*0.08); w.dep[i]=clamp(w.dep[i]-it.s*0.06); if(it.topic==='police') w.trustP[i]=clamp(w.trustP[i]+(it.police||0)*4); }
+  // charity appeals move generous people
+  if(items.some(x=>x.charity)) for(const a of A) if(a.age>=15&&a.generosity>0.6) a.habits.sadaqa=clamp(a.habits.sadaqa+0.003);
+  // the paper
+  const top=items.filter(x=>!x.low).sort((p,q)=>(PRIO[q.topic]||0)-(PRIO[p.topic]||0)||Math.abs(q.s)-Math.abs(p.s));
+  const L=g.ctx.L;
+  const paper={era,bdi,date:WD[g.ctx.wd]+' '+L.d+' '+MON[L.m]+' '+e.year,hijri:g.ctx.hc.d+' '+g.ctx.hc.name+' '+g.ctx.hc.y+' AH',lead:top[0]||items[0],items:items.filter(x=>x!==(top[0]||items[0])),fasting:g.fasting,jum:g.jum,night:g.night,patrols:g.patrols,live:!!live,good:live?live.good:null};
+  st.papers.push(paper); if(st.papers.length>45) st.papers.shift();
+  // people talk and post
+  const talkers=A.filter(a=>a.age>=14); const nposts=4+Math.floor(r()*4);
+  for(let j=0;j<nposts;j++){ const it=R.pick(r,items.filter(x=>!x.low)); const a=it.aid!=null&&r()<0.4?A[it.aid]:R.pick(r,talkers); if(!a)continue; st.posts.push(post(era,a,it,r,w)); }
+  if(st.posts.length>80) st.posts.splice(0,st.posts.length-80);
+  if(st.days%30===1) survey(era,bdi,paper.date);
+}
+function post(era,a,it,r,w){ const e=E[era]; const plat=R.pick(r,e.platforms); const i=a.id; const low=w.dep[i]>0.5, angry=a.anger>0.45, pious=a.tier===2;
+  let text;
+  if(it.topic==='police'&&/^Traffic stop/.test(it.head)) text= it.aid===a.id? R.pick(r,['Got pulled over today. My fault, slow down people.','Pulled over — stayed calm, said sorry, got through it.']) : R.pick(r,['Police are out on the main roads today, drive carefully.','Slow down out there, everyone.']);
+  else if(it.topic==='police'&&/patrol/.test(it.head)) text=R.pick(r,['Quiet night in the area, alhamdulillah.','Saw a patrol car go by, all calm.']);
+  else if(it.topic==='police') text= it.s<0? R.pick(r,['Lock your cars, people. Again.','Hope they find it. Stay safe everyone.','I wish the officer had explained more, but we stayed calm.']) : (/masjid|iftar|Officers/.test(it.head)?'Good to see officers at the masjid. More of this.':'Respect to the officer who helped.');
+  else if(it.topic==='life'||it.topic==='eid'||it.topic==='heart') text=R.pick(r,['Mabrook!! So happy for them','Alhamdulillah, what a day','May Allah bless them','This made my week']);
+  else if(it.topic==='world') text= pious? R.pick(r,['Make dua for everyone affected.','Turn the news off for a bit and pray. It helps.']) : low? R.pick(r,['Every day the news is worse.','Can\'t stop reading about this.']) : R.pick(r,['Does anyone know how to help?','Talked about this at dinner for an hour.']);
+  else if(it.topic==='econ') text= R.pick(r,['Anyone hiring? Asking for a brother.','Prices are crazy. Bulk-buy rice together?','Tough times, stay patient.']);
+  else if(it.topic==='weather') text=R.pick(r,['Who\'s shovelling for the aunty next door?','Perfect weather for a walk after Asr.','Drive safe today.']);
+  else text= angry? R.pick(r,['Could be organised better honestly.','Parking was a nightmare.']) : R.pick(r,['Lovely day, see you there next time.','Great to see everyone.','JazakAllahu khayran to the volunteers.']);
+  if(e.feedKind==='letters') text = plat==='Letter to the editor'? 'Dear Editor, about "'+it.head+'": '+text : '(said '+R.pick(r,['after Jumu\'ah','at the grocery store','on the phone','over tea'])+') '+text;
+  else if(e.feedKind==='forum') text = plat==='MSN status'? '~*'+text+'*~' : text;
+  else text = text+(r()<0.4?' '+R.pick(r,['🤲','❤️','😔','💯','🙏','😂']):'');
+  return {era,aid:a.id,who:a.name,plat,text,about:it.head,date:C.local(eraTime(O._dayBase,era)).d+' '+MON[C.local(eraTime(O._dayBase,era)).m].slice(0,3)}; }
+function survey(era,bdi,date){ const st=O.st[era], w=st.w; let n=0; const s={dep:0,anx:0,lone:0,trustP:0,trustI:0,sat:0,attend:0,screen:0};
+  for(let i=0;i<A.length;i++){ const a=A[i]; if(a.age<15)continue; n++; s.dep+=w.dep[i]>0.5; s.anx+=w.anx[i]>0.5; s.lone+=w.lone[i]>0.5; s.trustP+=w.trustP[i]>0.5; s.trustI+=w.trustI[i]>0.5; s.sat+=w.sat[i]*10; s.attend+=(a.habits.fajrMosque*0.6+(a.gender==='m'?0.4:0.15)+(E[era].community-0.6)*0.4)>0.5; s.screen+=w.screen[i]; }
+  const res={era,bdi,date,month:st.surveys.length,n}; for(const k in s) res[k]= k==='sat'||k==='screen'? +(s[k]/n).toFixed(1) : Math.round(s[k]/n*100);
+  st.surveys.push(res); }
+// ---------- hooks used by the live map ----------
+O.plan=function(ctx,evs,insert){ if(O.switching&&false)return; const bdi=bday(O.baseT); const g=genDay(O.era,bdi);
+  for(const it of g.items){ if(it.low||it.topic==='weather')continue; const m=it.minute!=null?it.minute:540+((it.head.length*37)%600);
+    evs.push({t:ctx.mid+m*60000,type:'global',kind:it.topic==='police'?'police':it.good?'heart':'note',text:(it.topic==='police'?'🚓 ':it.good?'🎉 ':'📰 ')+it.head});
+    if(it.aid!=null&&it.rec) evs.push({t:ctx.mid+(m+5)*60000,type:'rec',side:'right',kind:'done',a:A[it.aid],text:it.rec});
+    if(it.aid!=null&&it.good) evs.push({t:ctx.mid+m*60000,type:'rec',side:'right',kind:'done',a:A[it.aid],text:'Said "Alhamdulillah" and thanked Allah for good news: '+it.head}); }
+  // jobless people stay home and look for work instead
+  const st=O.st[O.era]; for(const id in st.jobless){ const a=A[id]; if(!a.plan)continue; a.plan.blocks=a.plan.blocks.map(b=>b.act==='work'?{...b,act:'home',pid:'home',txt:'Looking for work online and calling friends for leads'}:b); }
+};
+O.simDayEnd=function(){ if(O.switching)return; const S=Sim.S; const bdi=bday(O.baseT)-1; // the day that just ended (base calendar)
+  let fast=0,jum=0,night=0,good=0,erased=0,held=0; for(const a of A){ const p=a.plan; if(!p)continue; if(p.fast)fast++; if(p.flags&&p.flags.tahajjud)night++; if(p.blocks&&p.blocks.some(b=>b.act==='jumuah'&&b.prayer!=='janazah'))jum++;
+    for(const r of a.records){ if(r.side==='right'){good++;a.tally.good++;} else { held++; a.tally.held++; if(r.erasedAt){erased++;a.tally.erased++;} } } }
+  const heart=S.events.filter(e=>e.type==='global'&&e.kind==='heart'&&!/^🎉/.test(e.text)).map(e=>e.text);
+  O.live[O.era+':'+bdi]={fast,jum:S.ctx.wd===5?jum:null,night,good,erased,held,heart};
+  for(const a of A) if(a._tierChange&&a._tierChange.day===S.day){ const t=['struggling','middle way','racing ahead']; hist(O.era,a,'Practice level moved from '+t[a._tierChange.from]+' to '+t[a._tierChange.to]); }
+  catchUp(bdi);
+};
+function catchUp(toBdi){ for(const k of EO){ const st=O.st[k]; let from=st.lastDay==null?bday(EPOCH):st.lastDay+1; if(toBdi-from>400) from=toBdi-400; for(let d=from; d<=toBdi; d++) advance(k,d); } O.notify&&O.notify(); }
+O.catchUp=catchUp;
+// ---------- saving & loading ----------
+O.save=function(){ try{ const pk=a=>Array.from(a,x=>Math.round(x*1000)); const eras={};
+  for(const k of EO){ const s=O.st[k]; const w={}; for(const f in s.w) w[f]=pk(s.w[f]); eras[k]={w,papers:s.papers.slice(-30).map(p=>({...p})),posts:s.posts.slice(-60),surveys:s.surveys,days:s.days,econ:s.econ,jobless:s.jobless,lastDay:s.lastDay}; }
+  const ag=A.map(a=>({h:Object.fromEntries(Object.entries(a.habits).map(([k,v])=>[k,Math.round(v*1000)])),he:Math.round(a.heart*1000),ti:a.tier,ts:Math.round(a.tierScore*1000),hi:a.hist,ta:a.tally}));
+  localStorage.setItem(KEY,JSON.stringify({v:2,baseT:O.baseT,savedAt:Date.now(),speed:O.speed,era:O.era,eras,ag,estr:People.estranged.map(p=>[p.done?1:0,p.days])})); }catch(err){ console.warn('save failed',err); } };
+O.load=function(){ let d=null; try{ d=JSON.parse(localStorage.getItem(KEY)||'null'); }catch(e){}
+  const now=Date.now();
+  if(d&&d.v===2){
+    for(const k of EO){ const s=O.st[k], src=d.eras[k]; if(!src)continue; for(const f in s.w) if(src.w[f]) s.w[f]=Float32Array.from(src.w[f],x=>x/1000); Object.assign(s,{papers:src.papers,posts:src.posts,surveys:src.surveys,days:src.days,econ:src.econ,jobless:src.jobless||{},lastDay:src.lastDay}); }
+    d.ag.forEach((x,i)=>{ const a=A[i]; if(!a)return; for(const k in x.h)a.habits[k]=x.h[k]/1000; a.heart=x.he/1000; a.tier=x.ti; a.tierScore=x.ts/1000; a.hist=x.hi||{}; a.tally=x.ta||a.tally; });
+    (d.estr||[]).forEach((x,i)=>{ const p=People.estranged[i]; if(p){p.done=!!x[0];p.days=x[1];} });
+    O.era=d.era||'2026'; O.speed=d.speed==null?1:d.speed;
+    // the world kept living while the page was closed: real time passed at 1×, plus any faster speed is kept for what's on screen
+    O.baseT=d.baseT+(now-d.savedAt); O.closedFor=now-d.savedAt;
+  } else { O.baseT=now; O.speed=1; O.firstRun=true; }
+  catchUp(bday(O.baseT)-1);
+  return {t:eraTime(O.baseT),speed:O.speed};
+};
+let lastSave=0; O.tick=function(now){ if(now-lastSave>5000){ lastSave=now; O.save(); } };
+addEventListener('visibilitychange',()=>{ if(document.hidden) O.save(); }); addEventListener('pagehide',()=>O.save());
+// ---------- bio (inside the person card) ----------
+const bar=(v,col)=>`<span class="bar"><i style="width:${Math.round(clamp(v)*100)}%;background:${col}"></i></span>`;
+O.bioHTML=function(a){ const hh=HH[a.hh], i=a.id, w=O.st[O.era].w, e=E[O.era]; const he=a.gender==='m'?'He':'She', his=a.gender==='m'?'his':'her';
+  const fam=hh.members.filter(m=>m!==a).map(m=>`<span class="lnk" data-pid="${m.id}">${esc(m.first)}</span> (${m.role==='child'?(m.gender==='m'?'son':'daughter'):m.role}, ${m.age})`).join(', ')||'lives alone';
+  const yrs=hh.since; const origin=a.bornHere?`Born in Mississauga; family roots in ${hh.origin}.`:`Came to Canada from ${hh.origin}${yrs?` about ${yrs} years before ${e.year}`:''}.`;
+  const best=Object.entries(a.habits).sort((x,y)=>y[1]-x[1]).slice(0,2).map(x=>HABW[x[0]]), weak=Object.entries(a.habits).sort((x,y)=>x[1]-y[1]).slice(0,1).map(x=>HABW[x[0]]);
+  const h=(a.hist[O.era]||[]).slice().reverse().map(x=>`<div class="rc"><span class="st">${esc(x.d)}</span>${esc(x.t)}</div>`).join('')||`<div class="dim small">Nothing big yet in ${e.year} — an ordinary run of days. Big moments (jobs, weddings, police stops, babies) show up here.</div>`;
+  const mood= w.dep[i]>0.5?'Going through a low patch':w.anx[i]>0.5?'Worried a lot lately':w.sat[i]>0.7?'Happy with life':'Doing okay';
+  const tech=a.age<10?'':` ${he} spends about ${w.screen[i].toFixed(1)} hours a day on ${R.pick(R.rngFor('m',a.id),e.media)} and other screens.`;
+  return `<details open><summary>Life story — ${e.year}</summary><div class="small bio">
+   <p>${esc(a.name)} is ${a.age}. ${origin} ${he} is ${a.traits.join(', ')}, and loves ${a.likes.join(' and ')}.${tech}</p>
+   <p><b>Family:</b> ${fam}.<br><b>Home:</b> ${a.home.kind==='tower'?'apartment':'house'} in ${hoodName(a.home.hood)} · <b>Neighbour:</b> ${esc(hh.nb)}<br><b>Job:</b> ${O.st[O.era].jobless[i]?'looking for work (was '+esc(a.job)+')':esc(a.job)} · <b>Masjid:</b> ${esc(World.place(a.mosque).name)}<br>
+   ${a.age>=10?`<b>Strong at:</b> ${best.join(', ')} · <b>Finds hard:</b> ${weak.join(', ')}`:'Still little — learning prayer by copying the grown-ups.'}</p></div>
+   <div class="hist">${h}</div></details>
+   <details open><summary>How ${a.first} is doing (${e.year}, simulated)</summary><div class="now small">${mood}</div>
+    <div class="hb"><span>Low mood risk</span>${bar(w.dep[i],'#c97b7b')}</div><div class="hb"><span>Worry</span>${bar(w.anx[i],'#d8a65a')}</div>
+    <div class="hb"><span>Loneliness</span>${bar(w.lone[i],'#8a9ad8')}</div><div class="hb"><span>Faith practice</span>${bar(w.faith[i],'#2e9d74')}</div>
+    <div class="hb"><span>Trust in police</span>${bar(w.trustP[i],'#4f8fd0')}</div><div class="hb"><span>Life satisfaction</span>${bar(w.sat[i],'#f0c05a')}</div></details>
+   <details><summary>Angels' tally since you started watching</summary><div class="small">✦ Good deeds written: <b>${a.tally.good}</b> · ◇ Bad deeds held: <b>${a.tally.held}</b> · erased by saying sorry in time: <b>${a.tally.erased}</b></div></details>`; };
+const HABW={prompt:'praying on time',fajrMosque:'going to the masjid',rawatib:'extra prayers',night:'night prayer',fastMT:'Monday/Thursday fasts',white:'White Days fasts',dhikrAM:'morning remembrance',dhikrPM:'evening remembrance',quran:'daily Qur\'an',sadaqa:'daily charity',duha:'Duha prayer',sleepAdab:'bedtime routine',visit:'visiting people',kahf:'reading Al-Kahf on Fridays'};
+O.hoodName=hoodName; O.esc=esc; O.genDay=genDay; O.MON=MON;
+})();
+</script><script>// ===== Static map painter (pre-rendered once into an offscreen canvas) =====
+(function(){
+const W=World;
+function poly(ctx,pts){ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i][0],pts[i][1]);}
+function smooth(ctx,pts){ctx.beginPath();ctx.moveTo(pts[0][0],pts[0][1]);for(let i=1;i<pts.length-1;i++){const mx=(pts[i][0]+pts[i+1][0])/2,my=(pts[i][1]+pts[i+1][1])/2;ctx.quadraticCurveTo(pts[i][0],pts[i][1],mx,my);}const l=pts[pts.length-1];ctx.lineTo(l[0],l[1]);}
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+function shade(hex,f){const n=parseInt(hex.slice(1),16);let r=n>>16,g=n>>8&255,b=n&255;if(f<0){r*=1+f;g*=1+f;b*=1+f;}else{r+=(255-r)*f;g+=(255-g)*f;b+=(255-b)*f;}return 'rgb('+(r|0)+','+(g|0)+','+(b|0)+')';}
+function paint(S){
+  const cv=document.createElement('canvas'); cv.width=W.W*S; cv.height=W.H*S; const c=cv.getContext('2d'); c.scale(S,S);
+  const r=R.rngFor('paint');
+  // ground
+  const g=c.createLinearGradient(0,0,W.W,W.H); g.addColorStop(0,'#c9d8b4'); g.addColorStop(0.5,'#d3dcbc'); g.addColorStop(1,'#c4d4b0'); c.fillStyle=g; c.fillRect(0,0,W.W,W.H);
+  // fields & texture
+  for(let i=0;i<900;i++){const x=r()*W.W,y=r()*W.H; c.fillStyle=`rgba(${150+r()*60|0},${170+r()*50|0},${110+r()*40|0},${0.08+r()*0.1})`; c.beginPath(); c.ellipse(x,y,20+r()*90,15+r()*60,r()*3,0,7); c.fill();}
+  // neighbourhood suburban ground
+  for(const h of W.hoods){ c.fillStyle= h.kind==='plaza'?'rgba(225,220,205,0.85)':'rgba(232,229,214,0.78)'; roundRect(c,h.x-10,h.y-10,h.w+20,h.h+20,24); c.fill(); }
+  // lake
+  c.save(); poly(c,[...W.shore,[W.W,W.H],[0,W.H]]); c.closePath(); const lg=c.createLinearGradient(0,1000,0,W.H); lg.addColorStop(0,'#7fb3d0'); lg.addColorStop(1,'#4d86ad'); c.fillStyle=lg; c.fill(); c.clip();
+  c.strokeStyle='rgba(255,255,255,0.13)'; c.lineWidth=1; for(let i=0;i<500;i++){const x=r()*W.W,y=W.shoreY(x)+10+r()*400; c.beginPath(); c.moveTo(x,y); c.quadraticCurveTo(x+6,y-2,x+12,y); c.stroke();}
+  c.restore();
+  // beach + shore line
+  c.lineJoin='round'; c.lineCap='round';
+  smooth(c,W.shore); c.strokeStyle='#e9dcb5'; c.lineWidth=9; c.stroke(); c.strokeStyle='rgba(255,255,255,0.5)'; c.lineWidth=1.5; c.stroke();
+  // river valley + river
+  smooth(c,W.river); c.strokeStyle='rgba(120,160,95,0.55)'; c.lineWidth=60; c.stroke(); c.strokeStyle='rgba(105,150,85,0.5)'; c.lineWidth=30; c.stroke();
+  c.strokeStyle='#5d93b8'; c.lineWidth=9; c.stroke(); c.strokeStyle='#7fb4d4'; c.lineWidth=5; c.stroke();
+  // parks
+  for(const p of W.places) if(p.kind==='park'||p.kind==='eidground'){ c.fillStyle=p.kind==='park'?'#a8c98b':'#b9d39a'; roundRect(c,p.x-p.w/2,p.y-p.h/2,p.w,p.h,14); c.fill(); if(p.kind==='eidground'){ c.strokeStyle='rgba(255,255,255,0.7)'; c.lineWidth=1; c.strokeRect(p.x-p.w/2+8,p.y-p.h/2+8,p.w-16,p.h-16);} }
+  // local streets
+  c.strokeStyle='#bdb7a8'; c.lineWidth=4.2; for(const s of W.localStreets){poly(c,s);c.stroke();}
+  c.strokeStyle='#f6f3ec'; c.lineWidth=3; for(const s of W.localStreets){poly(c,s);c.stroke();}
+  // arterials
+  for(const a of W.arterials){ smooth(c,a.pts); c.strokeStyle='#b7ae9b'; c.lineWidth=7.5; c.stroke(); c.strokeStyle='#fffdf7'; c.lineWidth=5.5; c.stroke(); }
+  // rail
+  for(const l of W.goLines){ smooth(c,l.pts); c.strokeStyle='#6f6a63'; c.lineWidth=3.2; c.stroke(); c.setLineDash([1.2,2.2]); c.strokeStyle='#e9e4da'; c.lineWidth=2; c.stroke(); c.setLineDash([]);
+    for(const [n,[x,y]] of l.stations){ c.fillStyle='#2f7d4f'; roundRect(c,x-7,y-4,14,8,2); c.fill(); c.fillStyle='#fff'; c.font='bold 5px sans-serif'; c.textAlign='center'; c.textBaseline='middle'; c.fillText('GO',x,y+0.3);} }
+  // highways
+  for(const h of W.highways){ smooth(c,h.pts); c.strokeStyle='#a9864a'; c.lineWidth=13; c.stroke(); c.strokeStyle='#f3cf7c'; c.lineWidth=10.5; c.stroke(); c.strokeStyle='rgba(255,255,255,0.75)'; c.lineWidth=0.7; c.setLineDash([4,5]); c.stroke(); c.setLineDash([]); }
+  // places
+  for(const p of W.places) drawPlace(c,p,r);
+  // trees (shadow then crown)
+  for(const t of W.trees){ c.fillStyle='rgba(40,60,30,0.22)'; c.beginPath(); c.ellipse(t.x+t.s*0.45,t.y+t.s*0.45,t.s,t.s*0.8,0,0,7); c.fill(); }
+  for(const t of W.trees){ const col= t.c<0.15?'#7a9b4f':t.c<0.6?'#5f8d4a':'#4f7f45'; const gr=c.createRadialGradient(t.x-t.s*0.35,t.y-t.s*0.4,t.s*0.1,t.x,t.y,t.s); gr.addColorStop(0,shade(col,0.35)); gr.addColorStop(1,shade(col,-0.15)); c.fillStyle=gr; c.beginPath(); c.arc(t.x,t.y,t.s,0,7); c.fill(); }
+  // homes
+  // filler suburbs: streets then houses
+  c.fillStyle='rgba(246,243,236,0.95)'; for(const h of W.filler){ const k=(h.gy/13)|0; const sy=(k%3===0?h.gy-13:h.gy+13); c.fillRect(h.gx-6.5,sy-2.6,13,5); }
+  for(const h of W.filler) drawFill(c,h);
+  const hs=[...W.homes].sort((a,b)=>a.y-b.y);
+  for(const h of hs) drawHome(c,h);
+  for(const m of W.mosques) drawMosque(c,m);
+  return cv;
+}
+function drawHome(c,h){
+  if(h.kind==='tower'){ const hgt=h.floors*1.15; const w=h.w,d=h.h; const x=h.x-w/2,y=h.y-d/2;
+    c.fillStyle='rgba(30,40,40,0.25)'; c.beginPath(); c.moveTo(x+w,y); c.lineTo(x+w+hgt*0.6,y+hgt*0.35); c.lineTo(x+w+hgt*0.6,y+d+hgt*0.35); c.lineTo(x+hgt*0.6,y+d+hgt*0.35); c.lineTo(x,y+d); c.closePath(); c.fill();
+    // facade (south face visible), roof lifted
+    c.fillStyle='#b9c0c6'; c.fillRect(x,y+d-hgt*0.35-0,w,hgt*0.35); 
+    const roofY=y-hgt*0.35; c.fillStyle='#9aa4ad'; c.beginPath(); c.moveTo(x,y+d); c.lineTo(x,roofY+d); c.lineTo(x+w,roofY+d); c.lineTo(x+w,y+d); c.closePath(); c.fill();
+    c.fillStyle='rgba(60,80,100,0.55)'; for(let f=0;f<h.floors;f+=1){const yy=y+d-(f+0.6)*1.15*0.35*1; for(let k=0;k<5;k++){c.fillRect(x+1.5+k*(w-3)/5,roofY+d+ (hgt*0.35)*(f/h.floors)+0.3,(w-3)/5-1,0.35*1.15*0.55);} }
+    const rg=c.createLinearGradient(x,roofY,x+w,roofY+d); rg.addColorStop(0,'#e4e1db'); rg.addColorStop(1,'#c8c3ba'); c.fillStyle=rg; c.fillRect(x,roofY,w,d); c.strokeStyle='rgba(0,0,0,0.15)'; c.lineWidth=0.5; c.strokeRect(x,roofY,w,d);
+    c.fillStyle='#a9a39a'; c.fillRect(x+w*0.3,roofY+d*0.3,w*0.25,d*0.2);
+    h.roofY=roofY; return; }
+  const w=h.w,d=h.h,x=h.x-w/2,y=h.y-d/2, e=h.floors*1.6;
+  c.fillStyle='rgba(30,40,30,0.25)'; c.fillRect(x+e*0.6,y+e*0.5,w,d);
+  // yard
+  c.fillStyle='rgba(160,190,130,0.5)'; c.fillRect(x-2,y-2,w+4,d+5);
+  c.fillStyle='#e8ddc8'; c.fillRect(x,y+d-e,w,e); // front wall
+  c.fillStyle='rgba(90,70,50,0.6)'; c.fillRect(x+w*0.45,y+d-e*0.8,w*0.12,e*0.8); // door
+  const ry=y-e; const mid=ry+d/2;
+  c.fillStyle=shadeHex(h.roof,0.12); c.fillRect(x,ry,w,d/2); c.fillStyle=shadeHex(h.roof,-0.18); c.fillRect(x,mid,w,d/2);
+  c.strokeStyle='rgba(0,0,0,0.25)'; c.lineWidth=0.4; c.beginPath(); c.moveTo(x,mid); c.lineTo(x+w,mid); c.stroke(); c.strokeRect(x,ry,w,d);
+  h.roofY=ry;
+}
+function drawFill(c,h){ const w=h.w,d=h.h,x=h.x-w/2,y=h.y-d/2,e=h.floors*1.3; c.fillStyle='rgba(30,40,30,0.18)'; c.fillRect(x+e*0.6,y+e*0.5,w,d); c.fillStyle=shade(h.roof,0.1); c.fillRect(x,y-e,w,d/2); c.fillStyle=shade(h.roof,-0.15); c.fillRect(x,y-e+d/2,w,d/2); c.fillStyle='#e6dcc8'; c.fillRect(x,y-e+d,w,e); }
+function shadeHex(h,f){return shade(h,f);}
+function drawMosque(c,m){
+  const s=m.size, q=World.QIBLA_DEG*Math.PI/180; c.save(); c.translate(m.x,m.y); c.rotate(q);
+  // courtyard
+  c.fillStyle='rgba(0,0,0,0.18)'; roundRect(c,-15*s+2,-14*s+2,30*s,30*s,3); c.fill();
+  c.fillStyle='#efe8da'; roundRect(c,-15*s,-14*s,30*s,30*s,3); c.fill(); c.strokeStyle='#c7b893'; c.lineWidth=1; c.stroke();
+  // prayer hall (front = towards qibla = -y after rotation)
+  c.fillStyle='#f8f4ec'; c.fillRect(-12*s,-12*s,24*s,14*s); c.strokeStyle='#d9c9a3'; c.lineWidth=0.6; c.strokeRect(-12*s,-12*s,24*s,14*s);
+  // carpet rows
+  c.strokeStyle='rgba(46,110,90,0.35)'; c.lineWidth=0.5; for(let i=0;i<5;i++){c.beginPath(); c.moveTo(-11*s,-9*s+i*2.6); c.lineTo(11*s,-9*s+i*2.6); c.stroke();}
+  // mihrab niche
+  c.fillStyle='#2f6f5a'; c.beginPath(); c.arc(0,-12*s,2*s,Math.PI,0); c.fill();
+  c.restore();
+  // dome (not rotated so light stays consistent)
+  const dx=m.x+Math.sin(q)*(10*s), dy=m.y-Math.cos(q)*(10*s)-3*s;
+  c.fillStyle='rgba(0,0,0,0.22)'; c.beginPath(); c.ellipse(dx+3*s,dy+4*s,4.6*s,3.6*s,0,0,7); c.fill();
+  const dg=c.createRadialGradient(dx-1.8*s,dy-1.8*s,0.5,dx,dy,5*s); dg.addColorStop(0,'#bfe7d6'); dg.addColorStop(0.55,'#3f9b7d'); dg.addColorStop(1,'#1f5e4c'); c.fillStyle=dg; c.beginPath(); c.arc(dx,dy,4.6*s,0,7); c.fill();
+  c.fillStyle='#e7c46a'; c.beginPath(); c.arc(dx,dy-4.6*s-0.8,1,0,7); c.fill();
+  // minaret
+  const mx=m.x+13*s, my=m.y+12*s; c.fillStyle='rgba(0,0,0,0.25)'; c.beginPath(); c.moveTo(mx,my); c.lineTo(mx+16*s,my+9*s); c.lineTo(mx+17*s,my+7*s); c.lineTo(mx+1.5,my-1.5); c.fill();
+  c.fillStyle='#e9e2d2'; c.fillRect(mx-1.6*s,my-22*s,3.2*s,22*s); c.fillStyle='#d6ccb6'; c.fillRect(mx,my-22*s,1.6*s,22*s);
+  c.fillStyle='#3f9b7d'; c.beginPath(); c.moveTo(mx-2.2*s,my-22*s); c.lineTo(mx,my-27*s); c.lineTo(mx+2.2*s,my-22*s); c.fill();
+  c.fillStyle='#f3efe6'; c.fillRect(mx-2.4*s,my-15*s,4.8*s,1.2*s);
+  m.domeX=dx; m.domeY=dy; m.minX=mx; m.minY=my-25*s;
+}
+function drawPlace(c,p,r){
+  const x=p.x-(p.w||30)/2, y=p.y-(p.h||30)/2, w=p.w||30, h=p.h||30;
+  const box=(col,top,e=3)=>{c.fillStyle='rgba(0,0,0,0.22)'; c.fillRect(x+e,y+e,w,h); c.fillStyle=col; c.fillRect(x,y,w,h); c.fillStyle=top; c.fillRect(x+1,y+1,w-2,h-2);};
+  switch(p.kind){
+   case 'mall': c.fillStyle='#d9d4c9'; roundRect(c,x-25,y-18,w+50,h+36,6); c.fill(); // parking
+     c.fillStyle='rgba(255,255,255,0.6)'; for(let i=0;i<40;i++){c.fillRect(x-22+i*3.8,y-15,0.4,8);c.fillRect(x-22+i*3.8,y+h+7,0.4,8);}
+     box('#c7c1b6','#eae6de',4); c.fillStyle='rgba(140,190,220,0.8)'; for(let i=0;i<5;i++)c.fillRect(x+10+i*20,y+h/2-3,14,6); break;
+   case 'office': for(let i=0;i<5;i++){const bx=x+(i%3)*w/3+3,by=y+Math.floor(i/3)*h/2+4; c.fillStyle='rgba(0,0,0,0.25)'; c.fillRect(bx+5,by+5,w/3-8,h/2-8); c.fillStyle='#9fb3c4'; c.fillRect(bx,by,w/3-8,h/2-8); c.fillStyle='#c9d7e2'; c.fillRect(bx+1,by+1,w/3-10,h/2-10);} break;
+   case 'industry': for(let i=0;i<6;i++){const bx=x+(i%3)*w/3+4,by=y+Math.floor(i/3)*h/2+6; c.fillStyle='rgba(0,0,0,0.2)'; c.fillRect(bx+3,by+3,w/3-10,h/2-12); c.fillStyle='#b8bcc0'; c.fillRect(bx,by,w/3-10,h/2-12); c.strokeStyle='rgba(0,0,0,0.12)'; c.lineWidth=0.5; for(let k=0;k<8;k++){c.beginPath();c.moveTo(bx,by+k*(h/2-12)/8);c.lineTo(bx+w/3-10,by+k*(h/2-12)/8);c.stroke();}} break;
+   case 'airport': c.fillStyle='#d6d9d2'; roundRect(c,x,y,w,h,20); c.fill(); c.strokeStyle='#8c9196'; c.lineCap='butt';
+     for(const [a,b,cc,d] of [[x+20,y+60,x+w-20,y+80],[x+30,y+h-60,x+w-30,y+h-40],[x+w*0.55,y+20,x+w*0.7,y+h-20]]){c.lineWidth=14;c.beginPath();c.moveTo(a,b);c.lineTo(cc,d);c.stroke(); c.strokeStyle='#fff'; c.lineWidth=0.6; c.setLineDash([6,6]); c.stroke(); c.setLineDash([]); c.strokeStyle='#8c9196';}
+     c.fillStyle='rgba(0,0,0,0.2)'; c.fillRect(x+80+4,y+120+4,110,40); c.fillStyle='#e6e3dc'; c.fillRect(x+80,y+120,110,40); c.fillStyle='#b0c4d2'; c.fillRect(x+85,y+125,100,8); c.lineCap='round'; break;
+   case 'hospital': box('#d6dde0','#f4f7f8'); c.fillStyle='#d64545'; c.fillRect(p.x-2,p.y-7,4,14); c.fillRect(p.x-7,p.y-2,14,4); break;
+   case 'campus': c.fillStyle='#b9d39a'; roundRect(c,x,y,w,h,10); c.fill(); for(let i=0;i<5;i++){const bx=x+10+(i%3)*w/3.2,by=y+10+Math.floor(i/3)*h/2.2; c.fillStyle='rgba(0,0,0,0.22)'; c.fillRect(bx+3,by+3,26,18); c.fillStyle='#c97f5d'; c.fillRect(bx,by,26,18); c.fillStyle='#dca184'; c.fillRect(bx+1,by+1,24,8);} break;
+   case 'school': c.fillStyle='#b6d197'; c.fillRect(x-4,y+h,w+8,22); c.strokeStyle='rgba(255,255,255,0.8)'; c.lineWidth=0.6; c.strokeRect(x,y+h+3,w,16); box('#c98f66','#e0b08a',2); break;
+   case 'plaza': c.fillStyle='#d8d3c8'; roundRect(c,x,y,w,h,6); c.fill(); for(let i=0;i<6;i++){const bx=x+8+i*w/6,by=y+8; c.fillStyle='rgba(0,0,0,0.2)'; c.fillRect(bx+2,by+2,w/6-10,26); c.fillStyle='#cbb79a'; c.fillRect(bx,by,w/6-10,26); c.fillStyle='#e8d9c1'; c.fillRect(bx+1,by+1,w/6-12,10);} break;
+   case 'market': c.fillStyle='#d8d3c8'; roundRect(c,x-6,y-6,w+12,h+12,4); c.fill(); box('#c7a37b','#e7c79f',2); const aw=['#c0392b','#2e86c1','#27ae60','#d4a017']; for(let i=0;i<5;i++){c.fillStyle=aw[i%4]; c.fillRect(x+2+i*(w-4)/5,y+h-4,(w-4)/5-1,4);} break;
+   case 'civic': box('#c7c0b2','#e9e3d6'); c.fillStyle='#8aa0b0'; c.beginPath(); c.arc(p.x,p.y,7,0,7); c.fill(); break;
+   case 'square': c.fillStyle='#e6e1d6'; c.fillRect(x,y,w,h); c.fillStyle='#8cc0dc'; c.fillRect(p.x-10,p.y-5,20,10); break;
+   case 'towers': for(const [ox,oy,rr,hh] of [[0,0,8,56],[24,10,7,48]]){ const cx=p.x+ox,cy=p.y+oy; c.fillStyle='rgba(0,0,0,0.25)'; c.beginPath(); c.moveTo(cx-rr,cy); c.lineTo(cx-rr+hh*0.6,cy+hh*0.35); c.lineTo(cx+rr+hh*0.6,cy+hh*0.35); c.lineTo(cx+rr,cy); c.fill();
+       for(let f=0;f<hh;f+=1.6){const tw=Math.sin(f/9)*1.6; c.fillStyle= f%3.2<1.6?'#e8eef2':'#cdd8e0'; c.beginPath(); c.ellipse(cx+tw,cy-f*0.62,rr,rr*0.62,f/30,0,7); c.fill();} } break;
+   case 'lighthouse': c.fillStyle='rgba(0,0,0,0.25)'; c.fillRect(p.x,p.y,14,3); c.fillStyle='#f4f1ea'; c.fillRect(p.x-2,p.y-16,4,16); c.fillStyle='#c0392b'; c.fillRect(p.x-2.5,p.y-19,5,3); break;
+  }
+}
+window.Base={paint,roundRect,shade,smooth,poly};
+})();
+</script><script>// ===== Live renderer: world, people, Qareen & angels, light, effects =====
+(function(){
+const C=Clock, W=World, A=People.agents;
+const cv=document.getElementById('world'), ctx=cv.getContext('2d');
+const cam={x:1300,y:760,z:0.62,follow:null};
+let base=null, BS=2, dpr=1;
+const opt={qareen:true,angels:true,labels:true,colorBy:'doing'};
+const fx=[]; // effects
+const ACT={sleep:'#5b6aa8',tahajjud:'#f2c14e',pray:'#2e9d74',jumuah:'#2e9d74',taraweeh:'#2e9d74',itikaf:'#2e9d74',eid:'#e6a23c',dhikr:'#31b3a6',eat:'#e8833a',work:'#7d8590',school:'#4d9de0',learn:'#16a2c4',home:'#c9a27e',visit:'#e0679a',market:'#9b6ad6',outing:'#d6b13a',play:'#f4d03f',phone:'#3f7bff',walk:'#c9a27e',away:'#999'};
+const ACTN={sleep:'Asleep',tahajjud:'Night prayer',pray:'Praying',jumuah:'Friday prayer',taraweeh:'Taraweeh',itikaf:'I\'tikaf',eid:'Eid prayer',dhikr:'Remembering Allah',eat:'Eating',work:'Working',school:'At school',learn:'Learning',home:'At home',visit:'Visiting',market:'Shopping',outing:'Out with family',play:'Playing',phone:'On the phone',walk:'Walking',away:'Travelling'};
+const TIERC=['#d9534f','#f0ad4e','#2ecc71'];
+function resize(){dpr=Math.min(2,window.devicePixelRatio||1); cv.width=innerWidth*dpr; cv.height=innerHeight*dpr; cv.style.width=innerWidth+'px'; cv.style.height=innerHeight+'px';}
+function init(){ resize(); addEventListener('resize',resize); base=Base.paint(BS); }
+const w2s=(x,y)=>[(x-cam.x)*cam.z*dpr+cv.width/2,(y-cam.y)*cam.z*dpr+cv.height/2];
+const s2w=(sx,sy)=>[(sx*dpr-cv.width/2)/(cam.z*dpr)+cam.x,(sy*dpr-cv.height/2)/(cam.z*dpr)+cam.y];
+
+// ----- light -----
+function lightFor(t){
+  const alt=C.sunAltitude(t); const ill=C.moonIllum(t);
+  let dark= alt>8?0: alt>-6? (8-alt)/14*0.55 : alt>-18? 0.55+(-6-alt)/12*0.27 : 0.82;
+  dark-= (alt<-6? ill*0.12:0);
+  let tint;
+  if(alt>8) tint=[255,255,255];
+  else if(alt>-1) tint=[255,200+ (alt+1)*5|0,150+(alt+1)*10|0];  // golden hour
+  else if(alt>-8) tint=[200,150,190];                            // dusk / dawn pink-violet
+  else tint=[70,85,150];
+  return {alt,dark,tint,moon:ill};
+}
+function moonAlt(t){ // approximate: moon trails the sun by its age
+  const age=C.moonAgeDays(t)/C.SYN; return C.sunAltitude(t - age*86400000*(24.84/24)) ; }
+
+// ----- draw -----
+let lastT=0, frames=0, fps=60, fpsT=performance.now();
+function draw(t,events){
+  const now=performance.now(); frames++; if(now-fpsT>1000){fps=frames*1000/(now-fpsT);frames=0;fpsT=now;}
+  const z=cam.z*dpr;
+  if(cam.follow){ const p=cam.follow._p; if(p){cam.x+=(p.x-cam.x)*0.12; cam.y+=(p.y-cam.y)*0.12;} }
+  ctx.setTransform(1,0,0,1,0,0); ctx.fillStyle='#4d86ad'; ctx.fillRect(0,0,cv.width,cv.height);
+  ctx.setTransform(z,0,0,z,cv.width/2-cam.x*z,cv.height/2-cam.y*z);
+  ctx.imageSmoothingEnabled=true; ctx.imageSmoothingQuality='high';
+  ctx.drawImage(base,0,0,W.W,W.H);
+  const [vx0,vy0]=s2w(0,0), [vx1,vy1]=s2w(innerWidth,innerHeight);
+  const vis=(x,y,m=20)=>x>vx0-m&&x<vx1+m&&y>vy0-m&&y<vy1+m;
+  const L=lightFor(t); const tm=t/60000;
+  // water shimmer
+  if(cam.z>0.4){ ctx.strokeStyle='rgba(255,255,255,0.18)'; ctx.lineWidth=0.6/cam.z*1.2; for(let i=0;i<60;i++){ const x=((i*137.5+tm*2)%W.W), y=W.shoreY(x)+30+(i*53%300); if(!vis(x,y))continue; const o=Math.sin(tm*0.8+i)*3; ctx.beginPath(); ctx.moveTo(x+o,y); ctx.lineTo(x+o+10,y); ctx.stroke(); } }
+  // traffic on highways (density by hour)
+  const Lc=C.local(t); const hr=Lc.min/60; const rush=Math.exp(-((hr-8)**2)/2)+Math.exp(-((hr-17.3)**2)/2.5)+0.35*(hr>6&&hr<22?1:0.15);
+  for(const h of W.highways){ const n=Math.round(14*rush*(h.name==='401'?2:1)); for(let k=0;k<n;k++){ const f=((k/n)+tm*0.004*(k%2?1:-1)*(1+(k%3)*0.2)+10)%1; const p=along(h.pts,f); if(!vis(p.x,p.y))continue; const off=(k%2?2.2:-2.2); ctx.fillStyle=k%5===0?'#ffffff':k%3===0?'#c0392b':'#34495e'; ctx.fillRect(p.x-1.6,p.y+off-0.9,3.2,1.8); } }
+  // GO trains
+  for(const l of W.goLines){ const per=30; const ph=((tm%per)/per); for(const dir of [0,1]){ const f=dir?ph:1-ph; const p=along(l.pts,f); const q=along(l.pts,Math.min(1,f+0.012)); const ang=Math.atan2(q.y-p.y,q.x-p.x)+(dir?0:Math.PI); if(!vis(p.x,p.y,40))continue; ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(ang); ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(-17,-1,36,4.6); for(let c=0;c<4;c++){ctx.fillStyle='#2f7d4f'; ctx.fillRect(-18+c*9,-2.2,8.4,4.4); ctx.fillStyle='#f4f4f0'; ctx.fillRect(-18+c*9,-0.6,8.4,1.2);} ctx.restore(); } }
+  // planes at Pearson
+  { const ph=(tm%7)/7; const x=2700-ph*700, y=200+ph*130, sc=1.6-ph*0.8; if(vis(x,y,60)){ ctx.save(); ctx.translate(x+18*sc,y+14*sc); ctx.fillStyle='rgba(0,0,0,0.18)'; plane(ctx,sc); ctx.restore(); ctx.save(); ctx.translate(x,y); ctx.fillStyle='#f6f6f6'; plane(ctx,sc); ctx.restore(); } }
+
+  // ----- people -----
+  const tSec=t/1000; const zoomPx=cam.z; const drawSpirits=zoomPx>6.5;
+  const sel=UI.selected;
+  const people=[];
+  for(const a of A){ const p=Sim.locate(a,t); a._p=p; if(!p)continue; const b=p.b;
+    if(b.act==='away'&&!p.moving) continue;
+    const hidden=!p.moving&&(b.act==='sleep'||(b.pid==='home'&&a.home.kind==='tower'&&zoomPx<3.5)); if(hidden&&a!==sel)continue;
+    if(!vis(p.x,p.y))continue; people.push(a); }
+  people.sort((p,q)=>p._p.y-q._p.y);
+  // lighting overlay first for the world (so people stay readable), then lights
+  if(L.dark>0.01){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation='multiply'; const k=L.dark; const tt=L.tint; ctx.fillStyle=`rgb(${(255-(255-tt[0])*k*1.25)|0},${(255-(255-tt[1])*k*1.25)|0},${(255-(255-tt[2])*k*1.1)|0})`; ctx.fillRect(0,0,cv.width,cv.height); ctx.restore(); }
+  else if(L.alt<14&&L.alt>0){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.globalCompositeOperation='soft-light'; ctx.fillStyle=`rgba(255,170,90,${(14-L.alt)/14*0.45})`; ctx.fillRect(0,0,cv.width,cv.height); ctx.restore(); }
+  if(L.dark>0.25){ ctx.save(); ctx.globalCompositeOperation='screen'; const lk=Math.pow(Math.min(1,(L.dark-0.25)/0.45),1.5);
+    // street lights
+    ctx.fillStyle=`rgba(255,170,80,${0.28*lk})`; for(const a of W.arterials){ for(let f=0;f<1;f+=0.012){const p=along(a.pts,f); if(vis(p.x,p.y)){ctx.beginPath();ctx.arc(p.x,p.y,2.4,0,7);ctx.fill();}} }
+    for(const h of W.highways){ for(let f=0;f<1;f+=0.01){const p=along(h.pts,f); if(vis(p.x,p.y)){ctx.fillStyle=`rgba(255,180,90,${0.3*lk})`;ctx.beginPath();ctx.arc(p.x,p.y,3,0,7);ctx.fill();}} }
+    // lit homes: someone awake at home
+    const lit=new Map(); for(const a of A){ const p=a._p; if(!p||p.moving)continue; const b=p.b; if(b.pid==='home'&&b.act!=='sleep'&&b.act!=='away'){ const v=lit.get(a.home)||{n:0,taj:0,phone:0}; v.n++; if(b.act==='tahajjud'||b.act==='pray'||b.act==='dhikr')v.taj++; if(b.act==='phone')v.phone++; lit.set(a.home,v);} }
+    for(const [h,v] of lit){ if(!vis(h.x,h.y))continue; const col= v.phone&&!v.taj?'rgba(90,140,255,':'rgba(255,196,110,'; const g=ctx.createRadialGradient(h.x,h.y,0,h.x,h.y,h.kind==='tower'?16:9); g.addColorStop(0,col+(0.6*lk)+')'); g.addColorStop(1,col+'0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(h.x,h.y,h.kind==='tower'?16:9,0,7); ctx.fill(); ctx.fillStyle=col+(0.9*lk)+')'; ctx.fillRect(h.x-1.4,(h.roofY||h.y)+h.h*0.6,2.8,1.6); }
+    // tower windows (static randomish)
+    for(const h of W.homes){ if(h.kind!=='tower'||!vis(h.x,h.y))continue; const nlit=Math.max(0, (Lc.min>1380||Lc.min<300)?2:7); for(let k=0;k<nlit;k++){const r=R.rngFor(h.id,k,Math.floor(tm/90)); if(r()<0.6){ctx.fillStyle=`rgba(255,210,140,${0.55*lk})`; ctx.fillRect(h.x-h.w/2+1+r()*(h.w-3),(h.roofY||h.y)+h.h+r()*h.floors*0.38,1.6,0.6);}} }
+    // mosques glow
+    for(const m of W.mosques){ if(!vis(m.x,m.y,60))continue; const g=ctx.createRadialGradient(m.domeX,m.domeY,0,m.domeX,m.domeY,40*m.size); g.addColorStop(0,`rgba(140,255,200,${0.35*lk})`); g.addColorStop(1,'rgba(140,255,200,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(m.domeX,m.domeY,40*m.size,0,7); ctx.fill(); ctx.fillStyle=`rgba(180,255,210,${0.9*lk})`; ctx.beginPath(); ctx.arc(m.minX,m.minY,1.4,0,7); ctx.fill(); }
+    // lighthouse beam
+    const lh=W.place('lighthouse'); const ang=tm*0.9; const g2=ctx.createRadialGradient(lh.x,lh.y-18,0,lh.x,lh.y-18,160); g2.addColorStop(0,`rgba(255,250,210,${0.4*lk})`); g2.addColorStop(1,'rgba(255,250,210,0)'); ctx.fillStyle=g2; ctx.beginPath(); ctx.moveTo(lh.x,lh.y-18); ctx.arc(lh.x,lh.y-18,160,ang,ang+0.22); ctx.fill();
+    // moon path on the lake
+    const ma=moonAlt(t); if(ma>0){ const mx=1500+Math.sin(tm/200)*20; const g3=ctx.createLinearGradient(0,1300,0,W.H); g3.addColorStop(0,`rgba(230,235,255,${0.28*L.moon*lk})`); g3.addColorStop(1,'rgba(230,235,255,0)'); ctx.fillStyle=g3; for(let k=0;k<40;k++){const y=1420+k*7, w=8+k*1.7+Math.sin(tm*2+k)*3; ctx.fillRect(mx-w/2+Math.sin(k*1.7+tm)*4,y,w,1.6);} }
+    ctx.restore(); }
+  // rain / snow
+  const cx=Sim.S.ctx; if(cx&&(cx.rain)&&Lc.min>420&&Lc.min<1260){ ctx.save(); ctx.setTransform(1,0,0,1,0,0); ctx.strokeStyle=cx.snow?'rgba(255,255,255,0.6)':'rgba(200,215,235,0.35)'; ctx.lineWidth=1; for(let i=0;i<180;i++){ const x=(i*97+tm*(cx.snow?40:400))%cv.width, y=(i*173+tm*(cx.snow?90:900))%cv.height; ctx.beginPath(); if(cx.snow){ctx.arc(x,y,1.4,0,7);ctx.stroke();} else {ctx.moveTo(x,y); ctx.lineTo(x-3,y+9); ctx.stroke();} } ctx.restore(); }
+
+  // mosque congregation halo when praying together
+  // people
+  const sc=Math.max(1.1,Math.min(3.2, 2.2/Math.sqrt(Math.max(0.15,zoomPx)))) ; // world units per avatar unit
+  for(const a of people){ drawPerson(a,a._p,t,sc,zoomPx); }
+  if(drawSpirits&&(opt.qareen||opt.angels)) for(const a of people){ drawSpirit(a,a._p,t,sc); }
+  else if(sel&&sel._p&&(opt.qareen||opt.angels)) drawSpirit(sel,sel._p,t,sc);
+  // effects
+  for(let i=fx.length-1;i>=0;i--){ const e=fx[i]; const age=(performance.now()-e.t0)/1000; if(age>e.dur){fx.splice(i,1);continue;} drawFx(e,age,t); }
+  // selection ring
+  if(sel&&sel._p){ const p=sel._p; ctx.strokeStyle='rgba(255,255,255,0.95)'; ctx.lineWidth=2/z*dpr; ctx.beginPath(); ctx.arc(p.x,p.y,4*sc+2,0,7); ctx.stroke(); ctx.strokeStyle='rgba(46,157,116,0.9)'; ctx.lineWidth=1/z*dpr; ctx.beginPath(); ctx.arc(p.x,p.y,4*sc+3.5+Math.sin(performance.now()/300),0,7); ctx.stroke(); }
+  // labels
+  drawLabels(t,vis,L);
+}
+function plane(c,s){ c.beginPath(); c.moveTo(-12*s,2*s); c.lineTo(12*s,-3*s); c.lineTo(13*s,-1*s); c.lineTo(-11*s,4*s); c.fill(); c.beginPath(); c.moveTo(0,0); c.lineTo(-5*s,-9*s); c.lineTo(-2*s,-9*s); c.lineTo(5*s,-1*s); c.lineTo(4*s,4*s); c.lineTo(-1*s,11*s); c.lineTo(-4*s,11*s); c.lineTo(-1*s,2*s); c.fill(); }
+// polyline sampler
+const lenCache=new WeakMap();
+function along(pts,f){ let L=lenCache.get(pts); if(!L){L=[0];for(let i=1;i<pts.length;i++)L.push(L[i-1]+Math.hypot(pts[i][0]-pts[i-1][0],pts[i][1]-pts[i-1][1]));lenCache.set(pts,L);} const d=f*L[L.length-1]; let i=1; while(i<L.length-1&&L[i]<d)i++; const g=(d-L[i-1])/(L[i]-L[i-1]||1); return {x:pts[i-1][0]+(pts[i][0]-pts[i-1][0])*g,y:pts[i-1][1]+(pts[i][1]-pts[i-1][1])*g}; }
+
+function personColor(a,b){ if(opt.colorBy==='tier') return TIERC[a.tier]; if(opt.colorBy==='fasting') return a.plan.fast?'#f2a33a':'#9aa7b0'; return ACT[b.act]||'#ccc'; }
+function drawPerson(a,p,t,sc,zp){
+  const b=p.b; const x=p.x,y=p.y;
+  if(zp<1.3){ // map dots
+    const col=personColor(a,b); ctx.fillStyle=col; ctx.beginPath(); ctx.arc(x,y,(a.age<12?1.6:2.2)*sc*0.6,0,7); ctx.fill(); return; }
+  if(p.moving&&p.mode!=='walk'){ // car or bus
+    ctx.save(); ctx.translate(x,y); ctx.rotate(p.dir||0); const L=p.mode==='bus'?10:6.4, Wd=p.mode==='bus'?3.6:3.2; ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fillRect(-L/2+1,-Wd/2+1,L,Wd); ctx.fillStyle=p.mode==='bus'?'#1f6fb2':a.carColor; Base.roundRect(ctx,-L/2,-Wd/2,L,Wd,1); ctx.fill(); ctx.fillStyle='rgba(170,210,240,0.85)'; ctx.fillRect(L/2-2.4,-Wd/2+0.5,1.3,Wd-1); ctx.fillStyle='rgba(255,255,255,0.18)'; ctx.fillRect(-L/2+1,-Wd/2+0.5,L-3,0.8); ctx.restore(); return; }
+  const s=sc*1.0; const child=a.age<13; const k=child?0.72:1;
+  const tm=t/60000;
+  let post='stand';
+  if(b.post==='pray'||b.act==='pray'||b.act==='tahajjud'||b.act==='taraweeh'||b.act==='jumuah'||b.act==='eid'){
+    const st=b.start||b.s+a.dayMid/60000; const ph=(((t-a.dayMid)/60000-(b.start||b.s))%3.2+3.2)%3.2;
+    if(b.act==='jumuah'&&(t-a.dayMid)/60000<(b.start||0)) post='sit'; else if(b.act==='eid'&&(t-a.dayMid)/60000<(b.start||0)) post='sit';
+    else post= b.post==='sit'?'sit': ph<1.3?'stand':ph<1.9?'bow':ph<2.9?'prostrate':'sit';
+  } else if(b.act==='dhikr'||b.act==='learn'||b.act==='eat'||b.act==='phone'||b.act==='visit') post='sit';
+  if(p.moving) post='walk';
+  const qd=World.QIBLA_DEG*Math.PI/180; const face=(post==='stand'||post==='bow'||post==='prostrate')&&!p.moving&&(b.post==='pray'||b.cong)?qd:(p.dir!=null?p.dir+Math.PI/2:0);
+  const bob= post==='walk'?Math.sin(t/120+a.id)*0.25*s:0;
+  // shadow
+  ctx.fillStyle='rgba(0,0,0,0.22)'; ctx.beginPath(); ctx.ellipse(x+0.8*s,y+1.1*s,2.1*s*k,1.1*s*k,0,0,7); ctx.fill();
+  const robe = (b.act==='jumuah'||b.act==='eid')&&a.gender==='m'?'#f4f2ec':a.cloth;
+  const hx=x, hy=y-3.4*s*k+bob;
+  if(a.disability==='wheelchair'){ ctx.strokeStyle='#333'; ctx.lineWidth=0.35*s; ctx.beginPath(); ctx.arc(x-1.3*s,y+0.2*s,1.1*s,0,7); ctx.arc(x+1.3*s,y+0.2*s,1.1*s,0,7); ctx.stroke(); }
+  if(post==='prostrate'){ ctx.save(); ctx.translate(x,y); ctx.rotate(qd); ctx.fillStyle=robe; ctx.beginPath(); ctx.ellipse(0,0,1.7*s*k,2.2*s*k,0,0,7); ctx.fill(); ctx.fillStyle=a.gender==='f'?a.hijab:(a.kufi?'#f7f5ef':a.hair); ctx.beginPath(); ctx.arc(0,-2.2*s*k,1.05*s*k,0,7); ctx.fill(); ctx.restore(); return; }
+  if(post==='bow'){ ctx.save(); ctx.translate(x,y); ctx.rotate(qd); ctx.fillStyle=robe; Base.roundRect(ctx,-1.5*s*k,-2.6*s*k,3*s*k,3.6*s*k,1.2*s*k); ctx.fill(); ctx.fillStyle=a.gender==='f'?a.hijab:a.skin; ctx.beginPath(); ctx.arc(0,-3.1*s*k,1.15*s*k,0,7); ctx.fill(); ctx.restore(); return; }
+  // body
+  const bh= post==='sit'?2.6:4.2;
+  const g=ctx.createLinearGradient(x-2*s,0,x+2*s,0); g.addColorStop(0,Base.shade(robe.startsWith('#')?robe:'#888888',0.18)); g.addColorStop(1,Base.shade(robe.startsWith('#')?robe:'#888888',-0.2));
+  ctx.fillStyle=g; ctx.beginPath(); const bw=(a.gender==='f'?2.1:1.8)*s*k; ctx.moveTo(x-bw*0.75,y-bh*s*k*0.75+bob); ctx.quadraticCurveTo(x,y-bh*s*k+bob,x+bw*0.75,y-bh*s*k*0.75+bob); ctx.lineTo(x+bw,y+bob*0.3); ctx.quadraticCurveTo(x,y+0.8*s*k,x-bw,y+bob*0.3); ctx.closePath(); ctx.fill();
+  if(post==='walk'){ const l=Math.sin(t/120+a.id)*0.7*s; ctx.strokeStyle=Base.shade(robe.startsWith('#')?robe:'#888888',-0.4); ctx.lineWidth=0.55*s*k; ctx.beginPath(); ctx.moveTo(x-0.5*s,y); ctx.lineTo(x-0.5*s+l*0.3,y+0.9*s); ctx.moveTo(x+0.5*s,y); ctx.lineTo(x+0.5*s-l*0.3,y+0.9*s); ctx.stroke(); }
+  // head
+  const hr=1.25*s*k; const hY= post==='sit'? y-2.9*s*k : hy;
+  ctx.fillStyle=a.skin; ctx.beginPath(); ctx.arc(hx,hY,hr,0,7); ctx.fill();
+  if(a.gender==='f'&&a.age>=12){ ctx.fillStyle=a.hijab; ctx.beginPath(); ctx.arc(hx,hY,hr*1.22,Math.PI*0.95,Math.PI*2.05); ctx.lineTo(hx+hr*1.3,hY+hr*1.4); ctx.lineTo(hx-hr*1.3,hY+hr*1.4); ctx.closePath(); ctx.fill(); ctx.fillStyle=a.skin; ctx.beginPath(); ctx.ellipse(hx,hY+hr*0.18,hr*0.62,hr*0.72,0,0,7); ctx.fill(); }
+  else { ctx.fillStyle=a.hair; ctx.beginPath(); ctx.arc(hx,hY-hr*0.15,hr*0.98,Math.PI,0); ctx.fill(); if(a.kufi&&a.gender==='m'&&(b.post==='pray'||b.cong||b.act==='jumuah'||a.tier===2)){ ctx.fillStyle='#f7f5ef'; ctx.beginPath(); ctx.arc(hx,hY-hr*0.3,hr*0.85,Math.PI,0); ctx.fill(); } if(a.beard){ ctx.fillStyle=a.hair; ctx.beginPath(); ctx.arc(hx,hY+hr*0.35,hr*0.6,0,Math.PI); ctx.fill(); } }
+  ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.beginPath(); ctx.arc(hx-hr*0.35,hY-hr*0.4,hr*0.32,0,7); ctx.fill();
+  // props
+  if(b.act==='phone'){ ctx.fillStyle='#8fb6ff'; ctx.fillRect(x+0.6*s,y-2.2*s,0.9*s,1.4*s); ctx.save(); ctx.globalCompositeOperation='lighter'; const gg=ctx.createRadialGradient(x+1*s,y-1.6*s,0,x+1*s,y-1.6*s,3*s); gg.addColorStop(0,'rgba(80,140,255,0.5)'); gg.addColorStop(1,'rgba(80,140,255,0)'); ctx.fillStyle=gg; ctx.beginPath(); ctx.arc(x+1*s,y-1.6*s,3*s,0,7); ctx.fill(); ctx.restore(); }
+  if(b.act==='eat'){ ctx.fillStyle='#fff'; ctx.beginPath(); ctx.ellipse(x,y+0.9*s,1.3*s,0.6*s,0,0,7); ctx.fill(); ctx.fillStyle='#b5651d'; ctx.beginPath(); ctx.arc(x-0.3*s,y+0.8*s,0.3*s,0,7); ctx.arc(x+0.35*s,y+0.9*s,0.3*s,0,7); ctx.fill(); }
+  if(b.act==='dhikr'){ for(let i=0;i<6;i++){const an=i/6*6.28+t/700; ctx.fillStyle='#d9c27a'; ctx.beginPath(); ctx.arc(x+Math.cos(an)*0.9*s+1.3*s,y-1.3*s+Math.sin(an)*0.5*s,0.18*s,0,7); ctx.fill();} }
+  if(a.disability==='cane'||a.disability==='blind'){ ctx.strokeStyle=a.disability==='blind'?'#fff':'#6b4a2a'; ctx.lineWidth=0.3*s; ctx.beginPath(); ctx.moveTo(x+1.2*s,y-2*s); ctx.lineTo(x+2.2*s,y+1*s); ctx.stroke(); }
+  if(a.plan.fast&&zp>3.5&&(opt.colorBy!=='doing'||true)){ ctx.fillStyle='#f2c14e'; ctx.beginPath(); ctx.arc(x+2.1*s,hY-1.6*s,0.65*s,0,7); ctx.fill(); ctx.fillStyle=Base.shade('#203050',0); ctx.globalAlpha=0.9; ctx.beginPath(); ctx.arc(x+2.4*s,hY-1.75*s,0.55*s,0,7); ctx.fill(); ctx.globalAlpha=1; }
+  // activity dot (colour code) under feet at mid zoom
+  if(zp<4){ ctx.fillStyle=personColor(a,b); ctx.beginPath(); ctx.arc(x,y+1.4*s,0.55*s,0,7); ctx.fill(); }
+}
+// ----- Qareen & angels: soft abstract light, no faces -----
+function liveQareen(a,p,t){
+  const b=p.b; let s=a._qs||0.3; const tmin=(t-a.dayMid)/60000; const pt=Sim.S.ctx.pt;
+  if(b.cong) s*=0.6; if(b.act==='pray'||b.act==='tahajjud'||b.act==='dhikr') s*=0.5;
+  for(const k of ['fajr','dhuhr','asr','maghrib','isha']) if(tmin>=pt[k]&&tmin<pt[k]+8) s*=0.35; // flees the adhan
+  if(a.qlog.some(e=>e.kind==='kursi'&&e.t<=t)&&b.act==='sleep') s*=0.3;
+  if(a.qlog.some(e=>e.kind==='morning'&&e.t<=t)&&tmin<pt.maghrib) s*=0.55;
+  if(b.act==='phone') s=Math.min(1,s*1.6+0.15);
+  const recent=a.qlog.find(e=>e.type==='qareen'&&e.t<=t&&t-e.t<20*60000); if(recent) s=Math.min(1,s+0.45);
+  return {s,recent};
+}
+function drawSpirit(a,p,t,sc){
+  const fade=UI.selected&&UI.selected!==a?0.4:1; const s=sc*(UI.selected===a?1.15:1); const x=p.x,y=p.y; const now=performance.now()/1000;
+  const child=a.age<7;
+  if(opt.qareen&&!child){ const {s:q,recent}=liveQareen(a,p,t); a._qlive=q;
+    const lean = recent?1:0; const ox=x-(2.6-lean*1.4)*s, oy=y-(1.6+lean*1.2)*s+Math.sin(now*1.3+a.id)*0.5*s;
+    const R1=(1.6+q*1.6)*s;
+    ctx.save(); ctx.globalAlpha=(0.2+q*0.6)*fade;
+    for(let i=0;i<3;i++){ const tx=ox-(i*0.9)*s+Math.sin(now*2+i+a.id)*0.4*s, ty=oy+i*0.9*s; const g=ctx.createRadialGradient(tx,ty,0,tx,ty,R1*(1-i*0.22)); g.addColorStop(0,'rgba(95,60,135,0.9)'); g.addColorStop(0.55,'rgba(130,95,180,0.35)'); g.addColorStop(1,'rgba(130,95,180,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(tx,ty,R1*(1-i*0.22),0,7); ctx.fill(); }
+    ctx.restore();
+    if(recent&&(UI.selected===a||cam.z>5)&&t-recent.t<12*60000){ bubble(ox,oy-R1-1.5*s,recent.text,'q',s); }
+  }
+  if(opt.angels){ const bobR=Math.sin(now*1.6+a.id)*0.4*s, bobL=Math.sin(now*1.6+a.id+1.7)*0.4*s;
+    const lastR=a.records.find(e=>e.side==='right'&&e.t<=t&&t-e.t<10*60000), lastL=a.records.find(e=>e.side==='left'&&e.t<=t&&t-e.t<10*60000);
+    ctx.globalAlpha=fade; angel(x+2.8*s,y-4.4*s+bobR,s,'r',lastR?1:0);
+    const pend=a.records.find(e=>e.side==='left'&&e.t<=t&&t-e.t<6*3600000&&!(e.erasedAt&&a.dayMid+e.erasedAt*60000<=t)&&e.pending);
+    angel(x-2.8*s+(opt.qareen?-1.2*s:0),y-4.6*s+bobL,s,'l',lastL?1:0,pend?((t-pend.t)/(6*3600000)):null); ctx.globalAlpha=1;
+  }
+}
+function angel(x,y,s,side,flash,pending){
+  const col= side==='r'?[255,224,140]:[190,215,255];
+  ctx.save(); ctx.globalCompositeOperation='lighter';
+  const R0=(0.9+flash*1.2)*s; const g=ctx.createRadialGradient(x,y,0,x,y,R0*2.2); g.addColorStop(0,`rgba(${col},${0.7})`); g.addColorStop(0.3,`rgba(${col},${0.22+flash*0.35})`); g.addColorStop(1,`rgba(${col},0)`); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,R0*2.2,0,7); ctx.fill();
+  // wings: two soft arcs
+  ctx.strokeStyle=`rgba(${col},0.4)`; ctx.lineWidth=0.22*s; const fl=Math.sin(performance.now()/260)*0.2;
+  ctx.beginPath(); ctx.ellipse(x-0.6*s,y,0.9*s,0.45*s,-0.5-fl,Math.PI*1.1,Math.PI*1.95); ctx.stroke();
+  ctx.beginPath(); ctx.ellipse(x+0.6*s,y,0.9*s,0.45*s,0.5+fl,Math.PI*1.05,Math.PI*1.9); ctx.stroke();
+  ctx.restore();
+  // body: soft teardrop of light (no face)
+  ctx.fillStyle=`rgba(${col},0.9)`; ctx.beginPath(); ctx.moveTo(x,y-0.8*s); ctx.quadraticCurveTo(x+0.65*s,y+0.2*s,x,y+0.9*s); ctx.quadraticCurveTo(x-0.65*s,y+0.2*s,x,y-0.8*s); ctx.fill();
+  if(pending!=null){ ctx.strokeStyle='rgba(190,215,255,0.95)'; ctx.lineWidth=0.3*s; ctx.beginPath(); ctx.arc(x,y,2.2*s,-Math.PI/2,-Math.PI/2+Math.PI*2*(1-pending)); ctx.stroke(); }
+}
+function bubble(x,y,text,kind,s){
+  const fs=Math.max(1.6*s, 11/(cam.z)); ctx.font=`italic ${fs}px Georgia, serif`; const maxW=fs*22; const words=text.split(' '); const lines=[]; let cur='';
+  for(const w of words){ const tt=cur?cur+' '+w:w; if(ctx.measureText(tt).width>maxW&&cur){lines.push(cur);cur=w;} else cur=tt; } if(cur)lines.push(cur);
+  const w=Math.max(...lines.map(l=>ctx.measureText(l).width))+fs, h=lines.length*fs*1.25+fs*0.6;
+  ctx.fillStyle=kind==='q'?'rgba(48,30,66,0.86)':'rgba(255,248,225,0.92)'; Base.roundRect(ctx,x-w/2,y-h,w,h,fs*0.5); ctx.fill();
+  ctx.fillStyle=kind==='q'?'#e7dcf5':'#4a3b10'; ctx.textAlign='center'; ctx.textBaseline='top'; lines.forEach((l,i)=>ctx.fillText(l,x,y-h+fs*0.3+i*fs*1.25));
+}
+function drawFx(e,age,t){
+  const k=age/e.dur;
+  if(e.kind==='adhan'){ for(let i=0;i<3;i++){ const kk=(k*1.5+i*0.25)%1; ctx.strokeStyle=`rgba(120,230,180,${0.6*(1-kk)})`; ctx.lineWidth=2.5/cam.z; ctx.beginPath(); ctx.arc(e.x,e.y,20+kk*220,0,7); ctx.stroke(); } }
+  else if(e.kind==='spark'){ const y=e.y-6-k*14; ctx.save(); ctx.globalCompositeOperation='lighter'; const col=e.side==='right'?'255,214,120':'170,200,255'; const g=ctx.createRadialGradient(e.x,y,0,e.x,y,4+k*3); g.addColorStop(0,`rgba(${col},${0.95*(1-k)})`); g.addColorStop(1,`rgba(${col},0)`); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(e.x,y,4+k*3,0,7); ctx.fill(); ctx.restore(); }
+  else if(e.kind==='qwisp'){ ctx.fillStyle=`rgba(90,60,120,${0.5*(1-k)})`; ctx.beginPath(); ctx.arc(e.x-3,e.y-4-k*6,3+k*4,0,7); ctx.fill(); }
+}
+function drawLabels(t,vis,L){
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  const z=cam.z;
+  // neighbourhoods
+  for(const h of W.hoods){ const x=h.x+h.w/2,y=h.y+h.h/2; if(!vis(x,y,200))continue; const fs=Math.max(14/z, Math.min(40,22/z)); ctx.font=`600 ${fs}px "Avenir Next", "Segoe UI", sans-serif`; ctx.fillStyle=L.dark>0.4?'rgba(230,235,255,0.55)':'rgba(70,60,45,0.55)'; ctx.save(); ctx.translate(x,y); ctx.fillText(h.name.toUpperCase().split('').join(' '),0,0); ctx.restore(); }
+  if(!opt.labels) return;
+  const fs=12/z;
+  ctx.font=`600 ${fs}px "Segoe UI", sans-serif`;
+  for(const m of W.mosques){ if(!vis(m.x,m.y))continue; label(m.x,m.y+20*m.size,m.name,'#1f5e4c',fs); }
+  if(z>0.9) for(const p of W.places){ if(p.kind==='mosque'||p.kind==='park'&&z<1.6||p.kind==='school'&&z<2.2)continue; if(!vis(p.x,p.y))continue; label(p.x,p.y+(p.h||20)/2+8,p.name,'#3d3a33',fs*0.9); }
+  if(z>0.45) for(const l of W.goLines) for(const [n,[x,y]] of l.stations){ if(vis(x,y)&&z>1.2) label(x,y+9,n,'#2f7d4f',fs*0.85); }
+  // highway shields
+  for(const h of W.highways){ const p=along(h.pts,0.32); if(!vis(p.x,p.y))continue; const s=11/z; ctx.fillStyle='#fff'; Base.roundRect(ctx,p.x-s*1.4,p.y-s*0.8,s*2.8,s*1.6,s*0.3); ctx.fill(); ctx.strokeStyle='#1d4f91'; ctx.lineWidth=1.5/z; ctx.stroke(); ctx.fillStyle='#1d4f91'; ctx.font=`bold ${s*0.95}px sans-serif`; ctx.fillText(h.name,p.x,p.y+0.5/z); }
+  { const p=along(W.river,0.45); if(vis(p.x,p.y)&&z>0.5){ ctx.font=`italic ${12/z}px Georgia`; ctx.fillStyle='rgba(30,80,120,0.85)'; ctx.fillText('Credit River',p.x+30,p.y); } }
+  if(vis(1900,1450,400)){ ctx.font=`italic ${18/z}px Georgia`; ctx.fillStyle='rgba(255,255,255,0.7)'; ctx.fillText('L a k e   O n t a r i o',1900,1480); }
+  // people names when very close
+  if(z>6){ ctx.font=`600 ${10/z}px "Segoe UI", sans-serif`; for(const a of A){ const p=a._p; if(!p||!vis(p.x,p.y)||(p.b.act==='sleep'&&!p.moving))continue; ctx.fillStyle='rgba(255,255,255,0.85)'; const txt=a.first+' · '+(p.moving?(p.mode==='walk'?'walking':'driving'):ACTN[p.b.act]||''); const w=ctx.measureText(txt).width; ctx.fillRect(p.x-w/2-1/z,p.y+3-5/z,w+2/z,10/z); ctx.fillStyle='#222'; ctx.fillText(txt,p.x,p.y+3); } }
+}
+function label(x,y,txt,col,fs){ ctx.font=`600 ${fs}px "Segoe UI", sans-serif`; const w=ctx.measureText(txt).width; ctx.fillStyle='rgba(255,255,255,0.82)'; Base.roundRect(ctx,x-w/2-fs*0.4,y-fs*0.7,w+fs*0.8,fs*1.4,fs*0.4); ctx.fill(); ctx.fillStyle=col; ctx.fillText(txt,x,y+fs*0.05); }
+function pick(sx,sy){ const [wx,wy]=s2w(sx,sy); let best=null,bd=1e9; const rad=Math.max(4,14/cam.z); for(const a of A){ const p=a._p; if(!p)continue; if(p.b.act==='away'&&!p.moving)continue; if(p.b.act==='sleep'&&!p.moving)continue; const d=Math.hypot(p.x-wx,p.y-wy); if(d<bd&&d<rad){bd=d;best=a;} } return best; }
+function addFx(e){ e.t0=performance.now(); fx.push(e); if(fx.length>400)fx.splice(0,fx.length-400); }
+window.Render={init,draw,cam,opt,pick,addFx,s2w,w2s,ACT,ACTN,TIERC,lightFor,get fps(){return fps;},resize};
+})();
+</script><script>// ===== Controls, HUD, agent card, ticker, main loop =====
+(function(){
+const C=Clock,S=Sim.S,A=People.agents,$=id=>document.getElementById(id);
+const UI={selected:null}; window.UI=UI;
+const fmt=m=>{m=((m%1440)+1440)%1440;const h=Math.floor(m/60),mi=Math.floor(m%60);const ap=h<12?'am':'pm';return ((h+11)%12+1)+':'+String(mi).padStart(2,'0')+' '+ap;};
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const TIER=[['Struggling','"wrongs himself" (Fatir 35:32) — misses a lot, but can grow'],['Middle way','"moderate" — does the duties, some extras'],['Racing ahead','"foremost in good" — duties plus lots of extras']];
+let speed=1, paused=false;
+const params=new URLSearchParams(location.search);
+// start time: real now (or ?t=ISO)
+if(params.get('fresh')) localStorage.removeItem('sunnahWorld.v2');
+if(params.get('era')&&ERAS[params.get('era')]) Outside.era=params.get('era');
+const SAVED=params.get('t')?null:Outside.load();
+if(params.get('era')&&ERAS[params.get('era')]) Outside.era=params.get('era');
+if(params.get('t')){Outside.baseT=Date.parse(params.get('t'));}
+let start=Outside.eraTime(Outside.baseT);
+if(SAVED&&SAVED.speed!=null) speed=SAVED.speed;
+if(params.get('speed')) speed=+params.get('speed');
+Sim.setTime(start);
+Render.init();
+if(params.get('z')){Render.cam.z=+params.get('z');} if(params.get('x')){Render.cam.x=+params.get('x');Render.cam.y=+params.get('y');}
+// ---------- ticker ----------
+const tick=[]; function push(text,kind,a){ tick.unshift({text,kind,a,time:S.t}); if(tick.length>7)tick.pop(); renderTicker(); }
+function renderTicker(){ $('ticker').innerHTML=tick.map(e=>`<div class="tk ${e.kind||''}" ${e.a?`data-id="${e.a.id}"`:''}><span class="tt">${fmt(C.local(e.time).min)}</span> ${esc(e.text)}</div>`).join(''); }
+window.pushTicker=(t,k)=>push(t,k);
+$('ticker').onclick=e=>{const d=e.target.closest('[data-id]'); if(d) select(A[+d.dataset.id],true);};
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+let goodToday=0,leftHeld=0,erased=0,whispers=0;
+function onEvents(evs){
+  for(const e of evs){
+    if(e.type==='global'){ if(e.kind==='adhan'){ for(const m of World.mosques) Render.addFx({kind:'adhan',x:m.domeX||m.x,y:m.domeY||m.y,dur:6}); } push(e.text,e.kind); }
+    else if(e.type==='rec'){ const p=e.a._p; if(p) Render.addFx({kind:'spark',x:p.x,y:p.y,side:e.side,dur:2.2}); if(e.side==='right')goodToday++; else leftHeld++;
+      if(e.a===UI.selected) push((e.side==='right'?'✦ Right angel wrote: ':'◇ Left angel holds the pen: ')+e.text,e.side==='right'?'good':'left',e.a);
+      else if(e.kind==='leftfor'&&Math.random()<0.25) push(e.a.first+': '+e.text,'good',e.a); }
+    else if(e.type==='qareen'){ whispers++; const p=e.a._p; if(p) Render.addFx({kind:'qwisp',x:p.x,y:p.y,dur:2}); if(e.a===UI.selected) push('Qareen ('+e.move+'): '+e.text,'q',e.a); }
+    else if(e.type==='note'&&Math.random()<0.15) push(e.text,'note',e.a);
+  }
+}
+// ---------- sky widget ----------
+const sky=$('sky'), sc=sky.getContext('2d');
+function drawSky(){
+  const w=sky.width=sky.clientWidth*2, h=sky.height=sky.clientHeight*2; const pt=S.ctx.pt; const L=C.local(S.t);
+  const alt=C.sunAltitude(S.t); const Lr=Render.lightFor(S.t);
+  const g=sc.createLinearGradient(0,0,0,h); if(alt>6){g.addColorStop(0,'#5fa8e6');g.addColorStop(1,'#bfe1f7');} else if(alt>-6){g.addColorStop(0,'#3b4b8f');g.addColorStop(0.6,'#e58f6f');g.addColorStop(1,'#f6c58f');} else if(alt>-18){g.addColorStop(0,'#141c45');g.addColorStop(1,'#3d3f7a');} else {g.addColorStop(0,'#070b22');g.addColorStop(1,'#151b3e');}
+  sc.fillStyle=g; sc.fillRect(0,0,w,h);
+  if(alt<-6){ const r=R.rngFor('stars'); sc.fillStyle='rgba(255,255,255,0.8)'; for(let i=0;i<60;i++){sc.fillRect(r()*w,r()*h*0.8,1.5,1.5);} }
+  // timeline of the day
+  const X=m=>m/1440*w; const y0=h*0.7;
+  sc.fillStyle='rgba(0,0,0,0.25)'; sc.fillRect(0,y0-2,w,4);
+  const marks=[['Fajr',pt.fajr],['Sunrise',pt.sunrise],['Dhuhr',pt.dhuhr],['Asr',pt.asr],['Maghrib',pt.maghrib],['Isha',pt.isha]];
+  sc.font='bold 20px Segoe UI, sans-serif'; sc.textAlign='center';
+  // last third band
+  sc.fillStyle='rgba(242,193,78,0.25)'; sc.fillRect(X(pt.lastThirdMorning),y0-14,X(pt.fajr)-X(pt.lastThirdMorning),28);
+  for(const [n,m] of marks){ sc.fillStyle=n==='Sunrise'?'rgba(255,220,150,0.9)':'#fff'; sc.fillRect(X(m)-1.5,y0-12,3,24); sc.fillStyle='rgba(255,255,255,0.95)'; const up=['Fajr','Dhuhr','Maghrib'].includes(n); sc.fillText(n,X(m),up?y0-20:y0+34); }
+  // sun path
+  sc.strokeStyle='rgba(255,255,255,0.35)'; sc.lineWidth=2; sc.beginPath(); for(let m=0;m<=1440;m+=15){ const a=C.sunAltitude(S.ctx.mid+m*60000); const yy=y0-30-Math.max(-12,a)*3.2; m?sc.lineTo(X(m),yy):sc.moveTo(X(m),yy);} sc.stroke();
+  const nx=X(L.min), ny=y0-30-Math.max(-12,alt)*3.2;
+  if(alt>-1){ const sg=sc.createRadialGradient(nx,ny,0,nx,ny,30); sg.addColorStop(0,'#fff6c8'); sg.addColorStop(0.4,'#ffd45a'); sg.addColorStop(1,'rgba(255,200,80,0)'); sc.fillStyle=sg; sc.beginPath(); sc.arc(nx,ny,30,0,7); sc.fill(); }
+  sc.fillStyle='#fff'; sc.fillRect(nx-1,y0-16,2,32);
+  // moon (phase drawn)
+  const age=C.moonAgeDays(S.t), ill=C.moonIllum(S.t); const mx=w-60,my=50,mr=30;
+  sc.fillStyle='#232a4a'; sc.beginPath(); sc.arc(mx,my,mr,0,7); sc.fill();
+  sc.fillStyle='#f4f1dc'; sc.beginPath(); const waxing=age<C.SYN/2; sc.arc(mx,my,mr,-Math.PI/2,Math.PI/2,!waxing); const k=Math.cos(ill*Math.PI)*mr; sc.ellipse(mx,my,Math.abs(k),mr,0,Math.PI/2,-Math.PI/2,(k>0)===waxing?true:false); sc.fill();
+  // hide moon detail? fine
+}
+// ---------- HUD text ----------
+function hud(){
+  const L=C.local(S.t), pt=S.ctx.pt; const hc=C.hijri(S.t,'calc'), hs=C.hijri(S.t,'sight');
+  $('clock').textContent=fmt(L.min); $('date').textContent=DAYS[L.wd]+' '+L.d+' '+MON[L.m]+' '+L.y;
+  $('hijri').innerHTML=`${hc.d} ${hc.name} ${hc.y} AH`+(hs.d!==hc.d?` <span class="dim">(local-sighting masjids: ${hs.d} ${hs.name})</span>`:'');
+  const next=['fajr','sunrise','dhuhr','asr','maghrib','isha'].map(k=>[k,pt[k]]).find(([k,m])=>m>L.min);
+  const nm=next?next:['fajr',pt.fajr+1440]; const nn={fajr:'Fajr',sunrise:'Sunrise',dhuhr:L.wd===5?"Jumu'ah":'Dhuhr',asr:'Asr',maghrib:'Maghrib',isha:'Isha'}[nm[0]];
+  const left=nm[1]-L.min; $('next').textContent=`${nn} in ${left>=60?Math.floor(left/60)+'h ':''}${Math.round(left%60)}m`;
+  const ill=C.moonIllum(S.t), age=C.moonAgeDays(S.t); const phase= age<1.5?'New moon':age<7?'Waxing crescent':age<8.5?'First quarter':age<14?'Waxing gibbous':age<16?'Full moon':age<22?'Waning gibbous':age<23.5?'Last quarter':age<28?'Waning crescent':'New moon';
+  const c=Sim.cal(hc); const tags=[]; if(c.white)tags.push('White Days'); if(c.ramadan)tags.push('Ramadan'+(c.lastTen?' · last ten nights':'')); if(c.eidFitr)tags.push('Eid al-Fitr'); if(c.eidAdha)tags.push('Eid al-Adha'); if(c.firstTen)tags.push('Best ten days'); if(c.sacred)tags.push('Sacred month'); if(L.wd===1||L.wd===4)tags.push('Mon/Thu fast day'); if(L.wd===5)tags.push("Friday · Jumu'ah");
+  if(L.min>=pt.lastThirdMorning&&L.min<pt.fajr) tags.push('Last third of the night');
+  $('moon').innerHTML=`${phase} · ${Math.round(ill*100)}% lit · ${S.ctx.temp}°C${S.ctx.snow?' snow':S.ctx.rain?' rain':''}`;
+  $('tags').innerHTML=tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  // stats
+  let pray=0,mosque=0,fast=0,sleep=0,awakeNight=0,work=0,move=0,phone=0;
+  const night=L.min<pt.fajr||L.min>pt.isha+60;
+  for(const a of A){ const p=a._p; if(!p)continue; const b=p.b; if(a.plan.fast)fast++; if(p.moving){move++;continue;}
+    if(['pray','tahajjud','jumuah','taraweeh','eid','itikaf'].includes(b.act)){pray++; if(World.place(b.pid)&&World.place(b.pid).kind==='mosque')mosque++;}
+    if(b.act==='sleep')sleep++; else if(night&&b.act!=='away')awakeNight++; if(b.act==='work'||b.act==='school')work++; if(b.act==='phone')phone++; }
+  $('stats').innerHTML=`<b>${A.length}</b> people · <b>${People.households.length}</b> homes<br>
+   <span style="color:#2e9d74">●</span> praying now <b>${pray}</b> (${mosque} at a masjid)<br>
+   <span style="color:#f2a33a">●</span> fasting today <b>${fast}</b><br>
+   <span style="color:#5b6aa8">●</span> asleep <b>${sleep}</b> · still up at night <b>${night?awakeNight:0}</b><br>
+   <span style="color:#7d8590">●</span> at work/school <b>${work}</b> · on the move <b>${move}</b><br>
+   <span style="color:#ffd678">✦</span> good deeds written today <b>${goodToday}</b><br>
+   <span style="color:#a9c6ff">◇</span> held by left angel <b>${leftHeld}</b> · <span style="color:#b49ad6">~</span> whispers <b>${whispers}</b>
+   <div class="dim small">${Math.round(Render.fps)} fps</div>`;
+}
+// ---------- Agent card ----------
+function bar(v,col){return `<span class="bar"><i style="width:${Math.round(v*100)}%;background:${col}"></i></span>`;}
+const HABN={prompt:'Prays on time',fajrMosque:'Goes to the masjid',rawatib:'Extra (sunnah) prayers',night:'Night prayer',fastMT:'Mon/Thu fasting',white:'White Days fasting',dhikrAM:'Morning remembrance',dhikrPM:'Evening remembrance',quran:'Daily Qur\'an',sadaqa:'Daily charity',duha:'Duha prayer',sleepAdab:'Sleep routine',visit:'Visiting people',kahf:'Al-Kahf on Fridays'};
+function card(){
+  const a=UI.selected; if(!a){$('card').classList.remove('open');return;} $('card').classList.add('open');
+  const openState=[...$('card').querySelectorAll('details')].map(d=>d.open); const sTop=$('card').scrollTop;
+  const p=a._p||{}; const b=p.b||{}; const tm=(S.t-a.dayMid)/60000; const hh=People.households[a.hh];
+  const q=a._qlive!=null?a._qlive:a._qs;
+  const flags=[]; const f=a.plan.flags||{}; if(a.plan.fast)flags.push('🌙 Fasting: '+a.plan.fast); if(f.ill)flags.push('Ill with '+f.ill.kind+' (day '+f.ill.day+')'); if(f.travel)flags.push('Travelling: '+f.travel.to); if(f.period)flags.push('On her period (excused from prayer & fasting)'); if(a.pregnant)flags.push('Pregnant'); if(a.estr&&!a.estr.done)flags.push('Not speaking to '+(a.estr.a===a?a.estr.b:a.estr.a).first+' ('+a.estr.days+' days — '+a.estr.why+')'); if(f.tahajjud)flags.push('Woke for night prayer');
+  const dis={wheelchair:'Uses a wheelchair',cane:'Walks with a cane',blind:'Blind',deaf:'Deaf (sees the adhan on a phone app)'}[a.disability];
+  const mood={calm:'Calm',cheerful:'Cheerful',anxious:'Anxious',low:'Feeling low',grieving:'Grieving'}[a.mood];
+  const sched=a.plan.blocks.filter(x=>x.e-x.s>=4&&!(x.act==='home'&&x.e-x.s<20)).map(x=>`<div class="sb ${tm>=x.s&&tm<x.e?'now':''} ${tm>=x.e?'past':''}"><span class="st">${fmt(x.s)}</span><span class="sd" style="background:${Render.ACT[x.act]}"></span>${esc(x.txt)}</div>`).join('');
+  const recs=a.records.filter(e=>e.t<=S.t).slice(-14).reverse().map(e=>{ let st=''; if(e.side==='left'){ const er=e.erasedAt&&a.dayMid+e.erasedAt*60000<=S.t; const due=S.t-e.t>=6*3600000; st= er?'<span class="er">erased — repented and did good within the 6 hours</span>': e.pending&&!due?`<span class="pd">pen lifted — ${Math.ceil((6*3600000-(S.t-e.t))/3600000)}h left to repent</span>`:'<span class="wr">written</span>'; } const k={done:'',intent:'(intention)',habit:'(habit kept while excused)',leftfor:'(bad deed left for Allah = good)',missed:'',sin:''}[e.kind]||'';
+    return `<div class="rc ${e.side}"><span class="st">${fmt((e.t-a.dayMid)/60000)}</span>${e.side==='right'?'✦':'◇'} ${esc(e.text)} <span class="dim">${k}</span> ${st}</div>`;}).join('')||'<div class="dim">Nothing written yet today.</div>';
+  const ql=a.qlog.filter(e=>e.t<=S.t&&(e.type==='qareen'||e.type==='shield')).slice(-8).reverse().map(e=>`<div class="ql ${e.type}"><span class="st">${fmt((e.t-a.dayMid)/60000)}</span>${e.type==='shield'?'🛡 '+esc(e.text):'<b>'+e.move+'</b> — '+esc(e.text)}</div>`).join('')||'<div class="dim">No whispers yet today.</div>';
+  const hab=Object.entries(a.habits).map(([k,v])=>`<div class="hb"><span>${HABN[k]}</span>${bar(v,'#2e9d74')}</div>`).join('');
+  const doing=p.moving?(p.mode==='walk'?'Walking to: ':'Driving to: ')+b.txt:b.txt;
+  $('card').innerHTML=`<div class="ch"><div><div class="nm">${esc(a.name)}</div><div class="sub">${a.age} · ${a.gender==='m'?'man':'woman'}${a.age<15?' (child)':''} · ${esc(a.job)}<br>${esc(People.households[a.hh].surname)} household, ${World.hoods.find(h=>h.id===a.home.hood).name} · ${a.home.kind==='tower'?'apartment':'house'} · ${a.madhhab} · masjid: ${World.place(a.mosque).short}</div></div><button id="cx">✕</button></div>
+   <div class="now"><span class="sd" style="background:${Render.ACT[b.act]||'#999'}"></span>${esc(doing||'')}</div>
+   <div class="row"><div class="tier t${a.tier}">${TIER[a.tier][0]}</div><div class="dim small">${TIER[a.tier][1]}</div></div>
+   ${flags.length?`<div class="flags">${flags.map(x=>'<div>'+esc(x)+'</div>').join('')}</div>`:''}
+   <div class="traits">
+    <div class="hb"><span>Heart clarity</span>${bar(a.heart,'#7fd3ff')}</div>
+    <div class="hb"><span>Qareen pressure now</span>${bar(q||0,'#8a63b8')}</div>
+    <div class="hb"><span>Honesty</span>${bar(a.honesty,'#f0c05a')}</div>
+    <div class="hb"><span>Phone attachment</span>${bar(a.phone,'#3f7bff')}</div>
+    <div class="small">${mood}${dis?' · '+dis:''}${a.chronic?' · long-term illness':''} · ${a.legal}</div>
+   </div>
+   ${Outside.bioHTML(a)}
+   <details><summary>Today's plan (from the sky clock)</summary><div class="sched">${sched}</div></details>
+   <details open><summary>Recording angels — right ✦ and left ◇</summary><div class="recs">${recs}</div></details>
+   <details open><summary>Qareen moves (delay · diminish · divert)</summary><div class="qls">${ql}</div></details>
+   <details><summary>Habits (grow with streaks, not intensity)</summary>${hab}</details>
+   <div class="btns"><button id="fol">${Render.cam.follow===a?'Stop following':'Follow'}</button><button id="zm">Zoom in</button></div>`;
+  if(openState.length) $('card').querySelectorAll('details').forEach((d,i)=>d.open=openState[i]); $('card').scrollTop=sTop;
+  $('cx').onclick=()=>{UI.selected=null;Render.cam.follow=null;card();};
+  $('fol').onclick=()=>{Render.cam.follow=Render.cam.follow===a?null:a;card();};
+  $('zm').onclick=()=>{Render.cam.follow=a;Render.cam.z=9;card();};
+}
+function select(a,zoom){ UI.selected=a; if(a&&zoom){Render.cam.follow=a; Render.cam.z=Math.max(Render.cam.z,7);} card(); }
+UI.select=select;
+// ---------- finder ----------
+const FIND={tahajjud:a=>a._p&&a._p.b.act==='tahajjud',mosque:a=>a._p&&!a._p.moving&&World.place(a._p.b.pid)&&World.place(a._p.b.pid).kind==='mosque',fasting:a=>a.plan.fast,qareen:a=>a.qlog.some(e=>e.type==='qareen'&&e.t<=S.t&&S.t-e.t<3600000),ill:a=>a.plan.flags.ill,phone:a=>a._p&&a._p.b.act==='phone',estranged:a=>a.estr&&!a.estr.done,sabiq:a=>a.tier===2&&a._p&&a._p.b.act!=='sleep',zalim:a=>a.tier===0&&a._p&&a._p.b.act!=='sleep',disabled:a=>a.disability,repent:a=>a.records.some(e=>e.erasedAt&&a.dayMid+e.erasedAt*60000<=S.t),child:a=>a.age<13&&a._p&&a._p.b.act!=='sleep',working:a=>a._p&&a._p.b.act==='work'};
+let findI=0;
+$('find').onchange=e=>{ const k=e.target.value; if(!k)return; const list=A.filter(FIND[k]).filter(a=>a._p&&!(a._p.b.act==='away'&&!a._p.moving)); if(!list.length){push('Nobody like that right now — try another time of day.','note');} else { select(list[(findI++)%list.length],true);} e.target.value=''; };
+// ---------- controls ----------
+function setSpeed(s){ speed=s; Outside.speed=s; paused=s===0; document.querySelectorAll('[data-sp]').forEach(b=>b.classList.toggle('on',+b.dataset.sp===s)); }
+document.querySelectorAll('[data-sp]').forEach(b=>b.onclick=()=>setSpeed(+b.dataset.sp)); setSpeed(speed);
+function jumpTo(ms,msg){ Outside.baseT=Outside.unEra(ms); Outside.switching=true; Sim.setTime(ms); Outside.switching=false; Outside.catchUp(Clock.dayIndex(Outside.baseT)-1); goodToday=leftHeld=whispers=0; for(const e of S.events){ if(e.t>S.t)break; if(e.type==='rec'){e.side==='right'?goodToday++:leftHeld++;} if(e.type==='qareen')whispers++; } if(msg)push(msg,'sky'); card(); }
+function nextPrayer(){ const L=C.local(S.t),pt=S.ctx.pt; for(const k of ['fajr','dhuhr','asr','maghrib','isha']) if(pt[k]-1>L.min) return S.ctx.mid+(pt[k]-1)*60000; const nd=S.ctx.mid+86400000*1.5; return C.localMidnight(nd)+(C.prayerTimes(nd).fajr-1)*60000; }
+function findDay(test,from){ for(let i=1;i<420;i++){ const ms=C.localMidnight(from)+i*86400000+43200000; if(test(ms))return C.localMidnight(ms);} return null; }
+$('jPrayer').onclick=()=>jumpTo(nextPrayer(),'Jumped to the next adhan');
+$('jNight').onclick=()=>{ const d=findDay(()=>true,S.t); jumpTo(d+(C.prayerTimes(d+43200000).lastThirdMorning+20)*60000,'Jumped to the last third of the night'); };
+$('jFri').onclick=()=>{ const d=findDay(ms=>C.local(ms).wd===5,S.t); jumpTo(d+(C.prayerTimes(d+43200000).dhuhr-25)*60000,"Jumped to Friday — Jumu'ah"); };
+$('jWhite').onclick=()=>{ const d=findDay(ms=>{const h=C.hijri(ms,'calc');return h.d===14;},S.t); jumpTo(d+(C.prayerTimes(d+43200000).maghrib+50)*60000,'Jumped to the White Days — full moon'); };
+$('jRam').onclick=()=>{ const d=findDay(ms=>{const h=C.hijri(ms,'calc');return h.m===8&&h.d===3;},S.t); jumpTo(d+(C.prayerTimes(d+43200000).maghrib-15)*60000,'Jumped to Ramadan — just before iftar'); };
+$('jEid').onclick=()=>{ const d=findDay(ms=>{const h=C.hijri(ms,'calc');return (h.m===9&&h.d===1)||(h.m===11&&h.d===10);},S.t); jumpTo(d+(C.prayerTimes(d+43200000).sunrise+40)*60000,'Jumped to Eid morning'); };
+$('jNow').onclick=()=>jumpTo(Outside.eraTime(Date.now()),'Back to right now');
+for(const k of ['qareen','angels','labels']){ const el=$('o_'+k); el.checked=Render.opt[k]; el.onchange=()=>Render.opt[k]=el.checked; }
+$('colorBy').onchange=e=>{Render.opt.colorBy=e.target.value; legend();};
+$('legendBtn').onclick=()=>$('legend').classList.toggle('open');
+$('aboutBtn').onclick=()=>$('about').classList.add('open'); $('aboutClose').onclick=()=>$('about').classList.remove('open');
+function legend(){ const o=Render.opt.colorBy; let rows;
+  if(o==='tier') rows=[[Render.TIERC[2],'Racing ahead (foremost in good)'],[Render.TIERC[1],'Middle way (moderate)'],[Render.TIERC[0],'Struggling (wrongs himself)']];
+  else if(o==='fasting') rows=[['#f2a33a','Fasting today'],['#9aa7b0','Not fasting']];
+  else rows=Object.entries({pray:'Praying',tahajjud:'Night prayer',dhikr:'Remembering Allah',learn:'Learning / Qur\'an',eat:'Eating',work:'Working',school:'School',visit:'Visiting someone',market:'Shopping',outing:'Family outing',play:'Playing',phone:'On the phone',home:'At home'}).map(([k,v])=>[Render.ACT[k],v]);
+  $('legRows').innerHTML=rows.map(([c,t])=>`<div><span class="sd" style="background:${c}"></span>${t}</div>`).join('');
+}
+legend();
+// ---------- input: pan / zoom / pinch / click ----------
+const cv=$('world'); const cam=Render.cam; const ptrs=new Map(); let drag=null, moved=0, pinch=null;
+cv.addEventListener('pointerdown',e=>{cv.setPointerCapture(e.pointerId); ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY}); moved=0; if(ptrs.size===1)drag={x:e.clientX,y:e.clientY}; else if(ptrs.size===2){const [a,b]=[...ptrs.values()];pinch={d:Math.hypot(a.x-b.x,a.y-b.y),z:cam.z};}});
+cv.addEventListener('pointermove',e=>{ if(!ptrs.has(e.pointerId))return; ptrs.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptrs.size===2&&pinch){const [a,b]=[...ptrs.values()]; const d=Math.hypot(a.x-b.x,a.y-b.y); zoomAt((a.x+b.x)/2,(a.y+b.y)/2,pinch.z*d/pinch.d/cam.z); moved+=10; return;}
+  if(drag){ const dx=e.clientX-drag.x,dy=e.clientY-drag.y; moved+=Math.abs(dx)+Math.abs(dy); cam.x-=dx/cam.z; cam.y-=dy/cam.z; drag={x:e.clientX,y:e.clientY}; if(moved>6)cam.follow=null; }});
+const up=e=>{ ptrs.delete(e.pointerId); if(ptrs.size<2)pinch=null; if(ptrs.size===0){ if(moved<6&&drag){ const a=Render.pick(e.clientX,e.clientY); if(a) select(a,false); } drag=null; } };
+cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
+function zoomAt(sx,sy,f){ const [wx,wy]=Render.s2w(sx,sy); cam.z=Math.max(0.28,Math.min(24,cam.z*f)); const [nx,ny]=Render.s2w(sx,sy); cam.x+=wx-nx; cam.y+=wy-ny; }
+cv.addEventListener('wheel',e=>{e.preventDefault(); zoomAt(e.clientX,e.clientY,Math.exp(-e.deltaY*0.0015));},{passive:false});
+cv.addEventListener('dblclick',e=>zoomAt(e.clientX,e.clientY,2.2));
+addEventListener('keydown',e=>{ if(e.key===' '){setSpeed(paused?60:0);e.preventDefault();} if(e.key==='+'||e.key==='=')zoomAt(innerWidth/2,innerHeight/2,1.3); if(e.key==='-')zoomAt(innerWidth/2,innerHeight/2,1/1.3); });
+// ---------- loop ----------
+let last=performance.now(), hudT=0;
+function frame(now){
+  const raw=now-last; if(raw>2000&&!paused) Outside.baseT+=raw; const dt=Math.min(100,raw); last=now;
+  if(!paused){ const d0=S.day; Outside.baseT+=dt*speed; const tgt=Outside.eraTime(Outside.baseT); let evs; if(tgt<S.t-3600000||tgt>S.t+3*86400000){ Sim.setTime(tgt); evs=[]; } else evs=Sim.step(Math.max(0,tgt-S.t)); if(S.day!==d0){goodToday=leftHeld=whispers=0;} onEvents(evs.slice(-60)); }
+  Render.draw(S.t); window.Panels&&Panels.overlay();
+  Outside.tick(now);
+  if(now-hudT>250){ hudT=now; hud(); drawSky(); if(UI.selected)card(); }
+  requestAnimationFrame(frame);
+}
+hud(); drawSky(); requestAnimationFrame(frame);
+window.App={jumpTo,setSpeed,select,nextPrayer};
+if(params.get('select')) setTimeout(()=>select(A[+params.get('select')],true),50);
+})();
+// helpers for tours / testing
+App.busiest=function(kind='mosque'){ const c=new Map(); for(const a of People.agents){const p=a._p; if(!p||p.moving)continue; const pl=World.place(p.b.pid); if(pl&&pl.kind===kind)c.set(pl,(c.get(pl)||0)+1);} let best=null,n=-1; for(const [k,v] of c) if(v>n){n=v;best=k;} return best; };
+App.fly=function(x,y,z,ms=2500){ const cam=Render.cam; cam.follow=null; const s={x:cam.x,y:cam.y,z:cam.z}, t0=performance.now(); return new Promise(res=>{ (function f(){ const k=Math.min(1,(performance.now()-t0)/ms), e=k<.5?2*k*k:1-Math.pow(-2*k+2,2)/2; cam.x=s.x+(x-s.x)*e; cam.y=s.y+(y-s.y)*e; cam.z=Math.exp(Math.log(s.z)+(Math.log(z)-Math.log(s.z))*e); if(k<1)requestAnimationFrame(f); else res(); })(); }); };
+</script><script>// ===== Panels: era switcher, newspaper, feed, survey, people directory, police cars =====
+(function(){
+const O=Outside, A=People.agents, E=ERAS, EO=ERA_ORDER, $=id=>document.getElementById(id), esc=O.esc;
+const P={}; window.Panels=P; const COL={'1986':'#c8964a','2006':'#4a90d9','2026':'#2e9d74'};
+// ---------- era switcher ----------
+function setEra(k,quiet){ O.era=k; O.switching=true; Sim.setTime(O.eraTime(O.baseT)); O.switching=false;
+  document.body.dataset.era=k; document.querySelectorAll('[data-era]').forEach(b=>b.classList.toggle('on',b.dataset.era===k));
+  if(UI.selected) UI.select(UI.selected,false); if(!quiet&&window.pushTicker) pushTicker('Now watching Mississauga in '+k+' — '+E[k].tag,'sky'); refresh(); }
+P.setEra=setEra;
+$('eras').innerHTML=EO.map(k=>`<button data-era="${k}">${k}</button>`).join('')+`<span class="dim small" id="eraTag"></span>`;
+$('eras').onclick=e=>{const b=e.target.closest('[data-era]'); if(b)setEra(b.dataset.era);};
+// ---------- generic panel ----------
+let open=null;
+function show(id){ for(const x of ['dir','paper','feed','survey']) $(x).classList.toggle('open',x===id&&open!==id); open=open===id?null:id; refresh(); }
+P.show=show;
+$('peopleBtn').onclick=()=>show('dir'); $('paperBtn').onclick=()=>show('paper'); $('feedBtn').onclick=()=>show('feed'); $('surveyBtn').onclick=()=>show('survey');
+document.addEventListener('click',e=>{ const c=e.target.closest('.pclose'); if(c){ show(open); return; }
+  const l=e.target.closest('[data-pid]'); if(l){ const a=A[+l.dataset.pid]; if(a){ if(open&&window.innerWidth<900) show(open); UI.select(a,true);} } });
+function refresh(){ $('eraTag').textContent=E[O.era].tag; if(open==='dir')dir(); if(open==='paper')paper(); if(open==='feed')feed(); if(open==='survey')survey(); }
+P.refresh=refresh;
+// ---------- people directory ----------
+let q='',hood='';
+function dir(){ const el=$('dir'); if(!el.querySelector('#dq')){ el.innerHTML=`<div class="ph"><b>👥 Everyone in town (${A.length})</b><button class="pclose">✕</button></div>
+  <input id="dq" placeholder="Search a name, job, area, masjid…"><select id="dh"><option value="">All areas</option>${World.hoods.map(h=>`<option value="${h.id}">${h.name}</option>`).join('')}</select><div id="dl"></div>`;
+  $('dq').oninput=e=>{q=e.target.value.toLowerCase();list();}; $('dh').onchange=e=>{hood=e.target.value;list();}; } list(); }
+function list(){ const w=O.st[O.era].w; const T=['Struggling','Middle way','Racing ahead'];
+  const rows=A.filter(a=>(!hood||a.home.hood===hood)&&(!q||(a.name+' '+a.job+' '+O.hoodName(a.home.hood)+' '+World.place(a.mosque).name).toLowerCase().includes(q)));
+  $('dl').innerHTML=`<div class="dim small">${rows.length} people · tap anyone to open their full story</div>`+rows.slice(0,250).map(a=>`<div class="pr" data-pid="${a.id}"><span class="dot t${a.tier}"></span><div><b>${esc(a.name)}</b> <span class="dim">${a.age}</span><div class="small dim">${esc(O.st[O.era].jobless[a.id]?'looking for work':a.job)} · ${O.hoodName(a.home.hood)} · ${T[a.tier]}${w.dep[a.id]>0.5?' · low patch':''}</div></div></div>`).join('')+(rows.length>250?`<div class="dim small">…and ${rows.length-250} more — search to narrow it down.</div>`:''); }
+// ---------- newspaper ----------
+let pIdx=null,pEra=null;
+function paper(){ const era=pEra||O.era, st=O.st[era], e=E[era]; const ps=st.papers; const el=$('paper');
+  if(!ps.length){ el.innerHTML='<div class="ph"><b>📰 Newspaper</b><button class="pclose">✕</button></div><p>The first paper prints at midnight.</p>'; return; }
+  const i=pIdx==null||pIdx>=ps.length?ps.length-1:pIdx; const p=ps[i];
+  const sec=(name,f)=>{ const xs=p.items.filter(f); return xs.length?`<div class="sec"><h4>${name}</h4>${xs.map(x=>`<div class="story"><b ${x.aid!=null?`data-pid="${x.aid}" class="lnk"`:''}>${esc(x.head)}</b><div>${esc(x.body)}</div></div>`).join('')}</div>`:''; };
+  el.innerHTML=`<div class="ph"><span>${EO.map(k=>`<button class="pe ${k===era?'on':''}" data-pe="${k}">${k}</button>`).join('')}</span><button class="pclose">✕</button></div>
+  <div class="news n${era}"><div class="mast">${esc(e.paper)}</div><div class="dateline">${p.date} · ${p.hijri}${e.forecast?' · <i>2026 is a forecast</i>':''}</div>
+   <h2 ${p.lead.aid!=null?`data-pid="${p.lead.aid}" class="lnk"`:''}>${esc(p.lead.head)}</h2><p class="leadp">${esc(p.lead.body)}</p>
+   <div class="facts"><span>🌙 ${p.fasting} fasting</span>${p.jum?`<span>🕌 ${p.jum} at Jumu'ah</span>`:''}<span>⭐ ${p.night} up for night prayer</span><span>🚓 ${p.patrols} patrol passes</span>${p.good!=null?`<span>✦ ${p.good} good deeds written</span>`:''}</div>
+   <div class="cols">${sec('Good news',x=>x.topic==='life'&&x.s>0||x.topic==='heart')}${sec('Faith',x=>['faith','jumuah','fast','ramadan','eid'].includes(x.topic))}${sec('Police notes (Peel Regional Police)',x=>x.topic==='police')}${sec('Money & jobs',x=>x.topic==='econ')}${sec('Around Mississauga',x=>['city','neigh'].includes(x.topic)||x.topic==='life'&&x.s<=0)}${sec('The wider world',x=>x.topic==='world')}${sec('Weather & moon',x=>x.topic==='weather')}</div>
+   <div class="dim small">Made up by the simulation from what happened in town today. Not real news.</div></div>
+  <div class="arch"><span class="small dim">Past issues:</span> ${ps.map((x,j)=>`<button class="pi ${j===i?'on':''}" data-pi="${j}">${x.date.split(' ').slice(1,3).join(' ')}</button>`).reverse().join('')}</div>`;
+  el.querySelectorAll('[data-pe]').forEach(b=>b.onclick=()=>{pEra=b.dataset.pe;pIdx=null;paper();}); el.querySelectorAll('[data-pi]').forEach(b=>b.onclick=()=>{pIdx=+b.dataset.pi;paper();}); }
+// ---------- feed ----------
+let fEra=null;
+function feed(){ const era=fEra||O.era, e=E[era], ps=O.st[era].posts.slice().reverse(); const el=$('feed');
+  el.innerHTML=`<div class="ph"><span>${EO.map(k=>`<button class="fe ${k===era?'on':''}" data-fe="${k}">${k}</button>`).join('')}</span><button class="pclose">✕</button></div>
+   <h3>${esc(e.feedName)} <span class="dim small">· ${esc(e.tag)}</span></h3>
+   <div class="feed f${era}">${ps.map(p=>`<div class="post"><div class="small dim">${esc(p.plat)} · ${esc(p.date)}</div><b class="lnk" data-pid="${p.aid}">${esc(p.who)}</b><div>${esc(p.text)}</div><div class="small dim">re: ${esc(p.about)}</div></div>`).join('')||'<p>Nobody has posted yet.</p>'}</div>`;
+  el.querySelectorAll('[data-fe]').forEach(b=>b.onclick=()=>{fEra=b.dataset.fe;feed();}); }
+// ---------- survey ----------
+const MET=[['dep','Low mood (depression screen, PHQ-style)','%'],['anx','Lots of worry (anxiety)','%'],['lone','Often lonely','%'],['trustP','Trust the police','%'],['trustI','Trust big institutions','%'],['attend','Go to the masjid most weeks','%'],['screen','Screen time a day','h'],['sat','Life satisfaction (0–10)','']];
+function survey(){ const el=$('survey'); const last=k=>O.st[k].surveys[O.st[k].surveys.length-1], prev=k=>O.st[k].surveys[O.st[k].surveys.length-2];
+  const cell=(k,m)=>{ const s=last(k),p=prev(k); if(!s)return '<td>–</td>'; const d=p?s[m[0]]-p[m[0]]:null; return `<td><b>${s[m[0]]}${m[2]}</b>${d!=null?` <span class="${d>0?'up':d<0?'dn':''}">${d>0?'▲':d<0?'▼':'='}${Math.abs(+d.toFixed(1))}</span>`:''}</td>`; };
+  el.innerHTML=`<div class="ph"><b>📊 Monthly town survey</b><button class="pclose">✕</button></div>
+  <p class="small">A pretend poll in the style of Ipsos or Pew, asked of everyone 15+ once a month in each era. <b>All numbers are simulated</b>, not real survey results. Arrows show change since last month.${E['2026'].forecast?' 2026 is a forecast.':''}</p>
+  <table class="sv"><tr><th></th>${EO.map(k=>`<th style="color:${COL[k]}">${k}<div class="small dim">month ${last(k)?last(k).month+1:0}</div></th>`).join('')}</tr>${MET.map(m=>`<tr><td>${m[1]}</td>${EO.map(k=>cell(k,m)).join('')}</tr>`).join('')}</table>
+  <div class="charts">${MET.map(m=>`<div class="ch1"><div class="small">${m[1]}</div><canvas data-m="${m[0]}" width="300" height="110"></canvas></div>`).join('')}</div>
+  <details><summary>Archive (every month)</summary>${EO.map(k=>`<div class="small"><b>${k}</b>: ${O.st[k].surveys.map(s=>`${s.date.split(' ').slice(1,3).join(' ')} — low mood ${s.dep}%, lonely ${s.lone}%, trust police ${s.trustP}%`).join(' · ')}</div>`).join('')}</details>`;
+  el.querySelectorAll('canvas[data-m]').forEach(cv=>{ const m=cv.dataset.m, c=cv.getContext('2d'); const all=EO.flatMap(k=>O.st[k].surveys.map(s=>s[m])); const mx=Math.max(1,...all)*1.15; const n=Math.max(2,...EO.map(k=>O.st[k].surveys.length));
+    c.strokeStyle='rgba(255,255,255,0.15)'; c.beginPath(); c.moveTo(0,100);c.lineTo(300,100);c.stroke();
+    for(const k of EO){ const ss=O.st[k].surveys; c.strokeStyle=COL[k]; c.fillStyle=COL[k]; c.lineWidth=2.5; c.beginPath(); ss.forEach((s,i)=>{ const x=10+i*(280/(n-1)), y=100-s[m]/mx*90; i?c.lineTo(x,y):c.moveTo(x,y); }); c.stroke(); ss.forEach((s,i)=>{ const x=10+i*(280/(n-1)), y=100-s[m]/mx*90; c.beginPath(); c.arc(x,y,3,0,7); c.fill(); }); } }); }
+// ---------- police cars on the map ----------
+const cv=$('world'); const routes=[]; { const r=R.rngFor('patrol'); const hs=World.hoods; for(let i=0;i<6;i++){ const path=[]; for(let j=0;j<5;j++) path.push(R.pick(r,hs)); routes.push(path); } }
+P.overlay=function(){ const c=cv.getContext('2d'); const n=Math.max(2,Math.round(E[O.era].police.patrolsPerDay/5)); const t=Sim.S.t/60000; c.save(); c.setTransform(1,0,0,1,0,0);
+  for(let i=0;i<Math.min(n,routes.length);i++){ const p=routes[i]; const L=p.length; const f=((t/40+i*1.7)%L+L)%L; const a=p[Math.floor(f)], b=p[(Math.floor(f)+1)%L], k=f%1;
+    const ax=a.x+a.w/2,ay=a.y+a.h/2,bx=b.x+b.w/2,by=b.y+b.h/2; const x= k<0.5? ax+(bx-ax)*k*2 : bx, y= k<0.5? ay : ay+(by-ay)*(k-0.5)*2;
+    const [sx,sy]=Render.w2s(x,y); const z=Math.max(11,Render.cam.z*5); c.fillStyle='#f4f4f4'; c.fillRect(sx-z,sy-z*0.55,z*2,z*1.1); c.fillStyle='#1d3d8f'; c.fillRect(sx-z,sy-z*0.15,z*2,z*0.3);
+    const blink=Math.floor(performance.now()/400)%2; c.fillStyle=blink?'#ff3b3b':'#3b6bff'; c.fillRect(sx-z*0.4,sy-z*0.8,z*0.8,z*0.3); }
+  c.restore(); };
+// ---------- toasts on new papers & first-run note ----------
+let seen=EO.map(k=>O.st[k].papers.length).join();
+O.notify=function(){ const now=EO.map(k=>O.st[k].papers.length).join(); if(now!==seen){ seen=now; if(window.pushTicker) pushTicker('📰 The morning papers are out for 1986, 2006 and 2026 — tap Newspaper','eid'); if(open)refresh(); } };
+setInterval(()=>{ if(open==='survey'||open==='feed')return; if(open)refresh(); },4000);
+const pr=new URLSearchParams(location.search);
+setEra(O.era,true);
+if(O.closedFor>60000) setTimeout(()=>pushTicker&&pushTicker('Welcome back — the town kept living for '+Math.round(O.closedFor/3600000*10)/10+' hours while you were away','sky'),300);
+if(pr.get('open')) setTimeout(()=>show({people:'dir',paper:'paper',feed:'feed',survey:'survey'}[pr.get('open')]||pr.get('open')),200);
+})();
+</script>
+</body></html>
