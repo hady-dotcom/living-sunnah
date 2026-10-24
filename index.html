@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:,"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:,"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
 <title>Sunnah World — Mississauga</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#1b2433;font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;color:#f4f1ea}
 #world{position:fixed;inset:0;touch-action:none;cursor:grab}
 .glass{background:rgba(18,26,40,0.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.25)}
@@ -89,6 +89,36 @@ body.s3d #top{top:auto;bottom:12px;right:auto;left:12px;max-width:520px}
 body.s3d #inner .ib,body.s3d #inner .ilegend{display:none}
 @media (max-width:900px){body.s3d #inner{max-height:30vh!important;height:30vh!important;top:auto!important;bottom:0!important}body.s3d #controls{bottom:calc(30vh + 6px)!important;top:auto!important;right:6px!important;left:auto!important;padding:4px 6px!important}body.s3d #controls .lbl,body.s3d #controls .grp:first-child>span{display:none}#s3dCredit{bottom:calc(30vh + 2px)!important}#s3dBar{padding:6px 8px}#s3dBar .small,#s3dBar button{font-size:11px;padding:3px 6px}}
 @media (max-width:900px){body.s3d #controls{left:auto!important;max-width:calc(100vw - 12px);transform:none!important}body.s3d #controls button{font-size:11px;padding:3px 7px}}
+/* ---- minimisable info box + controls ---- */
+.minb{position:absolute;top:6px;right:6px;width:28px;height:28px;padding:0;border-radius:8px;font-size:14px;line-height:1;z-index:2}
+#top{padding-right:42px}
+body.topMin #top .brand,body.topMin #top #tags,body.topMin #top #moon,body.topMin #top .col:has(#date){display:none!important}
+body.topMin #top{flex-wrap:nowrap;gap:10px;padding-top:6px;padding-bottom:6px;cursor:pointer;overflow:hidden}
+body.topMin #top #clock{font-size:18px;min-width:0;white-space:nowrap}
+body.topMin #top #next{white-space:nowrap;font-size:12px}
+body.topMin #top .erabar button{padding:3px 7px;font-size:12px}
+body.topMin #top .erabar span,body.topMin #top .erabar .small{display:none}
+.ctlHead{display:none;width:100%;align-items:center;justify-content:space-between;position:relative;min-height:30px}
+.ctlHead .minb{position:static}
+#controls{position:fixed}
+#controls>.ctlHead{display:flex}
+#ctlBtn{display:none;position:fixed;right:max(14px,env(safe-area-inset-right));bottom:calc(max(16px,env(safe-area-inset-bottom)) + 8px);width:52px;height:52px;border-radius:50%;font-size:24px;z-index:20;background:rgba(20,28,40,.88);color:#fff;border:1px solid rgba(255,255,255,.25);box-shadow:0 6px 18px rgba(0,0,0,.4)}
+body.ctlMin #controls{display:none!important}
+body.ctlMin #ctlBtn{display:block}
+@media (max-width:900px){
+ #top{top:max(8px,env(safe-area-inset-top));left:8px;right:8px}
+ body.topMin #top .erabar{flex-wrap:nowrap}
+ body.topMin #top{max-height:46px}
+ body:not(.ctlMin) #controls{left:0!important;right:0!important;bottom:0!important;top:auto!important;transform:none!important;width:100vw;max-width:100vw!important;max-height:68vh;overflow-y:auto;border-radius:16px 16px 0 0;padding:8px 12px calc(14px + env(safe-area-inset-bottom))!important;z-index:30!important;align-items:stretch}
+ body:not(.ctlMin) #controls .grp{display:flex!important;flex-wrap:wrap;justify-content:center}
+ body:not(.ctlMin) #controls .lab{display:inline!important}
+ body.iso #ctlBtn{bottom:calc(46vh + 12px)}
+ body.s3d #ctlBtn{bottom:calc(30vh + 12px)}
+ body.iso #top{z-index:5}
+
+}
+@media (max-width:900px){body:has(#card.open):not(.iso):not(.s3d) #ctlBtn{bottom:calc(55vh + 24px)}}
+body.topMin #top #clock{margin-right:4px}
 </style></head><body>
 <canvas id="world"></canvas>
 <canvas id="iso"></canvas>
@@ -97,6 +127,7 @@ body.s3d #inner .ib,body.s3d #inner .ilegend{display:none}
 <div id="inner" class="glass"><div class="ih"><div id="innerHead"></div><div class="ib"><button id="isoFollow">Follow</button><button id="go3d">🚶 Street view (3D)</button><button id="isoPeople">👥 Someone else</button><button id="isoExit">🌍 World time view</button></div></div>
 <div class="ilegend small"><span class="lq">🟣 Qareen whispers</span><span class="la">🟡 Angel nudges</span><span>💭 Their thoughts</span><span>✦ / ◇ What gets written</span></div><div id="innerList"></div></div>
 <div id="top" class="glass">
+  <button id="topMin" class="minb" title="Minimise / expand" aria-label="Minimise or expand the info box">▴</button>
   <div class="brand">Sunnah World <span class="dim">· Mississauga</span></div>
   <div id="clock">--</div><div class="col"><div id="date"></div><div id="hijri"></div></div>
   <div class="col"><div id="next" class="next"></div><div id="moon" class="dim small"></div></div>
@@ -105,6 +136,7 @@ body.s3d #inner .ib,body.s3d #inner .ilegend{display:none}
 <canvas id="sky" class="glass"></canvas>
 <div id="stats" class="glass"></div>
 <div id="controls" class="glass">
+  <div class="ctlHead"><b>Controls</b><button id="ctlClose" class="minb" aria-label="Close controls">✕</button></div>
   <div class="grp"><span class="lab">Speed</span><button data-sp="0">❚❚</button><button data-sp="1">Real time</button><button data-sp="60">60×</button><button data-sp="600">600×</button><button data-sp="3600">1h/s</button></div>
   <div class="grp"><span class="lab">Jump to</span><button id="jPrayer">Next adhan</button><button id="jNight">Night prayer</button><button id="jFri">Friday</button><button id="jWhite">White Days</button><button id="jRam">Ramadan</button><button id="jEid">Eid</button><button id="jNow">Now</button></div>
   <div class="grp"><label><input type="checkbox" id="o_qareen"> Qareen</label><label><input type="checkbox" id="o_angels"> Angels</label><label><input type="checkbox" id="o_labels"> Labels</label>
@@ -112,6 +144,7 @@ body.s3d #inner .ib,body.s3d #inner .ilegend{display:none}
    <select id="find"><option value="">Show me someone…</option><option value="tahajjud">praying at night</option><option value="mosque">at a masjid</option><option value="fasting">fasting today</option><option value="qareen">just whispered to by the Qareen</option><option value="repent">who repented in time</option><option value="ill">who is ill</option><option value="phone">on their phone</option><option value="estranged">not speaking to someone</option><option value="sabiq">"racing ahead"</option><option value="zalim">struggling</option><option value="disabled">with a disability</option><option value="child">a child</option><option value="working">at work</option></select>
    <button id="peopleBtn">👥 People</button><button id="paperBtn">📰 Newspaper</button><button id="feedBtn">💬 Talk</button><button id="surveyBtn">📊 Survey</button><button id="legendBtn">Key</button><button id="aboutBtn">About</button></div>
 </div>
+<button id="ctlBtn" aria-label="Open controls">☰</button>
 <div id="ticker"></div>
 <div id="legend" class="glass"><b>Key</b><div id="legRows"></div><hr>
  <div><span class="orb q"></span> <b>Qareen</b> — a dark violet haze at the shoulder. Bigger and darker = stronger pull. It can only <i>delay</i>, <i>diminish</i> or <i>divert</i>; the person always chooses. It shrinks at the adhan, in congregation, after the morning remembrance, after Ayat al-Kursi, and to a third in Ramadan.</div>
@@ -2065,6 +2098,24 @@ function inner(force){ const a=UI.selected; if(!a||!(I.on||I.on3d))return; const
   if(atBottom||force) el.scrollTop=el.scrollHeight; }
 I.inner=inner; I.lines=lines;
 setInterval(()=>inner(false),500);
+})();
+</script><script>// Minimisable info box (#top) and controls panel. Phone: both start minimised.
+(function(){
+  const KEY='sunnahWorld.ui', $=id=>document.getElementById(id), B=document.body;
+  const phone=()=>matchMedia('(max-width:900px)').matches;
+  let st={}; try{ st=JSON.parse(localStorage.getItem(KEY)||'{}'); }catch(e){}
+  const save=()=>{ if(!phone()) try{ localStorage.setItem(KEY,JSON.stringify({top:B.classList.contains('topMin'),ctl:B.classList.contains('ctlMin')})); }catch(e){} };
+  function setTop(min){ B.classList.toggle('topMin',min); $('topMin').textContent=min?'▾':'▴'; if(!min&&phone()) setCtl(true,true); save(); }
+  function setCtl(min,quiet){ B.classList.toggle('ctlMin',min); if(!min&&phone()&&!B.classList.contains('topMin')) setTop(true); if(!quiet) save(); }
+  function init(){ if(phone()){ setTop(true); setCtl(true,true); } else { setTop(!!st.top); setCtl(!!st.ctl); }
+    $('topMin').onclick=e=>{ e.stopPropagation(); setTop(!B.classList.contains('topMin')); };
+    $('top').addEventListener('click',e=>{ if(B.classList.contains('topMin')&&!e.target.closest('button,select,input')) setTop(false); });
+    $('ctlClose').onclick=()=>setCtl(true); $('ctlBtn').onclick=()=>setCtl(false);
+    // on phone, picking something in the sheet that opens a panel closes the sheet
+    $('controls').addEventListener('click',e=>{ if(phone()&&e.target.closest('#peopleBtn,#paperBtn,#feedBtn,#surveyBtn,#legendBtn,#aboutBtn,[id^=j]')) setTimeout(()=>setCtl(true,true),50); });
+  }
+  if(document.readyState==='loading') addEventListener('DOMContentLoaded',init); else init();
+  window.Chrome={setTop,setCtl};
 })();
 </script><script type="module">import "./street3d/street3d.js";</script>
 </body></html>
