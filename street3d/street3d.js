@@ -136,9 +136,17 @@ function makePerson(a){ const src=models[dressFor(a)]; const o=SkeletonUtils.clo
       const dr=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.85,0.7,16,1,true),hj.material); dr.geometry=new THREE.CylinderGeometry(0.62,0.85,0.7,20,1,true,0.8,Math.PI*2-1.6); dr.position.set(0,0.0,-0.02); head.add(dr); }
     else if(a.gender==='m'&&a.kufi){ const k=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.42,0.18,16),new THREE.MeshLambertMaterial({color:0xf4f4f4})); k.position.set(0,0.98,0); head.add(k); }
     if(a.beard){ const bd=new THREE.Mesh(new THREE.BoxGeometry(0.62,0.32,0.2),new THREE.MeshLambertMaterial({color:new THREE.Color(a.hair||'#222')})); bd.position.set(0,0.12,0.42); head.add(bd); } }
-  const mixer=new THREE.AnimationMixer(o); const P={a,o,mixer,acts:{},cur:null,head};
+  const mixer=new THREE.AnimationMixer(o); const P={a,o,mixer,acts:{},cur:null,head,hand:findBone(o,'handslot.r')};
   for(const n of ['Idle','Walking_A','Walking_B','Sit_Chair_Idle','Sit_Floor_Idle','Interact','Cheer','Lie_Idle','Use_Item']) if(clips[n]) P.acts[n]=mixer.clipAction(clips[n]);
   play(P,'Idle'); return P; }
+function setProp(m,prop){ if(m.propK===prop) return; if(m.propO&&m.propO.parent) m.propO.parent.remove(m.propO); m.propK=prop; m.propO=null; if(!prop||!m.hand) return;
+  const L=(c,e)=>new THREE.MeshLambertMaterial({color:c,emissive:e||0x000000}); let g;
+  if(['phone','flip','bb','ipod','walkman'].includes(prop)){ g=new THREE.Group(); const body=new THREE.Mesh(new THREE.BoxGeometry(prop==='phone'?0.32:0.26,prop==='phone'?0.6:0.42,0.06),L(prop==='walkman'?0xc0392b:0x1b1f27)); g.add(body); const sc=new THREE.Mesh(new THREE.PlaneGeometry(prop==='phone'?0.28:0.2,prop==='phone'?0.52:0.2),new THREE.MeshBasicMaterial({color:prop==='phone'?0x8fd3ff:0x9fe0a0})); sc.position.z=0.035; if(prop!=='walkman') g.add(sc); g.rotation.x=-0.6; }
+  else if(prop==='paper'||prop==='letter'||prop==='cards'){ g=new THREE.Mesh(new THREE.PlaneGeometry(prop==='paper'?1.1:0.45,prop==='paper'?1.4:0.6),new THREE.MeshLambertMaterial({color:0xf1eee4,side:THREE.DoubleSide})); g.rotation.x=-0.9; }
+  else if(prop==='landline'){ g=new THREE.Mesh(new THREE.CapsuleGeometry(0.08,0.55,4,8),L(0xe8dcc8)); g.rotation.z=1.2; }
+  else if(prop==='radio'){ g=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.35,0.2),L(0x333333)); }
+  else if(prop==='laptop'){ g=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.05,0.55),L(0x9aa3ad,0x223344)); }
+  if(!g) return; g.position.set(0,0.15,0.1); m.hand.add(g); m.propO=g; }
 function findBone(o,name){ let b=null; o.traverse(n=>{ if(!b&&n.isBone&&n.name===name) b=n; }); return b; }
 function play(P,name){ if(P.cur===name||!P.acts[name])return; const nx=P.acts[name]; nx.reset().fadeIn(0.3).play(); if(P.cur&&P.acts[P.cur]) P.acts[P.cur].fadeOut(0.3); P.cur=name; }
 const PRAY=new Set(['pray','jumuah','taraweeh','tahajjud','eid','itikaf']);
@@ -182,7 +190,7 @@ function room(kind){ const g=new THREE.Group(); const W=kind==='mosque'?18:7, D=
     const mat=new THREE.Mesh(new THREE.PlaneGeometry(0.75,1.3),new THREE.MeshLambertMaterial({map:patTex((x,n)=>{ x.fillStyle='#1d4e89'; x.fillRect(0,0,n,n); x.fillStyle='#e6c35c'; x.beginPath(); x.moveTo(n/2,8); x.lineTo(n-10,40); x.lineTo(n-10,n-8); x.lineTo(10,n-8); x.lineTo(10,40); x.closePath(); x.lineWidth=5; x.strokeStyle='#e6c35c'; x.stroke(); })})); mat.rotation.x=-Math.PI/2; mat.position.set(-1.8,0.02,-1.6); g.add(mat); g.userData.mat=mat;
     const tbl=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,0.35,20),new THREE.MeshLambertMaterial({color:0x7a5230})); tbl.position.set(1.2,0.18,0.6); g.add(tbl);
     const sofa=new THREE.Mesh(new THREE.BoxGeometry(2.6,0.8,0.9),new THREE.MeshLambertMaterial({color:O.era==='1986'?0x8a5a2b:O.era==='2006'?0x6b7280:0x334155})); sofa.position.set(1.2,0.4,2.4); g.add(sofa);
-    const tv=new THREE.Mesh(O.era==='2026'?new THREE.BoxGeometry(1.6,0.9,0.06):new THREE.BoxGeometry(0.8,0.7,0.6),new THREE.MeshLambertMaterial({color:O.era==='1986'?0x5a3d22:0x111111,emissive:0x223344})); tv.position.set(1.2,O.era==='2026'?1.3:0.75,-D/2+0.4); g.add(tv);
+    const tv=new THREE.Mesh(O.era==='2026'?new THREE.BoxGeometry(1.6,0.9,0.06):new THREE.BoxGeometry(0.8,0.7,0.6),new THREE.MeshLambertMaterial({color:O.era==='1986'?0x5a3d22:0x111111,emissive:0x223344})); g.userData.tv=tv; tv.position.set(1.2,O.era==='2026'?1.3:0.75,-D/2+0.4); g.add(tv);
     const shelfB=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.8,0.35),new THREE.MeshLambertMaterial({color:0x6b4a2f})); shelfB.position.set(-W/2+0.3,0.9,1.5); shelfB.rotation.y=Math.PI/2; g.add(shelfB);
     for(let i=0;i<6;i++){ const bk=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.3,0.22),new THREE.MeshLambertMaterial({color:[0x1d4e89,0x2e7d6b,0x8c1d2b,0xe6c35c][i%4]})); bk.position.set(-W/2+0.32,1.2,1.0+i*0.16); g.add(bk); }
     const rug=new THREE.Mesh(new THREE.PlaneGeometry(2.6,1.8),new THREE.MeshLambertMaterial({color:0xa4483c})); rug.rotation.x=-Math.PI/2; rug.position.set(1.2,0.015,0.6); g.add(rug); }
@@ -217,7 +225,7 @@ function frame(){ if(!S3.on)return; requestAnimationFrame(frame); if(!ready)retu
   if(inside){ const R0=curRoom.position; const W=curRoom.userData.W, D=curRoom.userData.D; const isPray=PRAY.has(p.act); tx=R0.x+(kind==='mosque'?0:isPray?-1.8:0); tz=R0.z+(kind==='mosque'?-D/2+3.2:isPray?-1.6:0.2); ty=R0.y; o.rotation.y=Math.PI; if(p.act==='sleep'){ tx=R0.x-1; tz=R0.z+1; } }
   else { tx=p.x; tz=p.z; ty=0; if(p.moving) o.rotation.y=p.dir; }
   const prevPos=o.position.clone(); o.position.set(tx,ty,tz); const moved=prevPos.distanceTo(o.position);
-  pose(fModel,p.act,p.moving&&p.mode!=='car',p.mode); fModel.mixer.update(dt); if(PRAY.has(p.act)&&!p.moving) applyPrayerBones(fModel); else fModel.phase=null;
+  pose(fModel,p.act,p.moving&&p.mode!=='car',p.mode); setProp(fModel,(!p.moving&&p.b&&p.b.prop)||null); if(inside&&curRoom&&curRoom.userData.tv){ const glow=p.b&&['tv','pc'].includes(p.b.prop); const f=glow?0.5+0.5*Math.sin(now/140)*Math.sin(now/370):0; curRoom.userData.tv.material.emissive.setRGB(0.15+f*0.4,0.2+f*0.5,0.3+f*0.8); } fModel.mixer.update(dt); if(PRAY.has(p.act)&&!p.moving) applyPrayerBones(fModel); else fModel.phase=null;
   o.visible=!(p.moving&&p.mode==='car'); if(p.moving&&p.mode==='car'){ /* show as driving: a car at the spot */ }
   // camera follow (keep user orbit offset)
   if(!S3.follow0){ const off=camera.position.clone().sub(controls.target); tmpV.set(tx,ty+1.1,tz); const dd=controls.target.distanceTo(tmpV); controls.target.lerp(tmpV,dd>3?1:1-Math.exp(-dt*8)); if(moved>2) camera.position.copy(controls.target).add(off); else camera.position.copy(controls.target).add(off); }
@@ -261,12 +269,12 @@ function fillRoom(a,kind){ clearRoomPeople(); const R0=curRoom.position, D=curRo
 // ---------- 3D bubbles from the commentary engine ----------
 let lastB='';
 function bubbles(a,hx,hy,hz,sc){ const el=$('s3dBub'); const L=Iso.lines?Iso.lines(a):[]; const last=k=>{ for(let i=L.length-1;i>=Math.max(0,L.length-14);i--) if(k.includes(L[i].k)) return L[i]; return null; };
-  const items=[['thought',last(['thought','choiceGood','choiceBad']),0,0.75],['q',last(['q']),-1,0.3],['angel',last(['angel','right'])||{s:'Bismillah. Every good step is written.'},1,0.3]];
-  const key=items.map(x=>x[1]?x[1].s:'').join('|'); if(key!==lastB){ lastB=key; el.innerHTML=items.map(([k,l])=>l?`<div class="b3 ${k}" data-k="${k}"><b>${k==='q'?'Qareen':k==='angel'?'Angel':a.first}</b> ${O.esc(l.s)}</div>`:'').join(''); }
+  const lastAng=last(['angel','right','leftNote']); const items=[['thought',last(['event','thought','choiceGood','choiceBad','ripple']),0,0.75],['q',last(['q']),-1,0.3],['angel',lastAng||{s:'Bismillah. Every good step is written.'},1,0.3]];
+  const key=items.map(x=>x[1]?x[1].s:'').join('|'); if(key!==lastB){ lastB=key; el.innerHTML=items.map(([k,l])=>l?`<div class="b3 ${k} ${l.k==='leftNote'?'leftNote':''} ${l.k==='event'?'event':''}" data-k="${k}"><b>${k==='q'?'Qareen':k==='angel'?(l.k==='leftNote'?'Left angel':'Right angel'):(l.k==='event'?'🎬 '+a.first:a.first)}</b> ${O.esc(l.s)}</div>`:'').join(''); }
   const ry=fModel.o.rotation.y, rx=Math.cos(ry), rz=-Math.sin(ry);
   tmpV.set(hx,hy,hz).project(camera); const hsx=(tmpV.x*0.5+0.5)*innerWidth; tmpV.copy(angels[0].position).project(camera); const angL=(tmpV.x*0.5+0.5)*innerWidth<hsx;
-  for(const d of el.children){ const k=d.dataset.k; if(k==='angel') tmpV.copy(angels[0].position); else if(k==='q') tmpV.copy(qareen.children[0].position); else tmpV.set(hx,hy+0.75*sc,hz);
-    tmpV.project(camera); const x=(tmpV.x*0.5+0.5)*innerWidth, y=(-tmpV.y*0.5+0.5)*innerHeight; const vis=tmpV.z<1; d.style.display=vis?'block':'none'; let tx='-50%', ox=0, oy=-40; if(k!=='thought'){ const left=k==='q'?!angL:angL; tx=left?'-100%':'0'; ox=left?-40:40; oy=k==='q'?50:-45; if(k==='q') ox+=hsx-x+(left?-50:50); } const bw=d.offsetWidth||160; let lx=x+ox-(tx==='-100%'?bw:tx==='-50%'?bw/2:0); lx=Math.max(4,Math.min(innerWidth-bw-4,lx)); d.style.transform=`translate(${Math.round(lx)}px,${Math.round(y+oy)}px) translate(0,-100%)`; } }
+  for(const d of el.children){ const k=d.dataset.k; if(k==='angel') tmpV.copy(d.classList.contains('leftNote')?angels[1].position:angels[0].position); else if(k==='q') tmpV.copy(qareen.children[0].position); else tmpV.set(hx,hy+0.75*sc,hz);
+    tmpV.project(camera); const x=(tmpV.x*0.5+0.5)*innerWidth, y=(-tmpV.y*0.5+0.5)*innerHeight; const vis=tmpV.z<1; d.style.display=vis?'block':'none'; let tx='-50%', ox=0, oy=-40; if(k!=='thought'){ const left=k==='q'?!angL:(d.classList.contains('leftNote')?!angL:angL); tx=left?'-100%':'0'; ox=left?-40:40; oy=k==='q'?50:-45; if(k==='q') ox+=hsx-x+(left?-50:50); } const bw=d.offsetWidth||160; let lx=x+ox-(tx==='-100%'?bw:tx==='-50%'?bw/2:0); lx=Math.max(4,Math.min(innerWidth-bw-4,lx)); d.style.transform=`translate(${Math.round(lx)}px,${Math.round(y+oy)}px) translate(0,-100%)`; } }
 function hud(a,p,inside,kind){ const el=$('s3dWhere'); const txt=(inside?(kind==='mosque'?'🕌 Inside the masjid prayer hall':kind==='home'?'🏠 Inside at home':'🏢 Inside at work'):p.moving?(p.mode==='car'?'🚗 Driving':'🚶 Walking on '+(roadName(p)||'the footpath')):'📍 Outside')+' · '+(p.b&&p.b.txt||''); if(el.textContent!==txt) el.textContent=txt; }
 function roadName(p){ let best='',bd=30; for(const r of data.r){ if(!r.n)continue; for(const q of r.p){ const d=Math.hypot(q[0]-p.x,q[1]-p.z); if(d<bd){bd=d;best=r.n;} } } return best; }
 // ---------- enter / exit ----------
