@@ -1,0 +1,17 @@
+Sunnah World - Street view (3D) credits and licences
+
+1. Map data: (c) OpenStreetMap contributors, Open Database License (ODbL) 1.0.
+   https://www.openstreetmap.org/copyright
+   Area around Jame Masjid / ICNA-IPCO, Coopers Ave, Mississauga (about 1 km),
+   fetched once from the Overpass API and baked into coopers.json (local metres).
+   Note: OSM has no house outlines here, so 119 houses are generated along the
+   real residential streets. They are marked as made-up in the data and the credit line.
+
+2. People models and animations: KayKit Character Pack: Adventurers (Rogue, Mage)
+   by Kay Lousberg (kaylousberg.com). Licence: CC0 1.0 (public domain). See KAYKIT_LICENSE.txt.
+   Trimmed and compressed with gltf-transform. Hijab, kufi, beard and prayer poses are added in code.
+
+3. three.js r170 (three.module.min.js and examples/jsm loaders and controls),
+   MIT licence, (c) 2010-2024 three.js authors. See THREE_LICENSE.txt.
+
+No Google Maps or Street View data is used. Everything loads from this folder, with no CDN.

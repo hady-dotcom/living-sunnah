@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<!doctype html><html lang="en"><head><meta charset="utf-8"><link rel="icon" href="data:,"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
 <title>Sunnah World — Mississauga</title><style>*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:#1b2433;font-family:"Avenir Next","Segoe UI",system-ui,sans-serif;color:#f4f1ea}
 #world{position:fixed;inset:0;touch-action:none;cursor:grab}
 .glass{background:rgba(18,26,40,0.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.12);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,0.25)}
@@ -78,10 +78,23 @@ body.iso #controls .grp:not(:first-child){display:none}body.iso #controls{z-inde
 .ln.choiceGood{color:#9be8c6;font-weight:600}.ln.choiceBad{color:#ffb38a;font-weight:600}.ln.right{color:#ffe7a8}.ln.left{color:#c8d9ff}.ln.era{background:rgba(120,160,220,.14);border-left:3px solid #7aa7e0}
 @media (max-width:900px){#inner{left:0;right:0;top:auto;bottom:0;width:100vw;height:46vh;border-radius:16px 16px 0 0}body.iso #controls{bottom:auto;top:150px;left:auto;right:8px;transform:none;padding:4px}body.iso #controls .lab{display:none}body.iso #top #tags,body.iso #top .col:nth-child(4){display:none}}
 body.iso #top{z-index:4}
+#s3d{position:fixed;inset:0;display:none;z-index:3;background:#000}#s3dc{position:absolute;inset:0;width:100%!important;height:100%!important;touch-action:none}
+body.s3d #card,body.s3d #stats,body.s3d #ticker,body.s3d #legend,body.s3d #sky,body.s3d #iso{display:none!important}body.s3d #controls .grp:not(:first-child){display:none}body.s3d #controls,body.s3d #top{z-index:6}body.s3d #inner{z-index:6}
+body.s3d #top{top:auto;bottom:12px;right:auto;left:12px;max-width:520px}
+#s3dBar{position:absolute;left:12px;top:12px;padding:8px 12px;z-index:4;max-width:min(560px,calc(100vw - 440px))}#s3dWhere{margin:4px 0;color:#9be8c6;font-weight:600}
+#s3dCredit{position:absolute;left:12px;bottom:4px;font-size:10px;color:rgba(255,255,255,.7);z-index:4;text-shadow:0 1px 2px #000}
+#s3dBub{position:absolute;inset:0;pointer-events:none;z-index:3;overflow:hidden}.b3{position:absolute;left:0;top:0;max-width:240px;padding:7px 10px;border-radius:14px;font-size:12.5px;line-height:1.35;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.b3.thought{background:rgba(255,255,255,.95);color:#1d2433;font-style:italic}.b3.q{background:rgba(52,28,74,.92);color:#e9d8ff;border:1px solid #9b72cf}.b3.angel{background:rgba(255,236,190,.95);color:#3d2b00;border:1px solid #e6c35c}
+@media (max-width:900px){#s3dBar{max-width:calc(100vw - 24px);top:8px;left:8px;right:8px}body.s3d #top{display:none}body.s3d #controls{top:auto;bottom:47vh;right:8px}.b3{max-width:160px;font-size:11px}#s3dCredit{bottom:47vh;font-size:9px}}
+body.s3d #inner .ib,body.s3d #inner .ilegend{display:none}
+@media (max-width:900px){body.s3d #inner{max-height:30vh!important;height:30vh!important;top:auto!important;bottom:0!important}body.s3d #controls{bottom:calc(30vh + 6px)!important;top:auto!important;right:6px!important;left:auto!important;padding:4px 6px!important}body.s3d #controls .lbl,body.s3d #controls .grp:first-child>span{display:none}#s3dCredit{bottom:calc(30vh + 2px)!important}#s3dBar{padding:6px 8px}#s3dBar .small,#s3dBar button{font-size:11px;padding:3px 6px}}
+@media (max-width:900px){body.s3d #controls{left:auto!important;max-width:calc(100vw - 12px);transform:none!important}body.s3d #controls button{font-size:11px;padding:3px 7px}}
 </style></head><body>
 <canvas id="world"></canvas>
 <canvas id="iso"></canvas>
-<div id="inner" class="glass"><div class="ih"><div id="innerHead"></div><div class="ib"><button id="isoFollow">Follow</button><button id="isoPeople">👥 Someone else</button><button id="isoExit">🌍 World time view</button></div></div>
+<div id="s3d"><div id="s3dBub"></div><div id="s3dBar" class="glass"><b>🚶 Street view (3D)</b> <span class="dim small">Coopers Ave, Mississauga — modelled on OpenStreetMap</span><div id="s3dWhere" class="small"></div><div class="ib"><button id="s3d2d">🏙 2D day view</button><button id="s3dPeople">👥 Someone else</button><button id="s3dExit">🌍 World time view</button></div></div>
+<div id="s3dCredit">Map data © OpenStreetMap contributors (ODbL) · People: KayKit by Kay Lousberg (CC0) · three.js (MIT)</div></div>
+<div id="inner" class="glass"><div class="ih"><div id="innerHead"></div><div class="ib"><button id="isoFollow">Follow</button><button id="go3d">🚶 Street view (3D)</button><button id="isoPeople">👥 Someone else</button><button id="isoExit">🌍 World time view</button></div></div>
 <div class="ilegend small"><span class="lq">🟣 Qareen whispers</span><span class="la">🟡 Angel nudges</span><span>💭 Their thoughts</span><span>✦ / ◇ What gets written</span></div><div id="innerList"></div></div>
 <div id="top" class="glass">
   <div class="brand">Sunnah World <span class="dim">· Mississauga</span></div>
@@ -118,6 +131,7 @@ body.iso #top{z-index:4}
 <p><b>Drag</b> to move · <b>scroll or pinch</b> to zoom · <b>click a person</b> to open their day · <b>space</b> to pause.</p>
 <p class="dim small">This is a simulation, not a fatwa. It never judges anyone's soul or works out reward. The Qareen and angels are shown as soft lights with no faces, only to picture the rules in the source sheets. Places are inspired by real Mississauga; positions are approximate. Times use the ISNA 15° method, and Hijri dates use the Umm al-Qura calculation (with local-sighting masjids sometimes one day behind).</p>
 <button id="aboutClose">Start watching</button></div></div>
+<script type="importmap">{"imports":{"three":"./street3d/three.module.min.js"}}</script>
 <script>(function(){
 function mulberry32(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;}}
 function hash(...xs){let h=2166136261>>>0;for(const x of xs){const s=String(x);for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}h^=0x9e37;h=Math.imul(h,16777619);}return h>>>0;}
@@ -1648,11 +1662,11 @@ function card(){
    <details open><summary>Recording angels — right ✦ and left ◇</summary><div class="recs">${recs}</div></details>
    <details open><summary>Qareen moves (delay · diminish · divert)</summary><div class="qls">${ql}</div></details>
    <details><summary>Habits (grow with streaks, not intensity)</summary>${hab}</details>
-   <div class="btns"><button id="fol">${Render.cam.follow===a?'Stop following':'Follow'}</button><button id="zm">🏙 Day to day</button></div>`;
+   <div class="btns"><button id="fol">${Render.cam.follow===a?'Stop following':'Follow'}</button><button id="zm">🏙 Day to day</button><button id="z3">🚶 Street view (3D)</button></div>`;
   if(openState.length) $('card').querySelectorAll('details').forEach((d,i)=>d.open=openState[i]); $('card').scrollTop=sTop;
   $('cx').onclick=()=>{UI.selected=null;Render.cam.follow=null;card();};
   $('fol').onclick=()=>{Render.cam.follow=Render.cam.follow===a?null:a;card();};
-  $('zm').onclick=()=>{Render.cam.follow=a;Iso.enter(a);};
+  $('zm').onclick=()=>{Render.cam.follow=a;Iso.enter(a);}; $('z3').onclick=()=>{ window.S3D&&S3D.enter(a); };
 }
 function select(a,zoom){ UI.selected=a; if(a&&zoom){Render.cam.follow=a; Render.cam.z=Math.max(Render.cam.z,7);} card(); }
 UI.select=select;
@@ -1701,14 +1715,14 @@ let last=performance.now(), hudT=0;
 function frame(now){
   const raw=now-last; if(raw>2000&&!paused) Outside.baseT+=raw; const dt=Math.min(100,raw); last=now;
   if(!paused){ const d0=S.day; Outside.baseT+=dt*speed; const tgt=Outside.eraTime(Outside.baseT); let evs; if(tgt<S.t-3600000||tgt>S.t+3*86400000){ Sim.setTime(tgt); evs=[]; } else evs=Sim.step(Math.max(0,tgt-S.t)); if(S.day!==d0){goodToday=leftHeld=whispers=0;} onEvents(evs.slice(-60)); }
-  if(window.Iso&&Iso.on) Iso.draw(); else { Render.draw(S.t); window.Panels&&Panels.overlay(); if(window.Iso&&UI.selected&&Render.cam.z>=11) Iso.enter(); }
+  if(window.S3D&&S3D.on){} else if(window.Iso&&Iso.on) Iso.draw(); else { Render.draw(S.t); window.Panels&&Panels.overlay(); if(window.Iso&&UI.selected&&Render.cam.z>=11) Iso.enter(); }
   Outside.tick(now);
   if(now-hudT>250){ hudT=now; hud(); drawSky(); if(UI.selected)card(); }
   requestAnimationFrame(frame);
 }
 hud(); drawSky(); requestAnimationFrame(frame);
 window.App={jumpTo,setSpeed,select,nextPrayer};
-if(params.get('select')) addEventListener('load',()=>{ select(A[+params.get('select')],true); if(params.get('day')) Iso.enter(); });
+if(params.get('select')) addEventListener('load',()=>{ select(A[+params.get('select')],true); if(params.get('day')) Iso.enter(); if(params.get('s3d')){ const go=()=>window.S3D?S3D.enter():setTimeout(go,100); go(); } });
 })();
 // helpers for tours / testing
 App.busiest=function(kind='mosque'){ const c=new Map(); for(const a of People.agents){const p=a._p; if(!p||p.moving)continue; const pl=World.place(p.b.pid); if(pl&&pl.kind===kind)c.set(pl,(c.get(pl)||0)+1);} let best=null,n=-1; for(const [k,v] of c) if(v>n){n=v;best=k;} return best; };
@@ -1730,7 +1744,7 @@ function show(id){ for(const x of ['dir','paper','feed','survey']) $(x).classLis
 P.show=show;
 $('peopleBtn').onclick=()=>show('dir'); $('paperBtn').onclick=()=>show('paper'); $('feedBtn').onclick=()=>show('feed'); $('surveyBtn').onclick=()=>show('survey');
 document.addEventListener('click',e=>{ const c=e.target.closest('.pclose'); if(c){ show(open); return; }
-  const l=e.target.closest('[data-pid]'); if(l){ const a=A[+l.dataset.pid]; if(a){ if(open) show(open); if(window.Iso&&Iso.on){ UI.select(a,false); Iso.enter(a);} else UI.select(a,true);} } });
+  const l=e.target.closest('[data-pid]'); if(l){ const a=A[+l.dataset.pid]; if(a){ if(open) show(open); if(window.S3D&&S3D.on){ S3D.enter(a); } else if(window.Iso&&Iso.on){ UI.select(a,false); Iso.enter(a);} else UI.select(a,true);} } });
 function refresh(){ $('eraTag').textContent=E[O.era].tag; if(open==='dir')dir(); if(open==='paper')paper(); if(open==='feed')feed(); if(open==='survey')survey(); }
 P.refresh=refresh;
 // ---------- people directory ----------
@@ -2039,7 +2053,7 @@ function lines(a){ const out=[]; const day=S.day, t=S.t, mid=a.dayMid; const era
       if(gave) { out.push({m,k:'choiceBad',s:'Lost some time (not a sin written — but time you can\'t get back).'}); out.push({m,k:'angel',s:'Next time is a new chance. Start with bismillah.'}); }
       else out.push({m,k:'right',s:'✦ Right angel writes: chose the better use of time.'}); } }
   return out.slice(-60).map(x=>({...x,tm:tm(x.m)})); }
-function inner(force){ const a=UI.selected; if(!a||!I.on)return; const now=performance.now(); if(!force&&now-lastBuildT<400)return; lastBuildT=now;
+function inner(force){ const a=UI.selected; if(!a||!(I.on||I.on3d))return; const now=performance.now(); if(!force&&now-lastBuildT<400)return; lastBuildT=now;
   const L=lines(a); const key=a.id+':'+L.length+':'+(L.length?L[L.length-1].s:''); const p=a._p||{}; const b=p.b||{};
   const q=a._qlive!=null?a._qlive:(a._qs||0); const T=['Struggling','Middle way','Racing ahead'];
   $('innerHead').innerHTML=`<div><b class="nm2">${esc(a.name)}</b> <span class="dim small">${a.age} · ${esc(O.hoodName(a.home.hood))} · ${O.era}</span><div class="small">${p.moving?(p.mode==='car'?'🚗 Driving: ':'🚶 Walking: '):'📍 '}${esc(b.txt||'')}</div>
@@ -2049,8 +2063,8 @@ function inner(force){ const a=UI.selected; if(!a||!I.on)return; const now=perfo
   const el=$('innerList'); const atBottom=el.scrollHeight-el.scrollTop-el.clientHeight<60;
   el.innerHTML=(L.length?'':'<div class="ln thought">The day is just starting. Their first thoughts will show up here.</div>')+L.map(x=>`<div class="ln ${x.k}"><span class="tt">${x.tm}</span><span class="who">${IC[x.k]}</span> ${esc(x.s)}</div>`).join('');
   if(atBottom||force) el.scrollTop=el.scrollHeight; }
-I.inner=inner;
+I.inner=inner; I.lines=lines;
 setInterval(()=>inner(false),500);
 })();
-</script>
+</script><script type="module">import "./street3d/street3d.js";</script>
 </body></html>
