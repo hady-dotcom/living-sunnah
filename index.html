@@ -65,8 +65,24 @@ body[data-era="1986"] #world{filter:sepia(.45) saturate(.8) contrast(.95)}body[d
 .bio p{margin:5px 0}.hist{margin-top:6px}
 @media (max-width:900px){.panel{top:auto;bottom:0;left:0;width:100vw;height:72vh;border-radius:16px 16px 0 0}#controls{bottom:6px}#top{gap:8px;padding:8px 10px}#clock{font-size:22px;min-width:0}}
 #card{z-index:5}
+#iso{position:fixed;inset:0;width:100vw;height:100vh;display:none;touch-action:none;z-index:2;cursor:grab}
+body.iso #card,body.iso #stats,body.iso #ticker,body.iso #legend{display:none!important}
+body.iso #controls .grp:not(:first-child){display:none}body.iso #controls{z-index:4}
+#inner{position:fixed;right:12px;top:152px;bottom:12px;width:400px;display:none;flex-direction:column;z-index:5;padding:10px 12px}#inner.open{display:flex}
+.ih{display:flex;flex-direction:column;gap:6px}.ib{display:flex;gap:6px;flex-wrap:wrap}#isoFollow{display:none}.nm2{font-size:18px}
+.meters{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11.5px;margin-top:4px}.meters .bar{width:70px}
+.ilegend{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0;opacity:.8}
+#innerList{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding-right:4px}
+.ln{font-size:13px;line-height:1.4;padding:5px 8px;border-radius:9px;background:rgba(255,255,255,.05);animation:in .4s}.ln .tt{opacity:.55;font-size:11px;margin-right:5px;font-variant-numeric:tabular-nums}.ln .who{font-weight:700;margin-right:3px}
+.ln.q{background:rgba(110,70,160,.28);border-left:3px solid #9b72cf}.ln.angel{background:rgba(255,214,120,.14);border-left:3px solid #ffd678}.ln.thought{font-style:italic}
+.ln.choiceGood{color:#9be8c6;font-weight:600}.ln.choiceBad{color:#ffb38a;font-weight:600}.ln.right{color:#ffe7a8}.ln.left{color:#c8d9ff}.ln.era{background:rgba(120,160,220,.14);border-left:3px solid #7aa7e0}
+@media (max-width:900px){#inner{left:0;right:0;top:auto;bottom:0;width:100vw;height:46vh;border-radius:16px 16px 0 0}body.iso #controls{bottom:auto;top:150px;left:auto;right:8px;transform:none;padding:4px}body.iso #controls .lab{display:none}body.iso #top #tags,body.iso #top .col:nth-child(4){display:none}}
+body.iso #top{z-index:4}
 </style></head><body>
 <canvas id="world"></canvas>
+<canvas id="iso"></canvas>
+<div id="inner" class="glass"><div class="ih"><div id="innerHead"></div><div class="ib"><button id="isoFollow">Follow</button><button id="isoPeople">👥 Someone else</button><button id="isoExit">🌍 World time view</button></div></div>
+<div class="ilegend small"><span class="lq">🟣 Qareen whispers</span><span class="la">🟡 Angel nudges</span><span>💭 Their thoughts</span><span>✦ / ◇ What gets written</span></div><div id="innerList"></div></div>
 <div id="top" class="glass">
   <div class="brand">Sunnah World <span class="dim">· Mississauga</span></div>
   <div id="clock">--</div><div class="col"><div id="date"></div><div id="hijri"></div></div>
@@ -526,7 +542,7 @@ function buildDay(a,ctx){
   const rnd=R.rngFor(SEED,'day',a.id,ctx.di); const pt=ctx.pt, mid=ctx.mid;
   const ev=[]; // {t(min),type,side,kind,text}
   const rec=(t,side,kind,text,extra={})=>ev.push({t,type:'rec',side,kind,text,...extra});
-  const qe=(t,move,key,extra={})=>ev.push({t,type:'qareen',move,text:R.pick(rnd,QTXT[key]),...extra});
+  const qe=(t,move,key,extra={})=>ev.push({t,type:'qareen',move,key,text:R.pick(rnd,QTXT[key]),...extra});
   const note=(t,text)=>ev.push({t,type:'note',text});
   const c=a.policy==='sight'?ctx.cs:ctx.cc; const h=a.policy==='sight'?ctx.hs:ctx.hc;
   const wd=ctx.wd, friday=wd===5, weekend=wd===0||wd===6;
@@ -1632,11 +1648,11 @@ function card(){
    <details open><summary>Recording angels — right ✦ and left ◇</summary><div class="recs">${recs}</div></details>
    <details open><summary>Qareen moves (delay · diminish · divert)</summary><div class="qls">${ql}</div></details>
    <details><summary>Habits (grow with streaks, not intensity)</summary>${hab}</details>
-   <div class="btns"><button id="fol">${Render.cam.follow===a?'Stop following':'Follow'}</button><button id="zm">Zoom in</button></div>`;
+   <div class="btns"><button id="fol">${Render.cam.follow===a?'Stop following':'Follow'}</button><button id="zm">🏙 Day to day</button></div>`;
   if(openState.length) $('card').querySelectorAll('details').forEach((d,i)=>d.open=openState[i]); $('card').scrollTop=sTop;
   $('cx').onclick=()=>{UI.selected=null;Render.cam.follow=null;card();};
   $('fol').onclick=()=>{Render.cam.follow=Render.cam.follow===a?null:a;card();};
-  $('zm').onclick=()=>{Render.cam.follow=a;Render.cam.z=9;card();};
+  $('zm').onclick=()=>{Render.cam.follow=a;Iso.enter(a);};
 }
 function select(a,zoom){ UI.selected=a; if(a&&zoom){Render.cam.follow=a; Render.cam.z=Math.max(Render.cam.z,7);} card(); }
 UI.select=select;
@@ -1685,14 +1701,14 @@ let last=performance.now(), hudT=0;
 function frame(now){
   const raw=now-last; if(raw>2000&&!paused) Outside.baseT+=raw; const dt=Math.min(100,raw); last=now;
   if(!paused){ const d0=S.day; Outside.baseT+=dt*speed; const tgt=Outside.eraTime(Outside.baseT); let evs; if(tgt<S.t-3600000||tgt>S.t+3*86400000){ Sim.setTime(tgt); evs=[]; } else evs=Sim.step(Math.max(0,tgt-S.t)); if(S.day!==d0){goodToday=leftHeld=whispers=0;} onEvents(evs.slice(-60)); }
-  Render.draw(S.t); window.Panels&&Panels.overlay();
+  if(window.Iso&&Iso.on) Iso.draw(); else { Render.draw(S.t); window.Panels&&Panels.overlay(); if(window.Iso&&UI.selected&&Render.cam.z>=11) Iso.enter(); }
   Outside.tick(now);
   if(now-hudT>250){ hudT=now; hud(); drawSky(); if(UI.selected)card(); }
   requestAnimationFrame(frame);
 }
 hud(); drawSky(); requestAnimationFrame(frame);
 window.App={jumpTo,setSpeed,select,nextPrayer};
-if(params.get('select')) setTimeout(()=>select(A[+params.get('select')],true),50);
+if(params.get('select')) addEventListener('load',()=>{ select(A[+params.get('select')],true); if(params.get('day')) Iso.enter(); });
 })();
 // helpers for tours / testing
 App.busiest=function(kind='mosque'){ const c=new Map(); for(const a of People.agents){const p=a._p; if(!p||p.moving)continue; const pl=World.place(p.b.pid); if(pl&&pl.kind===kind)c.set(pl,(c.get(pl)||0)+1);} let best=null,n=-1; for(const [k,v] of c) if(v>n){n=v;best=k;} return best; };
@@ -1714,7 +1730,7 @@ function show(id){ for(const x of ['dir','paper','feed','survey']) $(x).classLis
 P.show=show;
 $('peopleBtn').onclick=()=>show('dir'); $('paperBtn').onclick=()=>show('paper'); $('feedBtn').onclick=()=>show('feed'); $('surveyBtn').onclick=()=>show('survey');
 document.addEventListener('click',e=>{ const c=e.target.closest('.pclose'); if(c){ show(open); return; }
-  const l=e.target.closest('[data-pid]'); if(l){ const a=A[+l.dataset.pid]; if(a){ if(open&&window.innerWidth<900) show(open); UI.select(a,true);} } });
+  const l=e.target.closest('[data-pid]'); if(l){ const a=A[+l.dataset.pid]; if(a){ if(open) show(open); if(window.Iso&&Iso.on){ UI.select(a,false); Iso.enter(a);} else UI.select(a,true);} } });
 function refresh(){ $('eraTag').textContent=E[O.era].tag; if(open==='dir')dir(); if(open==='paper')paper(); if(open==='feed')feed(); if(open==='survey')survey(); }
 P.refresh=refresh;
 // ---------- people directory ----------
@@ -1775,6 +1791,266 @@ const pr=new URLSearchParams(location.search);
 setEra(O.era,true);
 if(O.closedFor>60000) setTimeout(()=>pushTicker&&pushTicker('Welcome back — the town kept living for '+Math.round(O.closedFor/3600000*10)/10+' hours while you were away','sky'),300);
 if(pr.get('open')) setTimeout(()=>show({people:'dir',paper:'paper',feed:'feed',survey:'survey'}[pr.get('open')]||pr.get('open')),200);
+})();
+</script><script>// ===== "Day to day" mode: isometric close view + inner-voice commentary =====
+// Everything is drawn in code. Lines are built from templates using the person's state, era, activity, habits and the day's headlines.
+(function(){
+const RG=window.R; const A=People.agents, HH=People.households, S=Sim.S, C=Clock, O=Outside, $=id=>document.getElementById(id), esc=O.esc;
+const I={on:false,z:1.3}; window.Iso=I;
+const cv=$('iso'), g=cv.getContext('2d'); let dpr=1, Wd=0, Ht=0;
+const K=3, R=130; // px per world unit; half-size of the drawn area (world units)
+const iso=(x,y)=>[(x-y)*K,(x+y)*K*0.5];
+let layer=null, anchor=null, layerEra=null, cam={x:0,y:0}, pan=null;
+function resize(){ dpr=Math.min(2,devicePixelRatio||1); Wd=cv.clientWidth; Ht=cv.clientHeight; cv.width=Wd*dpr; cv.height=Ht*dpr; }
+addEventListener('resize',()=>{ if(I.on)resize(); });
+// ---------- era palettes ----------
+const PAL={
+ '1986':{grass:'#9db57a',grass2:'#8fa96d',road:'#6d6a66',walk:'#c9c1b0',roofs:['#7a4b33','#8a6a4a','#5f4b3b','#9b7b56','#6b5a48'],walls:['#e8d9b8','#d8c3a0','#c9a67c','#efe3c8','#b98b62'],cars:['#8b5a2b','#c2b280','#7f1d1d','#2f4f4f','#d4c27a','#556b2f'],bus:'#e8e2d0',busStripe:'#c0392b',tower:'#b9a27c'},
+ '2006':{grass:'#8fbf73',grass2:'#82b267',road:'#5f6166',walk:'#cfcfcb',roofs:['#4a4f57','#6b4e3d','#555b63','#7a5c4f','#3e4652'],walls:['#e9e4da','#d6cfc2','#c8b9a6','#f1ede4','#a9a39a'],cars:['#c0c4c9','#2b2f36','#8b1e2a','#e8e8e8','#24456b','#a7adb4'],bus:'#f4f4f4',busStripe:'#2a6db3',tower:'#a3b6c7'},
+ '2026':{grass:'#86c06c',grass2:'#79b360',road:'#545861',walk:'#d6d8d6',roofs:['#3b4048','#5b6470','#2f353d','#6d625a','#45505c'],walls:['#f2f2ef','#dfe3e6','#cfd6db','#e9e2d6','#b8c2c9'],cars:['#ffffff','#1f2328','#9aa3ad','#2563eb','#b91c1c','#334155'],bus:'#ffffff',busStripe:'#e30613',tower:'#7fb3d8'}};
+const hsh=(...x)=>RG.hash(...x);
+// ---------- static layer (ground, roads, buildings, trees) ----------
+function inR(x,y,pad=0){ return Math.abs(x-anchor.x)<R+pad&&Math.abs(y-anchor.y)<R+pad; }
+function build(){ const era=O.era, P=PAL[era]; layerEra=era; const s=Math.min(1.5,dpr);
+  const w=4*R*K*s+200, h=2*R*K*s+300; layer=document.createElement('canvas'); layer.width=w; layer.height=h; const c=layer.getContext('2d');
+  const [ax,ay]=iso(anchor.x,anchor.y); layer.ox=w/2/s-ax; layer.oy=h/2/s-ay+60; layer.s=s; c.setTransform(s,0,0,s,layer.ox*s,layer.oy*s);
+  const T=(x,y)=>iso(x,y);
+  // ground diamond
+  const poly=(pts,fill)=>{ c.beginPath(); pts.forEach(([x,y],i)=>{const [X,Y]=T(x,y); i?c.lineTo(X,Y):c.moveTo(X,Y);}); c.closePath(); c.fillStyle=fill; c.fill(); };
+  const x0=anchor.x-R-30,x1=anchor.x+R+30,y0=anchor.y-R-30,y1=anchor.y+R+30;
+  poly([[x0,y0],[x1,y0],[x1,y1],[x0,y1]],P.grass);
+  // grass texture
+  const rr=RG.rngFor('grass',Math.round(anchor.x),Math.round(anchor.y)); c.fillStyle=P.grass2; for(let i=0;i<500;i++){ const x=x0+rr()*(x1-x0), y=y0+rr()*(y1-y0); const [X,Y]=T(x,y); c.fillRect(X,Y,3,1.5); }
+  // water
+  if(World.shoreY){ try{ const pts=[]; for(let x=x0;x<=x1;x+=6){ pts.push([x,Math.min(y1,World.shoreY(x))]); } pts.push([x1,y1+200],[x0,y1+200]); poly(pts,'#4f8fc0'); }catch(e){} }
+  // parks / parking
+  for(const p of World.places){ if(!p.w||!inR(p.x,p.y,p.w)) continue; if(p.kind==='park'||p.kind==='eidground') poly([[p.x-p.w/2,p.y-p.h/2],[p.x+p.w/2,p.y-p.h/2],[p.x+p.w/2,p.y+p.h/2],[p.x-p.w/2,p.y+p.h/2]],'#6fae5a');
+    else if(['mall','plaza','market','office','hospital','campus','industry','civic','square'].includes(p.kind)){ poly([[p.x-p.w/2,p.y-p.h/2],[p.x+p.w/2,p.y-p.h/2],[p.x+p.w/2,p.y+p.h/2],[p.x-p.w/2,p.y+p.h/2]],p.kind==='square'?'#d8d2c4':'#8a8c90');
+      c.strokeStyle='rgba(255,255,255,0.55)'; c.lineWidth=1; for(let x=p.x-p.w/2+4;x<p.x+p.w/2;x+=5){ const [X1,Y1]=T(x,p.y+p.h/2-10),[X2,Y2]=T(x,p.y+p.h/2-4); c.beginPath(); c.moveTo(X1,Y1); c.lineTo(X2,Y2); c.stroke(); } } }
+  // roads
+  const road=(pts,wd,kind)=>{ c.lineCap='round'; c.lineJoin='round';
+    const path=()=>{ c.beginPath(); pts.forEach(([x,y],i)=>{const [X,Y]=T(x,y); i?c.lineTo(X,Y):c.moveTo(X,Y);}); };
+    path(); c.strokeStyle=P.walk; c.lineWidth=(wd+3)*K; c.stroke(); path(); c.strokeStyle=P.road; c.lineWidth=wd*K; c.stroke();
+    if(kind!=='local'){ path(); c.setLineDash([8,10]); c.strokeStyle=kind==='hwy'?'#f2f2f2':'#f2c94c'; c.lineWidth=1.4; c.stroke(); c.setLineDash([]); } };
+  for(const l of World.localStreets) road(l,4,'local');
+  for(const a of World.arterials) road(a.pts,8,'art');
+  for(const h of World.highways) road(h.pts,12,'hwy');
+  if(era==='2026'){ const hu=World.arterials.find(a=>/Hurontario/.test(a.name)); if(hu){ c.beginPath(); hu.pts.forEach(([x,y],i)=>{const [X,Y]=T(x+1,y); i?c.lineTo(X,Y):c.moveTo(X,Y);}); c.strokeStyle='#9aa0a6'; c.lineWidth=2; c.stroke(); } }
+  // objects sorted back-to-front
+  const objs=[];
+  for(const b of World.homes) if(inR(b.x,b.y,20)) objs.push({t:'b',x:b.x,y:b.y,w:b.w,h:b.h,fl:b.kind==='tower'?(era==='1986'?4:era==='2006'?9:14):b.floors||1,id:b.id,kind:b.kind});
+  for(const b of World.filler) if(inR(b.x,b.y,20)) objs.push({t:'b',x:b.x,y:b.y,w:b.w,h:b.h,fl:b.kind==='tower'?(era==='1986'?3:era==='2006'?7:12):b.floors||1,id:'f'+b.gx+'_'+b.gy,kind:b.kind});
+  for(const p of World.places) if(inR(p.x,p.y,40)&&p.kind!=='park'&&p.kind!=='eidground'&&!(p.kind==='mosque'&&p.closed)) objs.push({t:'p',p,x:p.x,y:p.y});
+  for(const tr of World.trees) if(inR(tr.x,tr.y,10)) objs.push({t:'tree',x:tr.x,y:tr.y,s:tr.s,c:tr.c});
+  // extra street trees for a lived-in look
+  const tr2=RG.rngFor('t2',Math.round(anchor.x/50),Math.round(anchor.y/50)); for(let i=0;i<90;i++){ const x=x0+tr2()*(x1-x0), y=y0+tr2()*(y1-y0); objs.push({t:'tree',x,y,s:3+tr2()*2,c:tr2()}); }
+  // era street furniture near shops
+  for(const p of World.places) if(inR(p.x,p.y,30)&&['market','plaza','mall'].includes(p.kind)) objs.push({t:'furn',x:p.x+(p.w||30)/2+3,y:p.y+(p.h||20)/2+3});
+  objs.sort((a,b)=>(a.x+a.y)-(b.x+b.y));
+  const month=C.local(S.t).m; layer.lights=[];
+  for(const o of objs){ if(o.t==='b') box(c,o,P,era); else if(o.t==='p') place(c,o.p,P,era); else if(o.t==='tree') tree(c,o,month); else furn(c,o,era); }
+}
+function prism(c,x,y,w,h,ht,top,left,right){ // footprint centred at x,y
+  const a=iso(x-w/2,y-h/2), b=iso(x+w/2,y-h/2), d=iso(x+w/2,y+h/2), e=iso(x-w/2,y+h/2);
+  c.fillStyle=left; c.beginPath(); c.moveTo(e[0],e[1]); c.lineTo(d[0],d[1]); c.lineTo(d[0],d[1]-ht); c.lineTo(e[0],e[1]-ht); c.closePath(); c.fill();
+  c.fillStyle=right; c.beginPath(); c.moveTo(d[0],d[1]); c.lineTo(b[0],b[1]); c.lineTo(b[0],b[1]-ht); c.lineTo(d[0],d[1]-ht); c.closePath(); c.fill();
+  c.fillStyle=top; c.beginPath(); c.moveTo(a[0],a[1]-ht); c.lineTo(b[0],b[1]-ht); c.lineTo(d[0],d[1]-ht); c.lineTo(e[0],e[1]-ht); c.closePath(); c.fill();
+  return {a,b,d,e}; }
+function shade(hex,f){ const n=parseInt(hex.slice(1),16); let r=n>>16,g=n>>8&255,b=n&255; r=Math.min(255,r*f);g=Math.min(255,g*f);b=Math.min(255,b*f); return 'rgb('+(r|0)+','+(g|0)+','+(b|0)+')'; }
+function box(c,o,P,era){ const k=hsh(o.id); const wall=P.walls[k%P.walls.length], roof=P.roofs[(k>>>3)%P.roofs.length]; const tall=o.kind==='tower';
+  const ht=(tall?10:7)*K*o.fl*0.9+ (tall?0:4);
+  const wall2=tall?P.tower:wall;
+  const f=prism(c,o.x,o.y,o.w*0.9,o.h*0.9,ht,tall?shade(wall2,1.1):wall2,shade(wall2,0.92),shade(wall2,0.75));
+  // windows
+  const rows=tall?o.fl:1, n=tall?4:2; c.fillStyle=tall&&era==='2026'?'rgba(40,70,100,0.55)':'rgba(50,60,80,0.6)';
+  for(let rI=0;rI<rows;rI++) for(let i=0;i<n;i++){ const fx=(i+0.6)/(n+0.2); const X=f.e[0]+(f.d[0]-f.e[0])*fx, Y=f.e[1]+(f.d[1]-f.e[1])*fx-ht*(rI+0.55)/rows; c.fillRect(X-1.6,Y-2.4,3.2,4.2); if(layer.lights.length<900) layer.lights.push([X,Y,k+rI*7+i]); }
+  if(!tall){ // pitched roof
+    const top=[iso(o.x-o.w*0.45,o.y),iso(o.x+o.w*0.45,o.y)]; c.fillStyle=roof; c.beginPath(); c.moveTo(f.a[0],f.a[1]-ht); c.lineTo(top[0][0],top[0][1]-ht-9); c.lineTo(top[1][0],top[1][1]-ht-9); c.lineTo(f.b[0],f.b[1]-ht); c.closePath(); c.fill();
+    c.fillStyle=shade(roof,1.25); c.beginPath(); c.moveTo(f.e[0],f.e[1]-ht); c.lineTo(top[0][0],top[0][1]-ht-9); c.lineTo(top[1][0],top[1][1]-ht-9); c.lineTo(f.d[0],f.d[1]-ht); c.closePath(); c.fill();
+    // door
+    const dx=(f.e[0]+f.d[0])/2, dy=(f.e[1]+f.d[1])/2; c.fillStyle=shade(roof,0.8); c.fillRect(dx-1.5,dy-6,3,6);
+    if(era==='2026'&&k%5===0){ c.fillStyle='#1e293b'; c.fillRect(f.a[0]+4,f.a[1]-ht-2,6,2); } // solar panel
+    if(era==='1986'&&k%4===0){ c.strokeStyle='#555'; c.lineWidth=0.8; c.beginPath(); const X=f.b[0]-4,Y=f.b[1]-ht-6; c.moveTo(X,Y); c.lineTo(X,Y-10); c.moveTo(X-4,Y-7); c.lineTo(X+4,Y-7); c.moveTo(X-3,Y-9); c.lineTo(X+3,Y-9); c.stroke(); } // TV aerial
+    if(era==='2006'&&k%6===0){ c.fillStyle='#ddd'; c.beginPath(); c.arc(f.b[0]-5,f.b[1]-ht-4,2.5,0,7); c.fill(); } // satellite dish
+  } }
+function place(c,p,P,era){ const w=Math.min(p.w||28,70), h=Math.min(p.h||22,50);
+  if(p.kind==='mosque'){ const s=p.size||1.5; const W=14*s, H=12*s, ht=12*s;
+    const f=prism(c,p.x,p.y,W,H,ht,'#f3efe6','#e5ddcc','#cfc4ad'); const [cx,cy]=iso(p.x,p.y);
+    c.fillStyle=era==='1986'?'#2e7d6b':'#3aa17e'; c.beginPath(); c.ellipse(cx,cy-ht-4,W*0.9,W*0.75,0,Math.PI,0); c.fill(); c.fillStyle='#e6c35c'; c.fillRect(cx-0.8,cy-ht-4-W*0.75-6,1.6,6);
+    if(s>1.4){ const [mx,my]=iso(p.x+W/2,p.y-H/2); c.fillStyle='#efe9db'; c.fillRect(mx-3,my-ht-30,6,ht+30); c.fillStyle=era==='1986'?'#2e7d6b':'#3aa17e'; c.beginPath(); c.moveTo(mx-4,my-ht-30); c.lineTo(mx,my-ht-40); c.lineTo(mx+4,my-ht-30); c.fill(); }
+    c.fillStyle='#2b2b2b'; c.fillRect(cx-3,cy-8,6,8); layer.lights.push([cx,cy-ht*0.5,7,1]); label(c,cx,cy+14,p.name,'#14532d'); return; }
+  let ht=14, wall='#e7e1d6', sign=null;
+  if(['mall','plaza','market'].includes(p.kind)){ ht=p.kind==='mall'?22:12; wall=era==='1986'?'#d9c7a3':era==='2006'?'#e3ddd2':'#eef0f2'; sign=era==='1986'?'#b5422b':era==='2006'?'#1f6fb2':'#0d9488'; }
+  if(p.kind==='office'||p.kind==='civic'||p.kind==='towers'){ ht=p.kind==='towers'?(era==='1986'?40:era==='2006'?110:150):era==='1986'?30:60; wall=p.kind==='towers'||era==='2026'?P.tower:'#c9c2b6'; }
+  if(p.kind==='hospital'){ ht=36; wall='#f4f4f4'; } if(p.kind==='campus'){ ht=26; wall='#c96f4a'; } if(p.kind==='industry'){ ht=16; wall='#b7b9bd'; } if(p.kind==='airport'){ ht=18; wall='#d9dde1'; }
+  if(p.kind==='square'){ const [cx,cy]=iso(p.x,p.y); c.fillStyle='#7dd3fc'; c.beginPath(); c.ellipse(cx,cy,14,7,0,0,7); c.fill(); label(c,cx,cy+14,p.name,'#334'); return; }
+  if(p.kind==='lighthouse'){ const [cx,cy]=iso(p.x,p.y); c.fillStyle='#fff'; c.fillRect(cx-3,cy-30,6,30); c.fillStyle='#c0392b'; c.fillRect(cx-3,cy-34,6,5); return; }
+  const f=prism(c,p.x,p.y,w*0.8,h*0.6,ht,shade(wall,1.05),shade(wall,0.93),shade(wall,0.78));
+  const rows=Math.max(1,Math.round(ht/14)); c.fillStyle=era==='2026'&&ht>40?'rgba(60,110,150,0.6)':'rgba(60,70,90,0.55)';
+  for(let r=0;r<rows;r++) for(let i=0;i<6;i++){ const fx=(i+0.5)/6; const X=f.e[0]+(f.d[0]-f.e[0])*fx, Y=f.e[1]+(f.d[1]-f.e[1])*fx-ht*(r+0.5)/rows; c.fillRect(X-2,Y-2.5,4,4); if(layer.lights.length<900)layer.lights.push([X,Y,r*13+i]); }
+  if(sign){ c.fillStyle=sign; c.beginPath(); c.moveTo(f.e[0],f.e[1]-ht+2); c.lineTo(f.d[0],f.d[1]-ht+2); c.lineTo(f.d[0],f.d[1]-ht+7); c.lineTo(f.e[0],f.e[1]-ht+7); c.fill(); }
+  if(p.kind==='hospital'){ const [cx,cy]=iso(p.x,p.y); c.fillStyle='#d62828'; c.fillRect(cx-2,cy-ht-12,4,10); c.fillRect(cx-5,cy-ht-9,10,4); }
+  const [cx,cy]=iso(p.x,p.y); label(c,cx,cy+16,p.name,'#223'); }
+function label(c,x,y,t,col){ c.font='600 10px system-ui,sans-serif'; c.textAlign='center'; const w=c.measureText(t).width+8; c.fillStyle='rgba(255,255,255,0.85)'; c.fillRect(x-w/2,y-9,w,13); c.fillStyle=col; c.fillText(t,x,y+1); }
+function tree(c,o,month){ const [X,Y]=iso(o.x,o.y); const s=(o.s||4)*1.6; c.fillStyle='rgba(0,0,0,0.15)'; c.beginPath(); c.ellipse(X+3,Y,s*1.1,s*0.5,0,0,7); c.fill(); c.fillStyle='#6b4a2f'; c.fillRect(X-1,Y-s*1.2,2,s*1.2);
+  const autumn=month>=8&&month<=10, winter=month===11||month<=2; let col= winter? (o.c>0.6?'#2f5d3a':null) : autumn? ['#d9822b','#c0392b','#e0b030','#7a9a3a'][Math.floor(o.c*4)] : ['#3f8f3f','#4e9a4a','#2f7d3a'][Math.floor(o.c*3)];
+  if(!col){ c.strokeStyle='#6b4a2f'; c.lineWidth=1; c.beginPath(); c.moveTo(X,Y-s); c.lineTo(X-s*0.7,Y-s*2); c.moveTo(X,Y-s); c.lineTo(X+s*0.6,Y-s*2.1); c.stroke(); return; }
+  c.fillStyle=col; c.beginPath(); c.arc(X,Y-s*1.8,s,0,7); c.fill(); c.fillStyle='rgba(255,255,255,0.12)'; c.beginPath(); c.arc(X-s*0.3,Y-s*2.1,s*0.45,0,7); c.fill(); }
+function furn(c,o,era){ const [X,Y]=iso(o.x,o.y);
+  if(era==='1986'){ c.fillStyle='#9aa0a6'; c.fillRect(X-2,Y-14,4,14); c.fillStyle='#1f4e8c'; c.fillRect(X-4,Y-20,8,7); c.fillStyle='#fff'; c.font='5px sans-serif'; c.fillText('☎',X,Y-14); // payphone
+    c.fillStyle='#c0392b'; c.fillRect(X+6,Y-8,6,8); c.fillStyle='#fff'; c.fillRect(X+7,Y-7,4,2); } // newspaper box
+  else if(era==='2006'){ c.fillStyle='#2a6db3'; c.fillRect(X-2,Y-10,4,10); c.fillStyle='#fff'; c.fillRect(X-3,Y-14,6,4); } // bus stop sign
+  else { c.fillStyle='#16a34a'; c.fillRect(X-2,Y-10,4,10); c.fillStyle='#e5e7eb'; c.fillRect(X-4,Y-14,8,5); c.fillStyle='#0ea5e9'; c.fillRect(X+5,Y-6,5,6); } } // EV charger + bike share
+// ---------- dynamic: cars, buses, people ----------
+function roadsNear(){ const out=[]; const add=(pts,kind)=>{ for(let i=0;i<pts.length-1;i++){ const [x1,y1]=pts[i],[x2,y2]=pts[i+1]; const mx=(x1+x2)/2,my=(y1+y2)/2; const L=Math.hypot(x2-x1,y2-y1); if(Math.abs(mx-anchor.x)<R+L/2&&Math.abs(my-anchor.y)<R+L/2) out.push({x1,y1,x2,y2,L,kind,id:out.length}); } };
+  for(const l of World.localStreets) add(l,'local'); for(const a of World.arterials) add(a.pts,'art'); for(const h of World.highways) add(h.pts,'hwy'); return out; }
+let segs=[];
+function traffic(c,t,P,era,hour){ const busy= hour<6?0.25: (hour>=7&&hour<10)||(hour>=16&&hour<19)?1:0.6;
+  for(const s of segs){ const n=Math.round((s.kind==='hwy'?6:s.kind==='art'?3:1)*busy*Math.max(1,s.L/150)); for(let i=0;i<n;i++){ const k=hsh(s.id,i,s.x1); const sp=(s.kind==='hwy'?0.9:s.kind==='art'?0.5:0.25); const dir=k%2?1:-1;
+    let f=((t/60000)*sp*60/s.L*(1+(k%7)/10)+(k%1000)/1000)%1; if(dir<0)f=1-f; const off=(dir>0?1.6:-1.6)*(s.kind==='local'?0.6:1.4);
+    const nx=-(s.y2-s.y1)/s.L, ny=(s.x2-s.x1)/s.L; const x=s.x1+(s.x2-s.x1)*f+nx*off, y=s.y1+(s.y2-s.y1)*f+ny*off;
+    if(Math.abs(x-cam.x)>R||Math.abs(y-cam.y)>R) continue;
+    const bus=s.kind==='art'&&i===0; car(c,x,y,(s.x2-s.x1)*dir,(s.y2-s.y1)*dir,bus?P.bus:P.cars[k%P.cars.length],bus,P,era); } } }
+function car(c,x,y,dx,dy,col,bus,P,era){ const along=Math.abs(dx)>Math.abs(dy); const L=bus?9:4.2, W=bus?2.6:2.2; const w=along?L:W, h=along?W:L;
+  const f=prism(c,x,y,w,h,bus?7:4,shade(col,1.05),shade(col,0.9),shade(col,0.72));
+  if(bus){ c.fillStyle=P.busStripe; c.fillRect(Math.min(f.e[0],f.d[0]),Math.min(f.e[1],f.d[1])-4,Math.abs(f.d[0]-f.e[0])||3,2); }
+  else { c.fillStyle='rgba(30,40,55,0.8)'; const [X,Y]=iso(x,y); c.fillRect(X-2.5,Y-6.5,5,2.5); } }
+const ACTOUT=new Set(['outing','play','eid','market']);
+function person(c,a,p,t,sel,P){ const [X,Y]=iso(p.x,p.y); const s=a.age<12?0.75:1; const bob=p.moving&&p.mode==='walk'?Math.sin(t/180+a.id)*1.2:0;
+  if(p.moving&&p.mode==='car'){ car(c,p.x,p.y,p.dir===0||p.dir===Math.PI?1:0,p.dir===0||p.dir===Math.PI?0:1,a.carColor||'#999',false,P); if(sel) ring(c,X,Y-4); return; }
+  c.fillStyle='rgba(0,0,0,0.2)'; c.beginPath(); c.ellipse(X,Y,4*s,2*s,0,0,7); c.fill();
+  // legs
+  c.strokeStyle='#333'; c.lineWidth=1.4; c.beginPath(); c.moveTo(X-1,Y); c.lineTo(X-1+bob,Y-5*s); c.moveTo(X+1,Y); c.lineTo(X+1-bob,Y-5*s); c.stroke();
+  // body (abaya for women, longer)
+  c.fillStyle=a.cloth; c.beginPath(); if(a.gender==='f'&&a.age>=12){ c.moveTo(X-3.5*s,Y-1); c.lineTo(X+3.5*s,Y-1); c.lineTo(X+2.2*s,Y-11*s); c.lineTo(X-2.2*s,Y-11*s); } else { c.moveTo(X-2.6*s,Y-4*s); c.lineTo(X+2.6*s,Y-4*s); c.lineTo(X+2.4*s,Y-11*s); c.lineTo(X-2.4*s,Y-11*s); } c.fill();
+  // head
+  c.fillStyle=a.skin; c.beginPath(); c.arc(X,Y-13.5*s,2.4*s,0,7); c.fill();
+  if(a.gender==='f'&&a.age>=12){ c.fillStyle=a.hijab; c.beginPath(); c.arc(X,Y-13.8*s,2.9*s,Math.PI*0.9,Math.PI*2.1); c.lineTo(X+2.9*s,Y-11*s); c.lineTo(X-2.9*s,Y-11*s); c.fill(); }
+  else if(a.kufi){ c.fillStyle='#f4f4f4'; c.beginPath(); c.arc(X,Y-14.5*s,2.3*s,Math.PI,0); c.fill(); } else { c.fillStyle=a.hair; c.beginPath(); c.arc(X,Y-14.6*s,2.3*s,Math.PI,0); c.fill(); }
+  // era gadget
+  if(a.age>=13&&p.b&&(p.b.act==='phone'||(p.moving&&a.phone>0.6))){ c.fillStyle=O.era==='1986'?'#f2f2f2':O.era==='2006'?'#555':'#111'; c.fillRect(X+2,Y-11,O.era==='1986'?4:2,O.era==='1986'?3:3.5); if(O.era==='2026'){ c.fillStyle='rgba(120,180,255,0.9)'; c.fillRect(X+2.3,Y-10.7,1.4,2.6); } }
+  if(sel){ ring(c,X,Y); const q=a._qlive!=null?a._qlive:(a._qs||0.3);
+    const qg=c.createRadialGradient(X-6,Y-15,0,X-6,Y-15,10+q*14); qg.addColorStop(0,'rgba(70,40,100,'+(0.35+q*0.4)+')'); qg.addColorStop(1,'rgba(70,40,100,0)'); c.fillStyle=qg; c.beginPath(); c.arc(X-6,Y-15,10+q*14,0,7); c.fill();
+    const tt=t/400; for(const [side,col] of [[1,'255,214,120'],[-1,'169,198,255']]){ const ox=X+side*8, oy=Y-17+Math.sin(tt+side)*1.5; const og=c.createRadialGradient(ox,oy,0,ox,oy,6); og.addColorStop(0,'rgba('+col+',0.95)'); og.addColorStop(1,'rgba('+col+',0)'); c.fillStyle=og; c.beginPath(); c.arc(ox,oy,6,0,7); c.fill(); } } }
+function ring(c,X,Y){ c.strokeStyle='#ffd678'; c.lineWidth=1.5; c.beginPath(); c.ellipse(X,Y,7,3.5,0,0,7); c.stroke(); }
+// ---------- draw ----------
+let lastBuild=0, rain=[];
+I.draw=function(){ if(!I.on)return; const t=S.t, a=UI.selected; if(!a){ I.exit(); return; }
+  for(const x of A) x._p=Sim.locate(x,t);
+  const p=a._p||{x:a.home.x,y:a.home.y};
+  if(!pan){ cam.x+=(p.x-cam.x)*0.15; cam.y+=(p.y-cam.y)*0.15; }
+  if(!anchor||Math.abs(cam.x-anchor.x)>R*0.45||Math.abs(cam.y-anchor.y)>R*0.45||layerEra!==O.era){ anchor={x:cam.x,y:cam.y}; build(); segs=roadsNear(); }
+  const P=PAL[O.era], z=I.z*dpr; g.setTransform(1,0,0,1,0,0); g.fillStyle=P.grass; g.fillRect(0,0,cv.width,cv.height);
+  const [cx,cy]=iso(cam.x,cam.y); const sx=cv.width/2-cx*z, sy=cv.height*(Wd<900?0.3:0.55)-cy*z;
+  g.setTransform(z/layer.s,0,0,z/layer.s,sx-layer.ox*z,sy-layer.oy*z); g.drawImage(layer,0,0);
+  g.setTransform(z,0,0,z,sx,sy);
+  const L=C.local(t), hour=L.h;
+  traffic(g,t,P,O.era,hour);
+  // people outdoors nearby (moving, or at outdoor places), plus the chosen person always
+  const list=[]; for(const x of A){ const q=x._p; if(!q)continue; if(Math.abs(q.x-cam.x)>R*0.9||Math.abs(q.y-cam.y)>R*0.9)continue; const pl=q.b&&World.place(q.b.pid);
+    if(x===a||q.moving||(pl&&(pl.kind==='park'||pl.kind==='eidground'||pl.kind==='square'))||(q.b&&ACTOUT.has(q.b.act)&&q.b.pid!=='home')) list.push(x); }
+  list.sort((m,n)=>(m._p.x+m._p.y)-(n._p.x+n._p.y)); for(const x of list) person(g,x,x._p,performance.now(),x===a,P);
+  if(!p.moving&&p.b&&p.b.pid!=='away'){ const [X,Y]=iso(p.x,p.y); bubble(g,X,Y-34,(p.b.pid==='home'?'At home: ':'')+short(p.b.txt)); }
+  // light & weather
+  const alt=C.sunAltitude(t); const dark=alt>8?0:alt>-8?(8-alt)/16*0.62:0.62; g.setTransform(1,0,0,1,0,0);
+  if(alt>-6&&alt<10){ g.fillStyle='rgba(255,140,60,'+(0.12*(1-Math.abs(alt-2)/8))+')'; g.fillRect(0,0,cv.width,cv.height); }
+  if(S.ctx.cloud){ g.fillStyle='rgba(120,130,140,0.12)'; g.fillRect(0,0,cv.width,cv.height); }
+  if(dark>0){ g.fillStyle='rgba(8,14,40,'+dark+')'; g.fillRect(0,0,cv.width,cv.height);
+    g.setTransform(z/layer.s,0,0,z/layer.s,sx-layer.ox*z,sy-layer.oy*z); g.globalCompositeOperation='lighter';
+    const hb=Math.floor(t/3600000); for(const [X,Y,k,always] of layer.lights){ if(!always&&(hsh(k,hb)%100)>(hour>=23||hour<5?18:55))continue; g.fillStyle=always?'rgba(255,220,140,0.55)':'rgba(255,200,110,0.75)'; g.fillRect(X*layer.s-2,Y*layer.s-3,4*layer.s,4.5*layer.s); }
+    g.globalCompositeOperation='source-over'; g.setTransform(1,0,0,1,0,0); }
+  if(S.ctx.rain||S.ctx.snow){ const n=S.ctx.snow?120:160; if(rain.length!==n) rain=Array.from({length:n},()=>[Math.random(),Math.random(),0.5+Math.random()]);
+    g.strokeStyle=S.ctx.snow?'rgba(255,255,255,0.9)':'rgba(190,210,240,0.55)'; g.fillStyle='rgba(255,255,255,0.9)'; g.lineWidth=1*dpr; const tm=performance.now()/1000;
+    for(const r of rain){ const x=((r[0]+ (S.ctx.snow?Math.sin(tm+r[2]*9)*0.01:tm*0.05*r[2]))%1)*cv.width, y=((r[1]+tm*(S.ctx.snow?0.05:0.9)*r[2])%1)*cv.height; if(S.ctx.snow){ g.beginPath(); g.arc(x,y,1.6*dpr,0,7); g.fill(); } else { g.beginPath(); g.moveTo(x,y); g.lineTo(x-2*dpr,y+9*dpr); g.stroke(); } } }
+};
+const short=s=>{ s=String(s||''); const n=Wd<900?26:46; return s.length>n?s.slice(0,n-2)+'…':s; };
+function bubble(c,X,Y,t){ c.font='600 10px system-ui,sans-serif'; const w=c.measureText(t).width+12; c.fillStyle='rgba(255,255,255,0.95)'; c.beginPath(); c.roundRect?c.roundRect(X-w/2,Y-12,w,17,6):c.rect(X-w/2,Y-12,w,17); c.fill(); c.beginPath(); c.moveTo(X-4,Y+5); c.lineTo(X,Y+10); c.lineTo(X+4,Y+5); c.fill(); c.fillStyle='#223'; c.textAlign='center'; c.fillText(t,X,Y+1); }
+// ---------- enter / exit / input ----------
+I.enter=function(a){ if(a) UI.select(a,false); if(!UI.selected) return; I.on=true; document.body.classList.add('iso'); cv.style.display='block'; $('inner').classList.add('open'); resize(); const p=Sim.locate(UI.selected,S.t)||UI.selected.home; cam={x:p.x,y:p.y}; anchor=null; pan=null; I.z=Wd<700?1.7:2.1; lastLines=''; inner(true); };
+I.exit=function(){ I.on=false; document.body.classList.remove('iso'); cv.style.display='none'; $('inner').classList.remove('open'); Render.cam.z=Math.min(Render.cam.z,4); if(UI.selected) Render.cam.follow=UI.selected; };
+const ptr=new Map(); let pinch=null, moved=0, last=null;
+cv.addEventListener('pointerdown',e=>{ cv.setPointerCapture(e.pointerId); ptr.set(e.pointerId,{x:e.clientX,y:e.clientY}); moved=0; last={x:e.clientX,y:e.clientY}; if(ptr.size===2){ const [p,q]=[...ptr.values()]; pinch={d:Math.hypot(p.x-q.x,p.y-q.y),z:I.z}; } });
+cv.addEventListener('pointermove',e=>{ if(!ptr.has(e.pointerId))return; ptr.set(e.pointerId,{x:e.clientX,y:e.clientY});
+  if(ptr.size===2&&pinch){ const [p,q]=[...ptr.values()]; zoom(pinch.z*Math.hypot(p.x-q.x,p.y-q.y)/pinch.d/I.z); moved+=10; return; }
+  if(last){ const dx=e.clientX-last.x, dy=e.clientY-last.y; moved+=Math.abs(dx)+Math.abs(dy); last={x:e.clientX,y:e.clientY}; if(moved>8){ pan=true; $('isoFollow').style.display='inline-block'; const k=K*I.z; const ix=-dx/k, iy=-dy/(k*0.5); cam.x+=(ix+iy)/2; cam.y+=(iy-ix)/2; } } });
+const up=e=>{ ptr.delete(e.pointerId); if(ptr.size<2)pinch=null; if(!ptr.size){ if(moved<8&&last) pick(e.clientX,e.clientY); last=null; } };
+cv.addEventListener('pointerup',up); cv.addEventListener('pointercancel',up);
+cv.addEventListener('wheel',e=>{ e.preventDefault(); zoom(Math.exp(-e.deltaY*0.0015)); },{passive:false});
+function zoom(f){ I.z=Math.min(4,I.z*f); if(I.z<0.55){ I.z=0.55; I.exit(); } }
+function pick(mx,my){ const z=I.z; const [cx,cy]=iso(cam.x,cam.y); let best=null,bd=22; for(const x of A){ const q=x._p; if(!q||Math.abs(q.x-cam.x)>R||Math.abs(q.y-cam.y)>R)continue; const [X,Y]=iso(q.x,q.y); const sx=Wd/2+(X-cx)*z, sy=Ht*(Wd<900?0.3:0.55)+(Y-cy)*z-8*z; const d=Math.hypot(sx-mx,sy-my); if(d<bd&&(q.moving||x===UI.selected)){bd=d;best=x;} } if(best&&best!==UI.selected){ UI.select(best,false); pan=null; lastLines=''; inner(true); } }
+$('isoFollow').onclick=()=>{ pan=null; $('isoFollow').style.display='none'; };
+$('isoExit').onclick=()=>I.exit();
+$('isoPeople').onclick=()=>{ Panels.show('dir'); };
+// ---------- inner voice ----------
+const pickR=(r,a)=>a[Math.floor(r()*a.length)];
+const PRAYK=/fajr|dhuhr|asr|maghrib|isha|jumuah|witr|back_to_sleep|rush/;
+const Q={ delay:['There\'s loads of time.','Nobody will notice if you\'re a bit late.','Finish what you\'re doing first.','You\'re so busy — later is fine.'],
+ divert:['Look at this instead.','You deserve a break from all that.','Just this once, it doesn\'t matter.','Everyone else is doing it.'],
+ diminish:['Do it quickly, it still counts.','Skip the extra bit today.','Your mind can be somewhere else, it\'s fine.'],
+ discourage:['You always mess this up anyway.','Why bother? You\'re not that kind of person.','People like you don\'t change.'] };
+const ANG={ prayer:['Prayer on time is one of the deeds Allah loves most.','Get up — the wudu will wake you up.','Pray now and the rest of the day goes better.','A few minutes for Allah, then back to it.'],
+ fast:['You started this for Allah. Sunset is not far.','The hunger is part of it — hold on.'],
+ give:['Charity never makes wealth less.','Give a little now, even something small.'],
+ visit:['Visiting the sick is a right they have over you.','They\'d love to see you today.'],
+ anger:['Say "a\'udhu billahi min ash-shaytan ir-rajim".','If you\'re standing, sit down. Breathe. Make wudu.','The strong one is the one who controls himself when angry.'],
+ pride:['The better of the two is the one who says salam first.','Let it go. Allah raises the humble.'],
+ defect:['Honest trade is blessed. Hiding a fault takes the blessing away.','Tell them about the scratch. Honesty first.'],
+ phone:['Put it down for a bit. Your body has a right over you.','Your family is right here. Look up.','Is this worth your time today?'],
+ general:['Remember Allah.','Is this what you want written down today?','Choose the better thing. You can.'] };
+function angelFor(key){ key=key||''; if(PRAYK.test(key))return 'prayer'; if(/fast/.test(key))return 'fast'; if(/give/.test(key))return 'give'; if(/visit/.test(key))return 'visit'; if(/anger/.test(key))return 'anger'; if(/pride/.test(key))return 'pride'; if(/defect/.test(key))return 'defect'; if(/divert/.test(key))return 'phone'; return 'general'; }
+const THINK_YES=['Okay. Bismillah — let\'s do it.','He\'s right. Get up.','I don\'t want to regret this tonight.','Fine. I\'ll do it now, not later.','Alhamdulillah, I almost forgot.'];
+const THINK_NO=['Just five more minutes…','I\'m too tired today.','I\'ll make it up later.','It\'s not a big deal, is it?','Everyone does it.'];
+const ERA={ '1986':{gadget:'the TV',moments:[['payphone','Stopped at the payphone outside the plaza to call {kin}.'],['paper','Grabbed the Toronto Star from the red newspaper box: "{head}".'],['tv','The evening news on TV: "{head}".'],['radio','CHIN Radio in the car, then a cassette lecture.']],commute:'the Mississauga Transit bus'},
+ '2006':{gadget:'MSN',moments:[['msn','MSN pings: {friend} says "salaam!! u coming to the halaqa 2nite?"'],['forum','Reading a forum thread about "{head}".'],['text','Flip phone buzzes: a text from {kin}.'],['ipod','iPod on shuffle — nasheeds, then something else.']],commute:'the bus with an iPod'},
+ '2026':{gadget:'the phone',moments:[['feed','Phone feed: a short clip about "{head}".'],['wa','WhatsApp group: 47 new messages.'],['notif','A notification: someone posted their new car.'],['auto','Autoplay starts another short video.']],commute:'the MiWay bus'} };
+const ACTT={ work:['Off to work. Bismillah.','Long shift today — make it count.','Working: try to be honest in every little thing.'], school:['School day. Try to be kind to the new kid.','Class. Focus, and say bismillah.'],
+ pray:['Time to pray. Stand, and leave the world for a minute.','Wudu, then prayer.'], tahajjud:['The house is quiet. Just me and my Lord.','Night prayer — the best time to ask.'], jumuah:['Friday! Early to the masjid.','Jumu\'ah: listen to the khutbah, no phone.'],
+ eat:['Bismillah, and eat with the right hand.','Eating together — the food goes further shared.'], sleep:['Wudu, Ayat al-Kursi, lie on the right side.','Bed. Tomorrow is a new chance.'], visit:['Going to visit — bring something small.','Keep family ties strong.'],
+ phone:['Just checking {gadget} for a minute…'], home:['Home. Time with the family.','A quiet moment at home.'], market:['Shopping — don\'t buy what you don\'t need.'], outing:['Family time outside!'], learn:['Learning — even one new thing is good.'], dhikr:['SubhanAllah, alhamdulillah, Allahu akbar…'], play:['Playing outside!'], taraweeh:['Taraweeh — long, but beautiful.'], away:['Away from town.'] };
+let lastLines='', lastBuildT=0;
+function lines(a){ const out=[]; const day=S.day, t=S.t, mid=a.dayMid; const era=O.era, E=ERA[era]; const hh=HH[a.hh];
+  const kin=(hh.kin&&hh.kin[0]?hh.kin[0].members[0].first:'a cousin'), friend=(hh.neigh&&hh.neigh[0]?hh.neigh[0].members[0].first:'a friend');
+  const ps=O.st[era].papers; let head='the news'; if(ps.length) head=ps[ps.length-1].lead.head; else { try{ const gd=O.genDay(era,C.dayIndex(O.baseT)); const it=gd.items.find(x=>x.topic==='world')||gd.items[0]; head=it.head; }catch(e){} }
+  const at=m=>mid+m*60000; const tm=m=>{ const h=Math.floor(m/60)%24, mi=Math.floor(m%60); return ((h+11)%12+1)+':'+String(mi).padStart(2,'0')+(h<12?'am':'pm'); };
+  const ev=[]; for(const e of a.qlog) if(e.t<=t) ev.push(e); for(const e of a.records) if(e.t<=t) ev.push(e);
+  for(const b of a.plan.blocks) if(at(b.s)<=t&&b.e-b.s>=10&&!(b.act==='home'&&b.e-b.s<30)) ev.push({t:at(b.s),type:'block',b});
+  // era moments while awake
+  for(let m=480;m<1380;m+=95){ if(at(m)>t)break; const b=a.plan.blocks.find(x=>m>=x.s&&m<x.e); if(!b||['sleep','pray','jumuah','tahajjud','taraweeh','away'].includes(b.act)||a.age<12) continue; ev.push({t:at(m),type:'era',m}); }
+  ev.sort((x,y)=>x.t-y.t);
+  for(const e of ev){ const r=RG.rngFor('iv',a.id,day,Math.round(e.t/60000),e.type); const m=(e.t-mid)/60000;
+    if(e.type==='block'){ const T=ACTT[e.b.act]||['{txt}']; let s=pickR(r,T).replace('{gadget}',E.gadget).replace('{txt}',e.b.txt); if(e.b.act==='work'&&!a.car&&r()<0.5) s+=' Taking '+E.commute+'.'; out.push({m,k:'thought',s:s,sub:e.b.txt}); }
+    else if(e.type==='qareen'){ const disc=a.mood==='low'||a.mood==='anxious'; const move=disc&&r()<0.4?'discourage':e.move;
+      out.push({m,k:'q',s:e.text+' '+pickR(r,Q[move]||Q.divert),tag:move});
+      const cat=angelFor(e.key); out.push({m,k:'angel',s:pickR(r,ANG[cat])});
+      const rec=a.records.find(x=>x.t>=e.t&&x.t<=e.t+150*60000);
+      const gave= rec? rec.side==='left' : r()>(a.heart*0.6+(a.habits.prompt||0.5)*0.4);
+      out.push({m,k:'thought',s:pickR(r,gave?THINK_NO:THINK_YES)});
+      if(gave){ out.push({m,k:'choiceBad',s:'Choice: gave in this time.'}); out.push({m,k:'angel',s:pickR(r,['It\'s not over. Say astaghfirullah — the pen is still lifted.','Turn back now and it can be wiped away. Do a good deed after.'])}); }
+      else out.push({m,k:'choiceGood',s:'Choice: said no to the whisper.'}); }
+    else if(e.type==='rec'){ if(e.side==='right') out.push({m,k:'right',s:'✦ Right angel writes: '+e.text}); else { const er=e.erasedAt&&mid+e.erasedAt*60000<=t; out.push({m,k:'left',s:'◇ Left angel holds the pen: '+e.text+(er?' — later erased: said sorry to Allah in time.':' — waiting up to six hours for a sorry.')}); } }
+    else if(e.type==='shield'){ out.push({m,k:'angel',s:'🛡 '+e.text}); }
+    else if(e.type==='istighfar'){ out.push({m,k:'right',s:'✦ Asked Allah for forgiveness — the slate gets cleaner.'}); }
+    else if(e.type==='note'){ out.push({m,k:'thought',s:e.text}); }
+    else if(e.type==='era'){ const [kind,txt]=pickR(r,E.moments); out.push({m,k:'era',s:txt.replace('{kin}',kin).replace('{friend}',friend).replace('{head}',head)});
+      const pull=(era==='2026'?0.6:era==='2006'?0.45:0.3)*(0.5+a.phone)*(1.2-a.heart*0.6);
+      out.push({m,k:'q',s:pickR(r,kind==='paper'||kind==='tv'||kind==='forum'||kind==='feed'?['Get angry about it. Say something harsh about them.','Keep reading. And another. And another.','The world is a mess, nothing you do matters.']:['Stay on a bit longer. Just one more.','Skip your plans, this is more fun.','Tell them that juicy story about so-and-so.']),tag:'distract'});
+      out.push({m,k:'angel',s:pickR(r,kind==='paper'||kind==='tv'||kind==='forum'||kind==='feed'?['Make dua for the people in that story instead.','Say something good or stay quiet.','Do one small good thing you CAN do today.']:ANG.phone.concat(['Don\'t talk about people behind their backs.']))});
+      const gave=r()<pull; out.push({m,k:'thought',s:pickR(r,gave?['Ugh, okay, one more…','Just a little longer.','Fine, nobody\'s watching.']:['Nope. Closing it.','I\'ll call them back after Maghrib.','Let me do something useful instead.'])});
+      if(gave) { out.push({m,k:'choiceBad',s:'Lost some time (not a sin written — but time you can\'t get back).'}); out.push({m,k:'angel',s:'Next time is a new chance. Start with bismillah.'}); }
+      else out.push({m,k:'right',s:'✦ Right angel writes: chose the better use of time.'}); } }
+  return out.slice(-60).map(x=>({...x,tm:tm(x.m)})); }
+function inner(force){ const a=UI.selected; if(!a||!I.on)return; const now=performance.now(); if(!force&&now-lastBuildT<400)return; lastBuildT=now;
+  const L=lines(a); const key=a.id+':'+L.length+':'+(L.length?L[L.length-1].s:''); const p=a._p||{}; const b=p.b||{};
+  const q=a._qlive!=null?a._qlive:(a._qs||0); const T=['Struggling','Middle way','Racing ahead'];
+  $('innerHead').innerHTML=`<div><b class="nm2">${esc(a.name)}</b> <span class="dim small">${a.age} · ${esc(O.hoodName(a.home.hood))} · ${O.era}</span><div class="small">${p.moving?(p.mode==='car'?'🚗 Driving: ':'🚶 Walking: '):'📍 '}${esc(b.txt||'')}</div>
+   <div class="meters"><span>Qareen pull</span><span class="bar"><i style="width:${Math.round(q*100)}%;background:#8a63b8"></i></span><span>Heart</span><span class="bar"><i style="width:${Math.round(a.heart*100)}%;background:#7fd3ff"></i></span><span class="tier t${a.tier}">${T[a.tier]}</span></div></div>`;
+  if(key===lastLines)return; lastLines=key;
+  const IC={q:'🟣 Qareen',angel:'🟡 Angel',thought:'💭 '+a.first,choiceGood:'✅',choiceBad:'⚠️',right:'',left:'',era:'📻'};
+  const el=$('innerList'); const atBottom=el.scrollHeight-el.scrollTop-el.clientHeight<60;
+  el.innerHTML=(L.length?'':'<div class="ln thought">The day is just starting. Their first thoughts will show up here.</div>')+L.map(x=>`<div class="ln ${x.k}"><span class="tt">${x.tm}</span><span class="who">${IC[x.k]}</span> ${esc(x.s)}</div>`).join('');
+  if(atBottom||force) el.scrollTop=el.scrollHeight; }
+I.inner=inner;
+setInterval(()=>inner(false),500);
 })();
 </script>
 </body></html>
