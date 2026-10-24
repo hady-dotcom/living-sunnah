@@ -135,18 +135,22 @@ function makePerson(a){ const src=models[dressFor(a)]; const o=SkeletonUtils.clo
   if(head){ if(a.gender==='f'&&a.age>=12){ const hj=new THREE.Mesh(new THREE.SphereGeometry(0.5,20,12,Math.PI/2+0.75,Math.PI*2-1.5,0,Math.PI*0.62),new THREE.MeshLambertMaterial({color:new THREE.Color(a.hijab||'#335'),side:THREE.DoubleSide})); hj.position.set(0,0.5,-0.06); hj.scale.set(1.12,1.1,1.1); head.add(hj);
       const dr=new THREE.Mesh(new THREE.CylinderGeometry(0.62,0.85,0.7,16,1,true),hj.material); dr.geometry=new THREE.CylinderGeometry(0.62,0.85,0.7,20,1,true,0.8,Math.PI*2-1.6); dr.position.set(0,0.0,-0.02); head.add(dr); }
     else if(a.gender==='m'&&a.kufi){ const k=new THREE.Mesh(new THREE.CylinderGeometry(0.4,0.42,0.18,16),new THREE.MeshLambertMaterial({color:0xf4f4f4})); k.position.set(0,0.98,0); head.add(k); }
-    if(a.beard){ const bd=new THREE.Mesh(new THREE.BoxGeometry(0.62,0.32,0.2),new THREE.MeshLambertMaterial({color:new THREE.Color(a.hair||'#222')})); bd.position.set(0,0.12,0.42); head.add(bd); } }
+    if(a.beard){ const bd=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.2,0.14),new THREE.MeshLambertMaterial({color:new THREE.Color(a.hair||'#222')})); bd.position.set(0,-0.06,0.42); head.add(bd); } }
   const mixer=new THREE.AnimationMixer(o); const P={a,o,mixer,acts:{},cur:null,head,hand:findBone(o,'handslot.r')};
   for(const n of ['Idle','Walking_A','Walking_B','Sit_Chair_Idle','Sit_Floor_Idle','Interact','Cheer','Lie_Idle','Use_Item']) if(clips[n]) P.acts[n]=mixer.clipAction(clips[n]);
   play(P,'Idle'); return P; }
-function setProp(m,prop){ if(m.propK===prop) return; if(m.propO&&m.propO.parent) m.propO.parent.remove(m.propO); m.propK=prop; m.propO=null; if(!prop||!m.hand) return;
+function setProp(m,prop){ if(m.propK===prop) return; if(m.propO&&m.propO.parent) m.propO.parent.remove(m.propO); m.propK=prop; m.propO=null; if(!prop||!(m.head||m.hand)) return;
   const L=(c,e)=>new THREE.MeshLambertMaterial({color:c,emissive:e||0x000000}); let g;
-  if(['phone','flip','bb','ipod','walkman'].includes(prop)){ g=new THREE.Group(); const body=new THREE.Mesh(new THREE.BoxGeometry(prop==='phone'?0.32:0.26,prop==='phone'?0.6:0.42,0.06),L(prop==='walkman'?0xc0392b:0x1b1f27)); g.add(body); const sc=new THREE.Mesh(new THREE.PlaneGeometry(prop==='phone'?0.28:0.2,prop==='phone'?0.52:0.2),new THREE.MeshBasicMaterial({color:prop==='phone'?0x8fd3ff:0x9fe0a0})); sc.position.z=0.035; if(prop!=='walkman') g.add(sc); g.rotation.x=-0.6; }
+  if(['phone','flip','bb','ipod','walkman'].includes(prop)){ g=new THREE.Group(); const body=new THREE.Mesh(new THREE.BoxGeometry(prop==='phone'?0.32:0.26,prop==='phone'?0.6:0.42,0.06),L(prop==='walkman'?0xc0392b:0x3a4250,0x111822)); g.add(body); const sc=new THREE.Mesh(new THREE.PlaneGeometry(prop==='phone'?0.28:0.2,prop==='phone'?0.52:0.2),new THREE.MeshBasicMaterial({color:prop==='phone'?0xbfe8ff:0xc8f0c8,side:THREE.DoubleSide})); sc.position.z=0.035; if(prop!=='walkman') g.add(sc); g.rotation.x=-0.6; }
   else if(prop==='paper'||prop==='letter'||prop==='cards'){ g=new THREE.Mesh(new THREE.PlaneGeometry(prop==='paper'?1.1:0.45,prop==='paper'?1.4:0.6),new THREE.MeshLambertMaterial({color:0xf1eee4,side:THREE.DoubleSide})); g.rotation.x=-0.9; }
   else if(prop==='landline'){ g=new THREE.Mesh(new THREE.CapsuleGeometry(0.08,0.55,4,8),L(0xe8dcc8)); g.rotation.z=1.2; }
   else if(prop==='radio'){ g=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.35,0.2),L(0x333333)); }
   else if(prop==='laptop'){ g=new THREE.Mesh(new THREE.BoxGeometry(0.8,0.05,0.55),L(0x9aa3ad,0x223344)); }
-  if(!g) return; g.position.set(0,0.15,0.1); m.hand.add(g); m.propO=g; }
+  if(!g) return; const hd=m.head||m.hand; if(prop==='landline'){ g.position.set(0.5,0.2,0.15); g.rotation.set(0,0,0.3); }
+  else if(prop==='paper'||prop==='letter'||prop==='cards'){ g.position.set(0,-0.45,0.75); g.rotation.set(-0.5,0,0); }
+  else if(prop==='laptop'||prop==='radio'){ g.position.set(0,-0.75,0.8); g.rotation.set(0,0,0); }
+  else { g.position.set(0.18,-0.4,0.62); g.rotation.set(-0.45,0,0); }
+  hd.add(g); m.propO=g; }
 function findBone(o,name){ let b=null; o.traverse(n=>{ if(!b&&n.isBone&&n.name===name) b=n; }); return b; }
 function play(P,name){ if(P.cur===name||!P.acts[name])return; const nx=P.acts[name]; nx.reset().fadeIn(0.3).play(); if(P.cur&&P.acts[P.cur]) P.acts[P.cur].fadeOut(0.3); P.cur=name; }
 const PRAY=new Set(['pray','jumuah','taraweeh','tahajjud','eid','itikaf']);

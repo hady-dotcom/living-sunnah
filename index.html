@@ -147,6 +147,8 @@ body.s3d #nowHap{top:auto;bottom:70px;left:12px}body.iso #nowHap{top:auto;bottom
 
 @media (max-width:900px){body.s3d #nowHap{top:calc(max(8px,env(safe-area-inset-top)) + 150px);bottom:auto;right:8px;max-height:96px}body.s3d #nowHap .nhi:nth-child(n+3){display:none}}
 .cdrama .ln{background:rgba(20,28,40,.88)!important;color:#fff!important;opacity:1!important}
+#nowHap .nhT{cursor:pointer}#nowHap.pill{width:auto!important;right:auto!important;max-height:none;padding:4px 10px;border-radius:22px}#nowHap.pill .nhi,#nowHap.pill #dirBtn{display:none}#nowHap.pill .nhh{margin:0;min-height:36px}
+@media (max-width:900px){body.s3d #nowHap.pill{top:auto;bottom:calc(30vh + 18px);right:auto;left:8px}body.iso #nowHap.pill{bottom:calc(46vh + 18px)}#nowHap.pill{bottom:calc(max(16px,env(safe-area-inset-bottom)) + 18px)}}
 </style></head><body>
 <canvas id="world"></canvas>
 <canvas id="iso"></canvas>
@@ -573,6 +575,26 @@ for(let i=0;i<14;i++){ const hh=R.pick(r,households); const o=hh.neigh[0]||hh.ki
 // slots inside home
 for(const hh of households) hh.members.forEach((m,i)=>m.slot=i);
 window.People={agents,households,estranged,TIERN,OCC};
+})();
+</script><script>// ===== Era-real evening & leisure activities =====
+// Grounded in time-use research: Statistics Canada General Social Survey (GSS) on Time Use — 1986, 1992, 1998, 2005, 2010, 2015 cycles and the 2022 survey —
+// and the U.S. Bureau of Labor Statistics American Time Use Survey (ATUS, 2003–). Broad patterns used (qualitative, not exact minutes):
+// TV was the biggest single leisure activity in every cycle; 1986 leisure = TV, radio, newspapers, phone calls on a landline, visiting;
+// 2005–2010 adds home computers/Internet; 2015–2022 shifts to phones/streaming; socialising in person falls over time.
+(function(){
+const L={
+ '1986':[['Watching the evening news on CFTO','tv'],['Watching CBC with the family','tv'],['Watching Citytv','tv'],['Watching a rented VHS movie on the VCR','tv'],['On the landline with a cousin (long-distance after 6pm is cheaper)','landline'],['Reading the Toronto Star','paper'],['Reading the Mississauga News','paper'],['Listening to the radio (CHIN / CFRB)','radio'],['Card games at the kitchen table','cards'],['Writing a letter home','letter'],['Walkman on, cassette tape playing','walkman']],
+ '2006':[['On MSN Messenger on the family desktop PC','pc'],['Watching a DVD','tv'],['Playing Xbox 360','tv'],['Playing PS2','tv'],['Texting on the flip phone','flip'],['Checking the BlackBerry','bb'],['On Facebook on the desktop','pc'],['Reading a forum on the PC','pc'],['iPod on, headphones in','ipod'],['Watching TV (Much Music / CBC)','tv']],
+ '2026':[['Scrolling TikTok / Reels','phone'],['In WhatsApp group chats','phone'],['Watching Netflix','tv'],['Watching YouTube on the phone','phone'],['Ordering Uber Eats on the phone','phone'],['Gaming on the PlayStation','tv'],['Video call with family overseas','phone'],['Scrolling Instagram','phone']]};
+const VIS={'1986':[['Visiting relatives for tea','visit'],['Reading the paper on the couch','paper']],'2006':[['On the computer in the basement','pc']],'2026':[['On the phone on the couch','phone']]};
+window.EraAct=function(a,p){ const era=(window.Outside&&Outside.era)||'2026', list=L[era]; if(!p||!p.blocks) return;
+  let k=0; for(const b of p.blocks){ k++; if(b.txt0==null) b.txt0=b.txt; b.txt=b.txt0; b.prop=null; const h=(Math.abs(a.id*31+k*17+(p.blocks.length*7))%97)/97;
+    if(b.act==='phone'){ const [t,pr]=list[Math.floor(h*list.length)]; b.txt=t; b.prop=pr; }
+    else if(b.act==='home'&&a.age>=10&&b.e>=1020&&b.e-b.s>=20){ const pool=list.concat(VIS[era]).filter(x=>x[1]!=='visit'); const [t,pr]=pool[Math.floor(h*pool.length)]; b.txt=t; b.prop=pr; }
+    else if(b.act==='eat'&&era==='1986'&&b.s<600&&h<0.5){ b.txt+=' — radio on (CFRB news)'; b.prop='radio'; }
+    else if(b.act==='work'&&era==='2026'&&a.occ==='office'&&h<0.3){ b.txt='Working from home (hybrid) — '+a.job; b.prop='laptop'; }
+    else if(b.act==='work'&&era==='2026'&&a.occ==='driver'&&h<0.5){ b.txt='Gig driving (Uber / delivery apps)'; b.prop='phone'; }
+  } };
 })();
 </script><script>// ===== Scheduler + spiritual layer (Qareen, recording angels, habits, heart) =====
 (function(){
@@ -1277,7 +1299,7 @@ O.presence=function(era){ const yr=E[era].year, want=Math.round(A.length*(ERA_SH
   const keep=new Set(); let n=0; for(const o of order){ if(n>=want) break; keep.add(o.h.id); n+=o.h.members.length; }
   for(const h of P) h.here=keep.has(h.id); for(const a of A) a.here=!!(a.home&&HH[a.hh]&&HH[a.hh].here); return n; };
 const ALLH=World.highways.slice();
-O.applyEra=function(){ O.nHere=O.presence(O.era); World.highways.length=0; for(const h of ALLH) if(!(h.built>E[O.era].year)) World.highways.push(h); const spec=window.ERA_MASJIDS[O.era]; World.mosques.length=0;
+O.applyEra=function(){ O.nHere=O.presence(O.era); if(window.EraAct) for(const a of A) if(a.plan) EraAct(a,a.plan); World.highways.length=0; for(const h of ALLH) if(!(h.built>E[O.era].year)) World.highways.push(h); const spec=window.ERA_MASJIDS[O.era]; World.mosques.length=0;
   for(const m of ALLM){ const o=ORIGM.get(m.id); Object.assign(m,o); if(spec&&!spec[m.id]){ m.closed=true; continue; } m.closed=false; if(spec) Object.assign(m,spec[m.id]); World.mosques.push(m); }
   if(!World.mosques.some(m=>m.jumuah)) World.mosques[0].jumuah=true;
   for(const a of A){ a.mosque=World.nearestMosque(a.home.x,a.home.y).id; a.jmosque=World.nearestMosque(a.home.x,a.home.y,true).id; a.policy=World.place(a.mosque).policy; }
@@ -2173,26 +2195,6 @@ function inner(force){ const a=UI.selected; if(!a||!(I.on||I.on3d))return; const
 I.inner=inner; I.lines=lines;
 setInterval(()=>inner(false),500);
 })();
-</script><script>// ===== Era-real evening & leisure activities =====
-// Grounded in time-use research: Statistics Canada General Social Survey (GSS) on Time Use — 1986, 1992, 1998, 2005, 2010, 2015 cycles and the 2022 survey —
-// and the U.S. Bureau of Labor Statistics American Time Use Survey (ATUS, 2003–). Broad patterns used (qualitative, not exact minutes):
-// TV was the biggest single leisure activity in every cycle; 1986 leisure = TV, radio, newspapers, phone calls on a landline, visiting;
-// 2005–2010 adds home computers/Internet; 2015–2022 shifts to phones/streaming; socialising in person falls over time.
-(function(){
-const L={
- '1986':[['Watching the evening news on CFTO','tv'],['Watching CBC with the family','tv'],['Watching Citytv','tv'],['Watching a rented VHS movie on the VCR','tv'],['On the landline with a cousin (long-distance after 6pm is cheaper)','landline'],['Reading the Toronto Star','paper'],['Reading the Mississauga News','paper'],['Listening to the radio (CHIN / CFRB)','radio'],['Card games at the kitchen table','cards'],['Writing a letter home','letter'],['Walkman on, cassette tape playing','walkman']],
- '2006':[['On MSN Messenger on the family desktop PC','pc'],['Watching a DVD','tv'],['Playing Xbox 360','tv'],['Playing PS2','tv'],['Texting on the flip phone','flip'],['Checking the BlackBerry','bb'],['On Facebook on the desktop','pc'],['Reading a forum on the PC','pc'],['iPod on, headphones in','ipod'],['Watching TV (Much Music / CBC)','tv']],
- '2026':[['Scrolling TikTok / Reels','phone'],['In WhatsApp group chats','phone'],['Watching Netflix','tv'],['Watching YouTube on the phone','phone'],['Ordering Uber Eats on the phone','phone'],['Gaming on the PlayStation','tv'],['Video call with family overseas','phone'],['Scrolling Instagram','phone']]};
-const VIS={'1986':[['Visiting relatives for tea','visit'],['Reading the paper on the couch','paper']],'2006':[['On the computer in the basement','pc']],'2026':[['On the phone on the couch','phone']]};
-window.EraAct=function(a,p){ const era=(window.Outside&&Outside.era)||'2026', list=L[era]; if(!p||!p.blocks) return;
-  let k=0; for(const b of p.blocks){ k++; const h=(Math.abs(a.id*31+k*17+(p.blocks.length*7))%97)/97;
-    if(b.act==='phone'){ const [t,pr]=list[Math.floor(h*list.length)]; b.txt=t; b.prop=pr; }
-    else if(b.act==='home'&&a.age>=13&&b.s>=1020&&b.e-b.s>=30&&h<0.6){ const pool=list.concat(VIS[era]); const [t,pr]=pool[Math.floor(h/0.6*pool.length)]; b.txt=t; b.prop=pr; }
-    else if(b.act==='eat'&&era==='1986'&&b.s<600&&h<0.5){ b.txt+=' — radio on (CFRB news)'; b.prop='radio'; }
-    else if(b.act==='work'&&era==='2026'&&a.occ==='office'&&h<0.3){ b.txt='Working from home (hybrid) — '+a.job; b.prop='laptop'; }
-    else if(b.act==='work'&&era==='2026'&&a.occ==='driver'&&h<0.5){ b.txt='Gig driving (Uber / delivery apps)'; b.prop='phone'; }
-  } };
-})();
 </script><script>// ===== Inciting incidents library (templated, by era / age / role) =====
 // Each: [id, eras ('all' or '86 06 26'), who, setup, qareen whisper, conscience (right angel), good choice, bad choice, ripple target, ripple-good, ripple-bad, echo]
 // who: any|adult|teen|kid|parent|worker|student|elder|driver|woman|man|married|youth   echo: news|social|''
@@ -2202,17 +2204,17 @@ window.DRAMA_TOK={
  '2006':{msg:'an MSN message',dev:'the flip phone',gossip:'an MSN group chat',cash:'a $50 bill',big:'$1,500',car:'Corolla',feed:'a forum thread',show:'a burned DVD',game:'Xbox 360',bank:'the ATM',shop:'Heartland',boss:'the manager',post:'a Facebook wall post',social:'Facebook'},
  '2026':{msg:'a WhatsApp message',dev:'the phone',gossip:'the WhatsApp group',cash:'a $100 bill',big:'$4,000',car:'Civic',feed:'a TikTok clip',show:'a Netflix series',game:'PlayStation',bank:'the banking app',shop:'Square One',boss:'the team lead',post:'an Instagram story',social:'the group chat'}};
 window.DRAMA_LIB=[
-['found_cash','all','any','{N} spots {cash} on the floor at {shop}. Nobody saw it fall.','Finders keepers. Nobody will ever know.','It belongs to someone. Hand it in.','Hands it to the customer service desk.','Pockets it and walks off quickly.','none','','',''],
-['wallet_found','all','adult','A wallet with ID and cash is lying on the bus seat.','Take the cash, drop the wallet. Easy.','Imagine it was yours. Return it whole.','Calls the number on the card and returns everything.','Keeps the cash, leaves the wallet behind.','none','','','news'],
+['found_cash','all','any','{N} spots {cash} on the ground {here}. Nobody saw it fall.','Finders keepers. Nobody will ever know.','It belongs to someone. Hand it in.','Hands it to the customer service desk.','Pockets it and walks off quickly.','none','','',''],
+['wallet_found','all','adult','A wallet with ID and cash is lying on the ground {here}.','Take the cash, drop the wallet. Easy.','Imagine it was yours. Return it whole.','Calls the number on the card and returns everything.','Keeps the cash, leaves the wallet behind.','none','','','news'],
 ['job_offer','all','worker','{N} gets a job offer — more money, but the shift clashes with Jumu\'ah.','Take it. Prayer can wait a few years.','Ask them for a long lunch on Fridays. Many say yes.','Asks politely for Friday lunch — they agree.','Takes it and stops going to Jumu\'ah.','spouse','{o} is proud and relieved.','{o} worries quietly.','social'],
 ['job_loss','all','worker','{N} is told the job is cut. Two weeks\' notice.','You\'re a failure. Everyone will know.','Your provision is written. Pray, then make a plan.','Prays two rak\'ahs and starts calling contacts.','Shouts at home and stops talking to anyone.','spouse','{o} hugs them: "We\'ll manage together."','{o} is hurt by the shouting.','news'],
 ['sib_argue','all','youth','{N} and {o} fight about who broke the {game}.','Blame them. Say something that really stings.','Cool down first. Say salam first — the better one does.','Says sorry first and they fix it together.','Says something cruel and slams the door.','sib','{o} smiles and forgives.','{o} cries in their room.',''],
 ['spouse_argue','all','married','Money is tight and {N} and {o} argue about the bills.','Bring up every old mistake they ever made.','Lower your voice. Sit down. You\'re on the same team.','Sits down, listens, and they make a budget together.','Raises their voice and storms out.','spouse','{o} feels heard.','{o} goes quiet and sad.',''],
 ['child_sick','all','parent','{o} has a high fever in the night.','Panic. Or ignore it till morning — you\'re tired.','Stay calm. Make dua, call the nurse line, stay close.','Sits up with {o}, calls for advice, makes dua.','Snaps at everyone from tiredness.','child','{o} sleeps better with them close.','{o} is scared by the shouting.',''],
-['car_break','all','driver','The {car} breaks down on Hurontario in the rain.','Curse at the car. Curse at everyone.','Say "inna lillahi" and stay patient. Call for help.','Stays calm and a stranger helps push it.','Swears loudly at other drivers.','none','','',''],
+['car_break','all','driver','The {car} breaks down {here}.','Curse at the car. Curse at everyone.','Say "inna lillahi" and stay patient. Call for help.','Stays calm and a stranger helps push it.','Swears loudly at other drivers.','none','','',''],
 ['exam','all','student','Big exam tomorrow. A friend has the answers.','Everyone cheats. Just look once.','Your own honest mark has barakah.','Studies late and does it honestly.','Takes a look at the answers.','friend','{o} decides not to cheat too.','{o} copies too after seeing them.',''],
 ['haram_invite','all','youth','{o} invites {N} to a party with alcohol.','You\'ll lose your friends if you say no.','Real friends respect a no. Suggest something else.','Says no kindly and suggests bowling instead.','Goes along "just to watch".','friend','{o} comes to bowling.','{o} thinks it\'s normal now.','social'],
-['beggar','all','any','A man outside the plaza asks {N} for help buying food.','He\'s probably lying. Walk past.','Charity never makes wealth less. Even a little.','Buys him a hot meal and talks with him.','Looks away and walks past.','none','','',''],
+['beggar','all','any','A man {here} asks {N} for help buying food.','He\'s probably lying. Walk past.','Charity never makes wealth less. Even a little.','Buys him a hot meal and talks with him.','Looks away and walks past.','none','','',''],
 ['gossip','all','any','Everyone in {gossip} is talking about {o}\'s family problems.','Add the juicy bit you heard. Everyone will love it.','Would you like this said about you? Stay quiet or defend them.','Says "let\'s not talk about them like that".','Adds the juicy detail.','neigh','{o} hears someone defended them.','{o} finds out and is deeply hurt.','social'],
 ['old_friend','all','adult','{msg} from {o}, an old friend not heard from in years.','Ignore it. You\'re busy.','Keeping ties is worship. Call back.','Calls back — they talk for an hour.','Leaves it unanswered.','friend','{o} is so happy to reconnect.','{o} feels forgotten.',''],
 ['neighbour_need','all','adult','{o} next door is struggling to carry groceries in the snow.','Not your problem. You\'re cold too.','The neighbour has a right over you.','Carries the bags and shovels their path.','Pretends not to see.','neigh','{o} tells everyone how kind they were.','{o} feels alone.','news'],
@@ -2220,7 +2222,7 @@ window.DRAMA_LIB=[
 ['lie_work','all','worker','A customer complaint. A small lie would make it go away.','Just say it was the supplier\'s fault.','Truth leads to good. Own it.','Owns the mistake and fixes it.','Blames someone else.','none','','',''],
 ['wedding_clash','all','adult','The two families clash over a huge, expensive wedding for {o}.','Go bigger. Show everyone you can.','The most blessed weddings are the simplest.','Pushes for a simple nikah and a fair walima.','Agrees to a big loan for the show.','kin','{o} is relieved — no debt.','{o} starts married life in debt.','social'],
 ['revert_neighbour','all','adult','A new neighbour, {o}, just took shahada and knows no one.','Let the imam deal with it.','Be their family. Invite them over.','Invites {o} for dinner and to the masjid.','Doesn\'t bother.','neigh','{o} feels welcome for the first time.','{o} feels lonely in the new faith.','news'],
-['racist_remark','all','any','Someone at the bus stop makes a racist remark at {N}.','Hit back with worse words.','Stay dignified. Respond with calm or walk away.','Answers calmly and walks away with dignity.','Yells insults back.','none','','','social'],
+['racist_remark','all','any','Someone {here} makes a racist remark at {N}.','Hit back with worse words.','Stay dignified. Respond with calm or walk away.','Answers calmly and walks away with dignity.','Yells insults back.','none','','','social'],
 ['police_stop','all','driver','Peel Regional Police pull {N} over for a rolling stop.','Argue. It\'s unfair. Film everything angrily.','Be polite. If it\'s fair, own it.','Is polite; the officer gives a warning.','Argues and gets a ticket.','none','','','news'],
 ['late_fajr','all','adult','The alarm rings for Fajr. The bed is warm.','Sleep. Pray when you wake up.','Prayer is better than sleep.','Gets up, makes wudu, prays on time.','Turns the alarm off and sleeps.','none','','',''],
 ['ramadan_tired','all','adult','It\'s a long fasting day and {N} is exhausted and snappy.','Snap at them. You\'re fasting, you have an excuse.','If someone provokes you, say "I am fasting".','Takes a breath and stays gentle.','Snaps at the family.','spouse','{o} notices the patience.','{o} gets snapped at.',''],
@@ -2262,12 +2264,12 @@ window.DRAMA_LIB=[
 ['father_time','all','parent','{o} wants to play, but {N} wants to watch {show}.','You worked all day. You deserve this.','These years go so fast.','Plays with {o} for half an hour.','Says "later" again.','child','{o} beams.','{o} plays alone.',''],
 ['inheritance','all','adult','A sibling wants a bigger share of the family house than is fair.','Cut them off forever.','Keep ties even when it\'s hard. Get fair advice.','Asks the imam to mediate.','Stops talking to them.','sib','{o} agrees to mediation.','{o} cuts them off too.',''],
 ['honest_trade','all','worker','A customer overpays {N} by mistake.','Keep it. Their mistake.','Return it. Honest trade is blessed.','Runs after them to return it.','Keeps the extra.','none','','',''],
-['traffic_rage','all','driver','Someone cuts {N} off on the 403.','Tailgate them. Teach them a lesson.','Let it go. Arrive safely.','Lets them go and says "bismillah".','Tailgates and honks.','none','','',''],
+['traffic_rage','all','driver','Someone cuts {N} off {here}.','Tailgate them. Teach them a lesson.','Let it go. Arrive safely.','Lets them go and says "bismillah".','Tailgates and honks.','none','','',''],
 ['visit_sick','all','adult','{o} is in Trillium Hospital.','Hospitals are depressing. Skip it.','Visiting the sick is a right.','Visits with flowers and dua.','Doesn\'t go.','kin','{o} smiles for the first time in days.','{o} feels forgotten.',''],
 ['zakat','all','adult','It\'s time to work out the zakat. It\'s more than expected.','Round it down. Who checks?','Zakat purifies your wealth.','Pays it in full.','Pays less than owed.','community','Families get help.','',''],
 ['backbite_coworker','all','worker','Coworkers mock someone who just left the room.','Join in so you fit in.','Change the subject or defend them.','Changes the subject.','Joins in.','none','','',''],
 ['promise','all','adult','{N} promised to help {o} move house on Saturday, but now has a better offer.','Cancel. Say you\'re sick.','Keep your promise. It\'s a trait of the believers.','Shows up and helps.','Fakes being sick.','friend','{o} is grateful.','{o} is let down.',''],
-['lost_child','all','adult','A little kid is crying alone at {shop}.','Someone else will help.','Help them find their parent.','Takes them to security.','Walks past.','community','The family is reunited.','',''],
+['lost_child','all','adult','A little kid is crying alone {here}.','Someone else will help.','Help them find their parent.','Takes them to security.','Walks past.','community','The family is reunited.','',''],
 ['iftar_host','all','adult','Neighbours who aren\'t Muslim ask about Ramadan.','Too much effort to explain.','Invite them to iftar.','Invites them for iftar.','Brushes them off.','neigh','{o} loves the iftar.','',''],
 ['dua_late','all','adult','The last third of the night. {N} is awake anyway.','Watch something. You\'re awake.','This is the best time to ask Allah.','Prays two rak\'ahs and makes dua.','Watches {show}.','none','','',''],
 ['envy','all','adult','{o} shows off a new {car}.','You deserve it more. Hope something goes wrong for them.','Say "masha\'Allah" and make dua for them.','Says "masha\'Allah, enjoy it!".','Says something snide.','friend','{o} is happy.','{o} feels the coldness.',''],
@@ -2278,7 +2280,7 @@ window.DRAMA_LIB=[
 ['quran_kid','all','kid','Qur\'an class or cartoons?','Cartoons. Qur\'an is boring.','Each letter is a reward.','Goes to Qur\'an class.','Hides to watch cartoons.','parent','{o} is proud.','',''],
 ['mosque_politics','all','adult','A fight over the masjid board elections gets nasty.','Spread rumours about the other side.','Disagree with good manners.','Speaks fairly at the meeting.','Spreads rumours.','community','The meeting calms down.','The community splits a little.','news'],
 ['divorce_talk','all','married','{N} and {o} are having a really hard month.','Just walk out. It\'s over.','Talk, get counselling, be patient.','Suggests seeing a counsellor together.','Threatens divorce in anger.','spouse','{o} agrees to try.','{o} is devastated.',''],
-['phone_found','06 26','any','A phone is left on a bench at the park.','Wipe it and sell it.','Return it to its owner.','Hands it in at the front desk.','Takes it.','none','','',''],
+['phone_found','06 26','any','A phone is left on a bench {here}.','Wipe it and sell it.','Return it to its owner.','Hands it in at the front desk.','Takes it.','none','','',''],
 ['online_scam','06 26','elder','{msg} says {N} won a prize — just send bank details.','Quick, before it expires!','If it seems too good to be true, ask family first.','Asks a grandchild who spots the scam.','Sends the details.','kin','{o} helps them block it.','{o} helps them call the bank.','news'],
 ['video_rental_late','86 06','adult','{show} is a week overdue at the rental store.','Say you returned it. They lost it.','Tell the truth and pay the fine.','Pays the late fee honestly.','Lies to the clerk.','none','','',''],
 ['bus_fare','all','teen','{N} could sneak onto the bus without paying.','Everyone does it.','Pay your way.','Pays the fare.','Sneaks on.','none','','',''],
@@ -2302,7 +2304,7 @@ window.DRAMA_LIB=[
 ['quarrel_neighbours','all','adult','{o}\'s tree drops leaves all over {N}\'s yard.','Call the city. Make their life hard.','Talk kindly. Neighbours matter.','Talks kindly; they rake together.','Files a complaint.','neigh','{o} brings over cookies.','{o} is cold from now on.',''],
 ['sadaqa_secret','all','adult','{N} wants to give, and is tempted to post about it.','Post it. Let everyone see how generous you are.','Give so the left hand doesn\'t know what the right gives.','Gives quietly.','Posts a big announcement.','none','','','social'],
 ['jealous_sibling','all','youth','{o} got the new {game} and {N} didn\'t.','Break it when no one is looking.','Be happy for them.','Asks to play together.','Hides it to annoy them.','sib','{o} shares happily.','{o} is upset.',''],
-['traffic_accident','all','driver','A minor fender-bender in the plaza lot. Nobody saw.','Drive away.','Leave a note with your number.','Leaves a note with their number.','Drives off.','none','','',''],
+['traffic_accident','all','driver','A minor fender-bender {here}. Nobody saw.','Drive away.','Leave a note with your number.','Leaves a note with their number.','Drives off.','none','','',''],
 ['moving_family','all','adult','{o}\'s family is moving away and needs help packing.','Too busy.','Help — they helped you before.','Spends the Saturday packing boxes.','Doesn\'t show.','neigh','{o} leaves with good memories.','',''],
 ['hospital_nurse','all','nurse','{N} is exhausted at the end of a hospital shift and could skip a patient check.','Skip the check. No one will know.','The patient is a trust.','Does the full check.','Skips it.','none','','',''],
 ['interfaith','all','adult','A church invites the masjid to a community dinner.','Don\'t go. They\'re not like us.','Good relations are part of the deen.','Goes and makes new friends.','Refuses rudely.','community','Two communities grow closer.','','news'],
@@ -2322,7 +2324,7 @@ const $=id=>document.getElementById(id), A=People.agents, HH=People.households;
 const D={log:[],live:[],director:true,next:0,bgNext:0}; window.Drama=D;
 try{ const v=localStorage.getItem('sunnahWorld.director'); if(v!=null) D.director=v==='1'; }catch(e){}
 const rnd=Math.random, pick=a=>a[Math.floor(rnd()*a.length)];
-const fill=(s,a,o,era)=>{ const T=DRAMA_TOK[era]; return s.replace(/\{N\}/g,a.first).replace(/\{o\}/g,o?o.first:'a friend').replace(/\{(\w+)\}/g,(m,k)=>T[k]!=null?T[k]:m); };
+const fill=(s,a,o,era)=>{ const T=DRAMA_TOK[era]; return s.replace(/\{here\}/g,D.hereTxt||'nearby').replace(/\{N\}/g,a.first).replace(/\{o\}/g,o?o.first:'a friend').replace(/\{(\w+)\}/g,(m,k)=>T[k]!=null?T[k]:m); };
 function fits(who,a){ const r=a.role, m=HH[a.hh].members;
   switch(who){ case 'any':return a.age>=7; case 'adult':return a.age>=18; case 'teen':return a.age>=13&&a.age<19; case 'kid':return a.age>=6&&a.age<13; case 'youth':return a.age>=12&&a.age<30;
    case 'parent':return (r==='father'||r==='mother')&&m.some(x=>x.role==='child'); case 'worker':return a.age>=18&&!['retired','home','uni','pupil','toddler'].includes(a.occ);
@@ -2339,10 +2341,17 @@ const COND={late_fajr:n=>n.h>=4&&n.h<7,dua_late:n=>n.h>=23||n.h<5,doomscroll:n=>
  snow_shovel:n=>n.winter,jumuah_parking:n=>n.wd===5&&n.h>=11&&n.h<15,salah_work:n=>n.work&&n.h>=15,exam:n=>n.h>=17,teen_curfew:n=>n.h>=20,school_fight:n=>n.work,kid_bully:n=>n.work,new_student:n=>n.work,ramadan:n=>n.ram,
  unfair_boss:n=>n.work,lie_work:n=>n.work,backbite_coworker:n=>n.work,coworker_help:n=>n.work,remote_slack:n=>n.work,bb_work:n=>n.h>=17,smoke_offer:n=>n.work,gamble_office:n=>n.work,hospital_nurse:n=>true,
  child_sick:n=>n.h>=19||n.h<6,time_waste:n=>n.wd===6||n.wd===0,first_masjid:n=>n.wd===5||n.wd===6,volunteer:n=>n.h>=9&&n.h<20,quran_kid:n=>n.h>=15&&n.h<20,father_time:n=>n.h>=17&&n.h<21,mother_tired:n=>n.h>=19,spouse_argue:n=>n.h>=17};
-const OUT=new Set(['found_cash','wallet_found','beggar','lost_child','racist_remark','kind_word','phone_found','traffic_accident','car_break','police_stop','traffic_rage','smoke_offer','hijab_comment','shoplift','bus_fare','unfair_boss','lie_work','backbite_coworker','coworker_help','honest_trade','gamble_office','hospital_nurse','salah_work','school_fight','kid_bully','new_student','exam','tax_cash','gig_rating','jumuah_parking','ramadan_eat']);
+const OUT=new Set(['halal_doubt','lost_child','visit_sick','found_cash','wallet_found','beggar','lost_child','racist_remark','kind_word','phone_found','traffic_accident','car_break','police_stop','traffic_rage','smoke_offer','hijab_comment','shoplift','bus_fare','unfair_boss','lie_work','backbite_coworker','coworker_help','honest_trade','gamble_office','hospital_nurse','salah_work','school_fight','kid_bully','new_student','exam','tax_cash','gig_rating','jumuah_parking','ramadan_eat']);
 const HOME=new Set(['late_fajr','doomscroll','dua_late','sib_argue','spouse_argue','child_sick','mother_tired','father_time','kid_lie_parent','elder_patience','ubereats','spouse_gift','remote_slack','letter_home','dad_smoke','vcr_movie','msn_flirt','quran_kid','fasting_kid','time_waste','zakat','elder_will']);
-function where(a){ const p=Sim.locate(a,Sim.S.t); if(!p) return 'x'; if(p.moving) return 'out'; return (p.b&&p.b.pid==='home')?'home':'out'; }
-function placeOK(t,a){ const w=where(a); if(OUT.has(t[0])) return w==='out'; if(HOME.has(t[0])) return w==='home'; return true; }
+function hereOf(a){ const p=Sim.locate(a,Sim.S.t); if(!p) return {w:'x'}; const b=p.b||{}; const pl=b.pid&&b.pid!=='home'&&!/^hh/.test(b.pid)?World.place(b.pid):null; const nm=pl?pl.name:(/^hh/.test(b.pid||'')?'a neighbour\'s house':'home');
+  if(p.moving) return {w:'out',mode:p.mode,act:b.act,txt:(p.mode==='car'?'on the road to ':'on the way to ')+nm,label:(p.mode==='car'?'🚗 Driving to ':'🚶 Walking to ')+nm};
+  if(b.pid==='home') return {w:'home',act:b.act,txt:'at home',label:'🏠 At home — '+(b.txt||'')};
+  return {w:'out',act:b.act,txt:'at '+nm,label:'📍 At '+nm+' — '+(b.txt||'')}; }
+function where(a){ return hereOf(a).w; }
+const DRIVE=new Set(['car_break','traffic_rage','police_stop','traffic_accident']);
+const WORK=new Set(['unfair_boss','lie_work','backbite_coworker','coworker_help','honest_trade','gamble_office','hospital_nurse','salah_work','smoke_offer','tax_cash','gig_rating','plant_layoff']);
+const SCHOOL=new Set(['school_fight','kid_bully','new_student','ramadan_eat','shoplift']);
+function placeOK(t,a){ const H=hereOf(a), w=H.w; if(DRIVE.has(t[0])) return H.mode==='car'; if(['hijab_comment','racist_remark','beggar','found_cash','wallet_found','lost_child','phone_found','kind_word','snow_shovel'].includes(t[0])&&H.mode==='car') return false; if(['elder_lonely','neighbour_need','snow_shovel','quarrel_neighbours'].includes(t[0])&&!(w==='home'||H.mode==='walk')) return false; if(WORK.has(t[0])) return w==='out'&&H.act==='work'; if(SCHOOL.has(t[0])) return w==='out'&&(H.act==='school'||H.act==='learn'||H.mode==='walk'); if(OUT.has(t[0])) return w==='out'; if(HOME.has(t[0])) return w==='home'; return true; }
 function eraOK(t,era){ const c=COND[t[0]]; if(c&&!c(now())) return false; return t[1]==='all'||t[1].split(' ').includes(era.slice(2)); }
 function awake(a){ const p=Sim.locate(a,Sim.S.t); if(!p) return false; const b=p.b||{}; return !['sleep','away'].includes(b.act)&&!(b.act==='pray'&&!p.moving); }
 function candidates(){ return A.filter(a=>a.here!==false&&a.age>=6&&a.plan&&awake(a)); }
@@ -2352,15 +2361,15 @@ function echo(kind,a,text,good){ const era=Outside.era, st=Outside.st[era]; if(!
   if(kind==='news'){ const p=st.papers[st.papers.length-1]; const it={topic:'neigh',head:text,body:'Reported from around town today.',s:good?1:-0.5,aid:a.id}; if(p) p.items.push(it); }
   else { const plat=pick(ERAS[era].platforms); st.posts.push({era,aid:a.id,who:a.name,plat,text,about:'',date:'today'}); if(st.posts.length>80) st.posts.shift(); } }
 const PH=[0,4,8,12,17,24]; // seconds between phases (real time)
-function start(a,t){ const era=Outside.era; const o=other(t[8],a); if(['spouse','child','sib','parent'].includes(t[8])&&!o) return null;
-  const inc={id:D.log.length+1,a,t,o,era,phase:0,t0:performance.now(),title:(x=>x.charAt(0).toUpperCase()+x.slice(1))(fill(t[3],a,o,era)),simT:Sim.S.t};
+function start(a,t){ const era=Outside.era; const H=hereOf(a); D.hereTxt=H.txt; const o=other(t[8],a); if(['spouse','child','sib','parent'].includes(t[8])&&!o) return null;
+  const inc={id:D.log.length+1,a,t,o,era,phase:0,t0:performance.now(),title:(x=>x.charAt(0).toUpperCase()+x.slice(1))(fill(t[3],a,o,era)),where:H.label,simT:Sim.S.t};
   const heart=a.heart||0.5, q=a._qs||0.3; inc.good = rnd() < 0.45+heart*0.4+(a.tier||0)*0.08-q*0.25; // realistic: people sometimes give in
   inc.repent = !inc.good && rnd() < 0.3+heart*0.5;
-  D.live.push(inc); D.log.push({n:inc.id,era,realS:Math.round((performance.now()-D.boot)/1000),who:a.name,age:a.age,id:t[0],setup:inc.title,choice:inc.good?'good':'bad',repent:inc.repent,ripple:o?o.name:null});
+  D.live.push(inc); D.log.push({n:inc.id,era,realS:Math.round((performance.now()-D.boot)/1000),who:a.name,age:a.age,id:t[0],setup:inc.title,where:inc.where,choice:inc.good?'good':'bad',repent:inc.repent,ripple:o?o.name:null});
   if(D.director) cut(a); ticker(); return inc; }
 function step(inc){ const a=inc.a,t=inc.t,o=inc.o,era=inc.era, el=(performance.now()-inc.t0)/1000;
   while(inc.phase<PH.length&&el>=PH[inc.phase]){ const ph=inc.phase++;
-    if(ph===0){ line(a,'event',inc.title); }
+    if(ph===0){ line(a,'event',inc.title+'  ('+inc.where+')'); }
     else if(ph===1){ line(a,'q',fill(t[4],a,o,era)); a._qlive=Math.min(1,(a._qs||0.3)+0.35); }
     else if(ph===2){ line(a,'angel',fill(t[5],a,o,era)); line(a,'thought',inc.good?pick(['Okay. I know what\'s right.','Bismillah. Do the right thing.','I don\'t want to regret this.']):pick(['Just this once…','Nobody will know.','I\'m too tired to care right now.'])); }
     else if(ph===3){ a._qlive=null;
@@ -2384,10 +2393,11 @@ function tick(){ const now=performance.now(); if(!D.boot){ D.boot=now; D.next=no
     if(now>=D.bgNext){ if(!D.director) choose(); D.bgNext=now+(25+rnd()*35)*1000; } }
   for(const i of D.live) step(i); const n=D.live.length; D.live=D.live.filter(i=>!i.done); if(n!==D.live.length) ticker(); }
 function ticker(){ const el=$('nowHap'); if(!el) return; const L=D.live.slice(-4).reverse();
-  el.innerHTML=`<div class="nhh"><b>🎬 Now happening</b><button id="dirBtn" class="${D.director?'on':''}" title="Director mode: the camera cuts to whoever is in an incident">Director: ${D.director?'on':'off'}</button></div>`+(L.length?L.map(i=>`<div class="nhi" data-aid="${i.a.id}">${i.title.includes(i.a.first)?'':'<b>'+i.a.first+':</b> '}${i.title.replace(/</g,'&lt;')}</div>`).join(''):'<div class="nhi dim">Watching the town… something will happen soon.</div>');
+  el.innerHTML=`<div class="nhh"><b class="nhT">🎬 Now happening${L.length?' ('+L.length+')':''} <span class="nhX">${el.classList.contains('pill')?'▾':'▴'}</span></b><button id="dirBtn" class="${D.director?'on':''}" title="Director mode: the camera cuts to whoever is in an incident">Director: ${D.director?'on':'off'}</button></div>`+(L.length?L.map(i=>`<div class="nhi" data-aid="${i.a.id}">${i.title.includes(i.a.first)?'':'<b>'+i.a.first+':</b> '}${i.title.replace(/</g,'&lt;')}</div>`).join(''):'<div class="nhi dim">Watching the town… something will happen soon.</div>');
+  el.querySelector('.nhT').onclick=e=>{ e.stopPropagation(); el.classList.toggle('pill'); D.pillSet=true; ticker(); };
   $('dirBtn').onclick=e=>{ e.stopPropagation(); D.director=!D.director; try{localStorage.setItem('sunnahWorld.director',D.director?'1':'0');}catch(_){} ticker(); };
   el.querySelectorAll('[data-aid]').forEach(d=>d.onclick=()=>cut(A[+d.dataset.aid])); }
-addEventListener('load',()=>{ ticker(); setInterval(tick,1000); });
+addEventListener('load',()=>{ if(matchMedia('(max-width:900px)').matches) $('nowHap').classList.add('pill'); ticker(); setInterval(tick,1000); });
 D.fire=()=>{ D.next=0; };
 })();
 </script><script>// Minimisable info box (#top) and controls panel. Phone: both start minimised.
