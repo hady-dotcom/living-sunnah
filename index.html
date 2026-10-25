@@ -2455,7 +2455,7 @@ body.clean #top,body.clean #controls,body.clean #ctlBtn,body.clean #ticker,body.
   const btn=document.createElement('button'); btn.id='cleanBtn'; btn.title='Show panels (H)'; btn.textContent='☰'; document.body.appendChild(btn);
   function toggle(on){ B.classList.toggle('clean',on===undefined?!B.classList.contains('clean'):on); }
   btn.onclick=e=>{ e.stopPropagation(); toggle(false); };
-  const PANEL='#top,#controls,#ctlBtn,#ticker,#nowHap,#legend,#card,#dir,#paper,#feed,#survey,#about,#inner,#s3dBar,#s3dCredit,#s3dLoad,#cleanBtn,button,input,select,a,summary';
+  const PANEL='#top,#controls,#ctlBtn,#ticker,#nowHap,#legend,#card,#dir,#paper,#feed,#survey,#about,#inner,#s3dBar,#s3dCredit,#s3dLoad,#cleanBtn,#help,#helpBtn,button,input,select,a,summary';
   const onScene=t=>t&&t.closest&&!t.closest(PANEL);
   // desktop / TV: capture phase so map zoom & camera handlers don't also fire
   addEventListener('dblclick',e=>{ if(!onScene(e.target)) return; e.preventDefault(); e.stopImmediatePropagation(); toggle(); },true);
@@ -2528,5 +2528,61 @@ body.tv #cleanBtn{bottom:auto;top:calc(30px + env(safe-area-inset-top));right:8p
   matchMedia('(orientation:landscape) and (max-height:500px)').addEventListener('change',e=>{ if(e.matches) setTV(true); });
   window.TV={setTV};
 })();
-</script><script type="module">import "./street3d/street3d.js";</script>
+</script><script>// What is this? — small help card. Opens from the ? button, the About button, or #about in the link.
+(function(){
+  const B=document.body,$=id=>document.getElementById(id), KEY='sunnahWorld.seenHelp';
+  const css=document.createElement('style');
+  css.textContent=`
+#helpBtn{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)));z-index:9998;width:40px;height:40px;border-radius:50%;padding:0;font-size:20px;font-weight:700;background:rgba(18,26,40,.85);color:#fff;border:1px solid rgba(255,255,255,.3);box-shadow:0 4px 14px rgba(0,0,0,.3)}
+body.clean #helpBtn{opacity:.55;width:34px;height:34px;font-size:16px}
+#help{position:fixed;left:max(12px,env(safe-area-inset-left));bottom:calc(max(12px,env(safe-area-inset-bottom)) + 50px);z-index:9998;width:min(340px,calc(100vw - 24px));max-height:min(42vh,460px);overflow-y:auto;display:none;padding:12px 14px;font-size:13.5px;line-height:1.45;background:rgba(18,26,40,.94);border:1px solid rgba(255,255,255,.18);border-radius:14px;box-shadow:0 8px 30px rgba(0,0,0,.35);color:#f4f1ea}
+#help.open{display:block}
+#help .hh{display:flex;justify-content:space-between;align-items:center;gap:8px;position:sticky;top:-12px;background:rgba(18,26,40,.98);padding:4px 0}
+#help .hh b{font-size:16px}#help .hx{display:flex;gap:6px}#help .hx button{padding:2px 10px}
+#help p{margin:6px 0}#help ul{margin:4px 0;padding-left:18px}#help li{margin:3px 0}
+#help.mini .hbody{display:none}#help.mini{max-height:none}
+#help .more{background:none;border:0;padding:0;color:#9be8c6;text-decoration:underline;font-size:12.5px}
+@media (orientation:landscape) and (max-height:500px){#help{width:min(380px,46vw);max-height:calc(100vh - 70px);font-size:12.5px}}`;
+  document.head.appendChild(css);
+  const btn=document.createElement('button'); btn.id='helpBtn'; btn.title='What is this?'; btn.setAttribute('aria-label','What is this?'); btn.textContent='?';
+  const c=document.createElement('div'); c.id='help'; c.setAttribute('role','dialog'); c.setAttribute('aria-label','What is this?');
+  c.innerHTML=`<div class="hh"><b>What is this?</b><span class="hx"><button id="helpMin" title="Make smaller">▾</button><button id="helpX" aria-label="Close">✕</button></span></div>
+<div class="hbody">
+<p>A living, make-believe town shaped like Mississauga, where about 750 people try to follow the Sunnah through the day. Real prayer times, sunrise, sunset and moon set the clock. You can watch the same town in 1986, 2006 or 2026. Each year comes with real facts from that time, like how many people lived there, the masjids, wages, rent, bus fares and gas prices, plus its own newspaper and news. 2026 is a forecast. The people, stories and survey numbers are made up.</p>
+<b>How to get around</b>
+<ul>
+<li><b>Move:</b> drag. <b>Zoom:</b> pinch, scroll, or the + and − keys.</li>
+<li><b>People:</b> each dot is a person. Tap one to see who they are and their day. Zoom in close to watch them at street level.</li>
+<li><b>Change year:</b> tap 1986, 2006 or 2026 at the top.</li>
+<li><b>🚶 Walk the streets (3D):</b> walk around the town up close.</li>
+<li><b>Controls (☰):</b> speed up or pause time, jump to the next adhan, Friday, Ramadan or Eid, and open People, Newspaper, Talk, Survey and Key.</li>
+<li><b>Hide panels:</b> double-tap an empty spot of the town (or press H). Double-tap again, or tap the small ☰, to bring them back.</li>
+<li><b>📺 TV mode:</b> turn your phone sideways (or tap TV mode) for a clean picture with one-line captions, made for watching on a TV.</li>
+<li>On a computer, <b>space</b> pauses and plays.</li>
+</ul>
+<button class="more" id="helpMore">Read more about how it works</button>
+</div>`;
+  B.appendChild(c); B.appendChild(btn);
+  function setMini(m){ c.classList.toggle('mini',m); $('helpMin').textContent=m?'▴':'▾'; $('helpMin').title=m?'Show more':'Make smaller'; }
+  function open(mini){ c.classList.add('open'); setMini(!!mini); try{localStorage.setItem(KEY,'1');}catch(e){} }
+  function close(){ c.classList.remove('open'); if(location.hash==='#about') history.replaceState(null,'',location.pathname+location.search); }
+  btn.onclick=e=>{ e.stopPropagation(); c.classList.contains('open')?close():open(false); };
+  $('helpX').onclick=e=>{ e.stopPropagation(); close(); };
+  $('helpMin').onclick=e=>{ e.stopPropagation(); setMini(!c.classList.contains('mini')); };
+  $('helpMore').onclick=e=>{ e.stopPropagation(); close(); $('about').classList.add('open'); };
+  c.addEventListener('click',e=>{ if(c.classList.contains('mini')&&!e.target.closest('button')) setMini(false); });
+  // tap outside closes it (the first tap of a double-tap closes it too)
+  addEventListener('pointerdown',e=>{ if(c.classList.contains('open')&&!e.target.closest('#help,#helpBtn,#aboutBtn')) close(); },true);
+  addEventListener('keydown',e=>{ if(e.key==='Escape'){ if(c.classList.contains('open')) close(); else $('about').classList.remove('open'); } });
+  // the old About button opens this small card
+  const ab=$('aboutBtn'); if(ab) ab.onclick=e=>{ e.stopPropagation(); open(false); };
+  const fromHash=()=>{ if(location.hash==='#about') open(false); };
+  addEventListener('hashchange',fromHash);
+  addEventListener('load',()=>{ let seen=false; try{seen=localStorage.getItem(KEY)==='1';}catch(e){}
+    if(location.hash==='#about') open(false);
+    else if(!seen){ open(false); setTimeout(()=>{ if(c.classList.contains('open')) setMini(true); },12000); } });
+  window.Help={open,close};
+})();
+</script>
+<script type="module">import "./street3d/street3d.js";</script>
 </body></html>
