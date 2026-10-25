@@ -2437,5 +2437,50 @@ D.fire=()=>{ D.next=0; };
   addEventListener('hashchange',hashGo);
   window.Chrome={setTop,setCtl};
 })();
+</script><script>// Clean mode: double-tap / double-click / H hides every panel. Panels start compact everywhere.
+(function(){
+  const B=document.body,$=id=>document.getElementById(id);
+  const css=document.createElement('style');
+  css.textContent=`
+body.clean #top,body.clean #controls,body.clean #ctlBtn,body.clean #ticker,body.clean #nowHap,body.clean #legend,body.clean #card,body.clean #dir,body.clean #paper,body.clean #feed,body.clean #survey,body.clean #about,body.clean #inner,body.clean #s3dBar,body.clean #s3dCredit{display:none!important}
+#cleanBtn{position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));z-index:9999;display:none;width:34px;height:34px;border-radius:17px;border:1px solid rgba(255,255,255,.25);background:rgba(18,26,40,.45);color:#fff;font-size:15px;opacity:.55;cursor:pointer;padding:0}
+#cleanBtn:hover{opacity:1} body.clean #cleanBtn{display:block}
+#cleanHint{position:fixed;left:50%;top:45%;transform:translate(-50%,-50%);z-index:9999;background:rgba(18,26,40,.82);color:#fff;padding:10px 18px;border-radius:20px;font-size:15px;pointer-events:none;transition:opacity .4s}
+#card.mini>*:not(:first-child){display:none!important} #card.mini{max-height:none!important;height:auto!important;overflow:hidden}
+#card .miniT,#inner .miniT{cursor:pointer;background:none;border:0;color:#fff;font-size:14px;padding:0 6px;opacity:.8}
+#inner.mini #innerList{display:none!important} #inner.mini{height:auto!important;max-height:none!important;bottom:auto!important;top:auto!important}#inner.mini>*:not(.ih){display:none!important}body:not(.s3d) #inner.mini{top:152px!important}@media (max-width:900px){#inner.mini{bottom:0!important;top:auto!important}}
+#inner.mini .ib button:not(.miniT){display:none} #inner.mini #innerHead{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;font-size:13px}
+#s3dBar.mini .dim,#s3dBar.mini #s3dWhere{display:none!important}#s3dBar.mini{padding:4px 8px!important;width:auto!important;max-width:calc(100vw - 20px);white-space:nowrap;font-size:12px}#s3dBar.mini .ib{display:inline-flex!important;gap:4px;margin:0 0 0 6px}#s3dBar.mini .ib button{font-size:11px;padding:3px 6px}@media (max-width:900px){#s3dBar.mini b{font-size:0}#s3dBar.mini b:before{content:'🚶 3D';font-size:12px}#s3dBar.mini b .miniT{font-size:13px}}body.s3d #inner.mini,body #inner.mini{height:auto!important;max-height:none!important}`;
+  document.head.appendChild(css);
+  const btn=document.createElement('button'); btn.id='cleanBtn'; btn.title='Show panels (H)'; btn.textContent='☰'; document.body.appendChild(btn);
+  function toggle(on){ B.classList.toggle('clean',on===undefined?!B.classList.contains('clean'):on); }
+  btn.onclick=e=>{ e.stopPropagation(); toggle(false); };
+  const PANEL='#top,#controls,#ctlBtn,#ticker,#nowHap,#legend,#card,#dir,#paper,#feed,#survey,#about,#inner,#s3dBar,#s3dCredit,#s3dLoad,#cleanBtn,button,input,select,a,summary';
+  const onScene=t=>t&&t.closest&&!t.closest(PANEL);
+  // desktop / TV: capture phase so map zoom & camera handlers don't also fire
+  addEventListener('dblclick',e=>{ if(!onScene(e.target)) return; e.preventDefault(); e.stopImmediatePropagation(); toggle(); },true);
+  // touch: two quick taps close together
+  let last=0,lx=0,ly=0,sx=0,sy=0,moved=false;
+  addEventListener('touchstart',e=>{ if(e.touches.length>1){ last=0; moved=true; return; } const t=e.touches[0]; sx=t.clientX; sy=t.clientY; moved=false; },{capture:true,passive:true});
+  addEventListener('touchmove',e=>{ const t=e.touches[0]; if(t&&Math.hypot(t.clientX-sx,t.clientY-sy)>12) moved=true; },{capture:true,passive:true});
+  addEventListener('touchend',e=>{ if(moved||e.touches.length||!onScene(e.target)) return; const t=e.changedTouches[0], now=Date.now();
+    if(now-last<320&&Math.hypot(t.clientX-lx,t.clientY-ly)<40){ last=0; if(e.cancelable) e.preventDefault(); e.stopImmediatePropagation(); toggle(); return; }
+    last=now; lx=t.clientX; ly=t.clientY; },{capture:true,passive:false});
+  addEventListener('keydown',e=>{ if((e.key==='h'||e.key==='H')&&!e.target.closest('input,textarea,select')&&!e.ctrlKey&&!e.metaKey) toggle(); });
+  // compact panels: card and inner get a ▾/▴ toggle on their first row
+  function addMini(el,head){ if(!el||!head||head.querySelector('.miniT')) return; const b=document.createElement('button'); b.className='miniT'; b.textContent=el.classList.contains('mini')?'▾':'▴'; b.title='Tuck away / expand';
+    b.onclick=e=>{ e.stopPropagation(); el.classList.toggle('mini'); el.dataset.user='1'; b.textContent=el.classList.contains('mini')?'▾':'▴'; }; head.appendChild(b); }
+  function watch(el,headSel){ if(!el) return; el.classList.add('mini');
+    const fix=()=>{ const h=headSel?el.querySelector(headSel):el.firstElementChild; addMini(el,h); };
+    new MutationObserver(fix).observe(el,{childList:true}); fix();
+    el.addEventListener('click',e=>{ if(el.classList.contains('mini')&&!e.target.closest('button,a,input,select')){ el.classList.remove('mini'); const b=el.querySelector('.miniT'); if(b) b.textContent='▴'; } }); }
+  addEventListener('load',()=>{
+    watch($('card')); watch($('s3dBar')); watch($('inner'),'.ih');
+    const nh=$('nowHap'); if(nh){ nh.classList.add('pill'); const x=nh.querySelector('.nhX'); if(x) x.textContent='▾'; }
+    if(window.Chrome) Chrome.setTop(true);
+    try{ if(!sessionStorage.getItem('cleanHint')){ sessionStorage.setItem('cleanHint','1'); const h=document.createElement('div'); h.id='cleanHint'; h.textContent='Double-tap to hide panels'; B.appendChild(h); setTimeout(()=>h.style.opacity='0',1500); setTimeout(()=>h.remove(),2000); } }catch(e){}
+  });
+  window.Clean={toggle};
+})();
 </script><script type="module">import "./street3d/street3d.js";</script>
 </body></html>
