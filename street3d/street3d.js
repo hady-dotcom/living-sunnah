@@ -245,6 +245,14 @@ function specFor(a,p){
   return finish({...base,type:'office',seed:hsh('off',pl.id,era),label:'🏢 '+(pl.name||'Indoors'),outdoor:false});
 }
 function dropRoom(){ if(!curRoom) return; scene.remove(curRoom); disposeSpace(curRoom); curRoom=null; clearRoomPeople(); spaceId=''; }
+function clearCam(cam, room, rs){ const ud=room.userData, R0=room.position;
+  if(ud.outdoor){ if(cam.y<R0.y+0.7) cam.y=R0.y+0.7; return; }
+  const hx=(ud.W||6)/2*rs+0.62*rs, hz=(ud.D||5)/2*rs+0.62*rs, hy=2.5*rs;
+  const dx=cam.x-R0.x, dy=cam.y-R0.y, dz=cam.z-R0.z;
+  if(Math.abs(dx)>=hx||Math.abs(dz)>=hz||dy>=hy||dy<-0.25) return;
+  if(ud.type==='car'||ud.type==='bus'){ cam.x=R0.x+hx; return; }
+  if((hx-dx)<(hz-dz)) cam.x=R0.x+hx; else cam.z=R0.z+hz;
+  if(cam.y<R0.y+0.85*rs) cam.y=R0.y+0.85*rs; }
 // ---------- setup ----------
 async function init(){ const box=$('s3d'); renderer=new THREE.WebGLRenderer({antialias:!phone,powerPreference:'high-performance'}); renderer.setPixelRatio(Math.min(devicePixelRatio||1,phone?1.25:1.75)); renderer.shadowMap.enabled=!phone; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace;
   box.prepend(renderer.domElement); renderer.domElement.id='s3dc';
@@ -272,22 +280,26 @@ function frame(){ if(!S3.on){ framed=false; return; } requestAnimationFrame(fram
   if(id!==spaceId){ dropRoom(); spaceId=id; if(spec){ curRoom=buildSpace(spec); curRoom.position.set(0,-500,0); scene.add(curRoom); fillRoom(a,spec); snapCam=true; } }
   city.visible=!curRoom;
   const o=fModel.o; let tx,ty,tz; const rs=curRoom?curRoom.scale.x:1;
-  if(curRoom){ const R0=curRoom.position, an=curRoom.userData.anchor||{x:0,y:0,z:0,ry:Math.PI,pose:'stand'}; const nudge=an.pose==='sit'?0.28:0; tx=R0.x+(an.x+Math.sin(an.ry)*nudge)*rs; ty=R0.y+(an.y+(an.pose==='lie'?0.08:0))*rs; tz=R0.z+(an.z+Math.cos(an.ry)*nudge)*rs; o.rotation.order='YXZ'; o.rotation.set(an.pose==='lie'?-Math.PI/2:0, an.ry, 0); fModel.poseHint=an.pose; }
+  if(curRoom){ const R0=curRoom.position, an=curRoom.userData.anchor||{x:0,y:0,z:0,ry:Math.PI,pose:'stand'}; const nudge=an.pose==='sit'?0.28:0; tx=R0.x+(an.x+Math.sin(an.ry)*nudge)*rs; ty=R0.y+(an.y+(an.pose==='lie'?-0.22:0))*rs; tz=R0.z+(an.z+Math.cos(an.ry)*nudge)*rs; o.rotation.order='YXZ'; o.rotation.set(an.pose==='lie'?-Math.PI/2:0, an.ry, 0); fModel.poseHint=an.pose; }
   else { tx=p.x; tz=p.z; ty=0; fModel.poseHint=null; o.rotation.order='YXZ'; o.rotation.x=0; o.rotation.z=0; if(p.moving) o.rotation.y=p.dir; }
   o.position.set(tx,ty,tz); o.visible=true;
   const ph=pose(fModel,p.act,!curRoom&&p.moving,p.mode); setProp(fModel,(curRoom||!p.moving)&&p.b&&p.b.prop||null); paintScreens(now); fModel.mixer.update(dt); if(ph) applyPrayerBones(fModel); else fModel.phase=null;
   const ud=curRoom&&curRoom.userData; const view=(ud?ud.view:8)*rs;
-  if(snapCam){ const udc=curRoom.userData, R0=curRoom.position, ry=o.rotation.y, fx=Math.sin(ry), fz=Math.cos(ry);
-  if(udc.outdoor){ const dist=view*1.05; controls.target.set(tx,ty+0.75,tz); camera.position.set(tx-fx*dist*0.65+dist*0.4, ty+dist*0.42, tz-fz*dist*0.65-dist*0.15); }
-  else { const m=0.38*rs; let cx=R0.x+udc.W/2*rs-m, cz=R0.z+udc.D/2*rs-m, cy=R0.y+Math.min(1.85, 1.65)*rs; if(Math.hypot(cx-tx,cz-tz)<0.9*rs) cx=R0.x-udc.W/2*rs+m; controls.target.set((tx+R0.x)*0.5, ty+0.55, (tz+R0.z)*0.5); camera.position.set(cx,cy,cz); } }
-  if(!S3.follow0){ const off=camera.position.clone().sub(controls.target); tmpV.set(tx,ty+1.1,tz); const dd=controls.target.distanceTo(tmpV); controls.target.lerp(tmpV,snapCam||dd>3?1:1-Math.exp(-dt*8)); camera.position.copy(controls.target).add(off); }
-  controls.maxDistance=curRoom?view*1.85:260; controls.update();
+  const aimY=ty+(ud&&ud.anchor&&ud.anchor.pose==='lie'?0.25:1.0);
+  if(snapCam&&curRoom){ const R0=curRoom.position, W=(ud.W||6)*rs, D=(ud.D||5)*rs; controls.target.set(tx,aimY,tz);
+    if(ud.outdoor){ const dist=Math.max(3.8, Math.max(W,D)*0.42); camera.position.set(tx+dist*0.38, ty+dist*0.48, tz+dist*0.78); }
+    else if(ud.type==='car'||ud.type==='bus'){ camera.position.set(R0.x+W/2+Math.max(1.2,W*0.9), ty+0.55+0.45*rs, tz+D*0.02); }
+    else { const dist=Math.max(W,D)*0.95; camera.position.set(R0.x+W*0.5+dist*0.2, R0.y+dist*0.48, R0.z+D*0.5+dist*0.36); } }
+  if(!S3.follow0){ const off=camera.position.clone().sub(controls.target); tmpV.set(tx,aimY,tz); const dd=controls.target.distanceTo(tmpV); controls.target.lerp(tmpV,snapCam||dd>3?1:1-Math.exp(-dt*8)); camera.position.copy(controls.target).add(off); }
+  if(curRoom) clearCam(camera.position, curRoom, rs);
+  controls.maxDistance=curRoom?Math.max(view*2.4,12):260; controls.update();
+  if(curRoom) clearCam(camera.position, curRoom, rs);
   // angels on the shoulders, Qareen behind
   const head=fModel.head; head&&head.getWorldPosition(tmpV); const hx=head?tmpV.x:tx, hy=head?tmpV.y:ty+1.4, hz=head?tmpV.z:tz; const ry=o.rotation.y; const rx=Math.cos(ry), rz=-Math.sin(ry); const bx=-Math.sin(ry), bz=-Math.cos(ry); const sc=fModel.o.scale.x/0.62;
   const bob=Math.sin(now/500)*0.03; const so=0.62*sc;
-  angels[0].position.set(hx-rx*so,hy+0.05*sc+bob,hz-rz*so); angels[1].position.set(hx+rx*so,hy+0.05*sc-bob,hz+rz*so); angels[0].scale.setScalar(1.5*sc); angels[1].scale.setScalar(1.5*sc); // right = person's right (model faces +z)
+  angels[0].position.set(hx-rx*so,hy+0.05*sc+bob,hz-rz*so); angels[1].position.set(hx+rx*so,hy+0.05*sc-bob,hz+rz*so); angels[0].scale.setScalar(2.05*sc); angels[1].scale.setScalar(2.05*sc); // right = person's right (model faces +z)
   for(const an of angels){ an.rotation.y=ry; an.visible=o.visible; const f=Math.sin(now/120)*0.4; an.userData.w1.rotation.y=f; an.userData.w2.rotation.y=-f; }
-  const q=a._qlive!=null?a._qlive:(a._qs||0.3); qareen.visible=o.visible; qareen.children.forEach((s,i)=>{ const ph=now/900+s.userData.ph; s.position.set(hx+bx*0.55*sc+Math.sin(ph)*0.25, hy-0.35*sc+Math.cos(ph*1.3)*0.25, hz+bz*0.55*sc+Math.cos(ph)*0.25); const k=(0.6+q*1.3)*sc; s.scale.set(k,k*1.4,1); s.material.opacity=0.25+q*0.5; });
+  const q=a._qlive!=null?a._qlive:(a._qs||0.3); qareen.visible=o.visible; qareen.children.forEach((s,i)=>{ const ph=now/900+s.userData.ph; s.position.set(hx+bx*0.7*sc+Math.sin(ph)*0.28, hy-0.15*sc+Math.cos(ph*1.3)*0.28, hz+bz*0.7*sc+Math.cos(ph)*0.28); const k=(0.85+q*1.5)*sc; s.scale.set(k,k*1.35,1); s.material.opacity=0.35+q*0.5; });
   // other people: outdoors moving nearby, or in the room
   if(!curRoom) others(t,a,tx,tz,dt); else { for(const P of pool) P.o.visible=false; for(const P of roomPeople){ const rph=pose(P,P.act,false); P.mixer.update(dt); if(rph) applyPrayerBones(P); else P.phase=null; } }
   // cars on the real streets
@@ -301,7 +313,7 @@ function frame(){ if(!S3.on){ framed=false; return; } requestAnimationFrame(fram
   const day=Math.max(0,Math.min(1,(alt+6)/18)); sun.intensity=2.4*Math.max(0,Math.min(1,alt/12)); hemi.intensity=0.15+day*1.05; const dusk=alt>-8&&alt<8;
   const sky=new THREE.Color().setHSL(0.6,0.55,0.06+day*0.6); if(dusk) sky.lerp(new THREE.Color(0xf29a6b),0.35*(1-Math.abs(alt)/8)); if(S.ctx.cloud) sky.lerp(new THREE.Color(0x9aa3ad),0.4*day);
   const enclosed=curRoom&&!curRoom.userData.skyBg;
-  if(enclosed){ hemi.intensity=0.85; sun.intensity=0.28; scene.background=new THREE.Color(0x1a1c22); scene.fog.color.set(0x1a1c22); }
+  if(enclosed){ hemi.intensity=0.9; sun.intensity=0.35; scene.background=new THREE.Color(0xc5d0d6); scene.fog.color.set(0xc5d0d6); }
   else { scene.background=sky; scene.fog.color.copy(sky); }
   const night=1-day;
   for(const m of mats.walls.concat([mats.ind])) m.emissiveIntensity=night*0.9; for(const l of mats.lamps) l.material.opacity=night;

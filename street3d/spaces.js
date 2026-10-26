@@ -359,12 +359,15 @@ function shell(g, ctx, o){
     rm.rotation.x = -Math.PI/2; rm.position.set(o.rug.x||0, 0.02, o.rug.z||0); g.add(rm);
   }
   const sides = o.sides == null ? 'nsew' : o.sides;
+  // Dollhouse: the close-up camera sits outside the south-east corner.
+  // Those walls are left out so it can never sit inside them.
+  const cut = o.open ? '' : (o.cut==null ? 'se' : o.cut);
   const nx = Math.round(W), nz = Math.round(D);
   const win = o.windows || {};
   const door = o.door || {};
   const H = 1.29;
   const place = (name, x, y, z, ry)=> tile(g, ctx, name, x, y, z, ry);
-  if (sides.includes('n')){
+  if (sides.includes('n') && !cut.includes('n')){
     for (let i=0;i<nx;i++){
       const x = -W/2 + i, z = -D/2;
       const isWin = win.n && win.n.includes(i), isDoor = door.side==='n' && door.i===i;
@@ -372,7 +375,7 @@ function shell(g, ctx, o){
       place('wall', x, H, z, 0);
     }
   }
-  if (sides.includes('s')){
+  if (sides.includes('s') && !cut.includes('s')){
     for (let i=0;i<nx;i++){
       const x = W/2 - i, z = D/2;
       const isWin = win.s && win.s.includes(i), isDoor = door.side==='s' && door.i===i;
@@ -380,7 +383,7 @@ function shell(g, ctx, o){
       place('wall', x, H, z, Math.PI);
     }
   }
-  if (sides.includes('e')){
+  if (sides.includes('e') && !cut.includes('e')){
     for (let i=0;i<nz;i++){
       const x = W/2, z = -D/2 + i;
       const isWin = win.e && win.e.includes(i), isDoor = door.side==='e' && door.i===i;
@@ -388,7 +391,7 @@ function shell(g, ctx, o){
       place('wall', x, H, z, -Math.PI/2);
     }
   }
-  if (sides.includes('w')){
+  if (sides.includes('w') && !cut.includes('w')){
     for (let i=0;i<nz;i++){
       const x = -W/2, z = D/2 - i;
       const isWin = win.w && win.w.includes(i), isDoor = door.side==='w' && door.i===i;
@@ -397,8 +400,7 @@ function shell(g, ctx, o){
     }
   }
   if (!o.open){
-    const ceil = new THREE.Mesh(new THREE.PlaneGeometry(W, D), ctx.pack.ceil);
-    ceil.rotation.x = Math.PI/2; ceil.position.y = 2.56; g.add(ceil);
+    // No ceiling slab. The camera looks down into the room, and a slab would hide it.
     prop(g, ctx, 'lampSquareCeiling', 0, 2.56 - dim('lampSquareCeiling').y, 0, 0);
     if (W>8) prop(g, ctx, 'lampSquareCeiling', -W*0.25, 2.56-dim('lampSquareCeiling').y, 0, 0);
     const warm = ctx.era==='2026' ? 0xfff6ea : ctx.era==='2006' ? 0xffe4c2 : 0xffd7a1;
@@ -411,10 +413,8 @@ function shell(g, ctx, o){
     const sun = new THREE.HemisphereLight(0xfff4e0, 0x6a8a48, 0.35);
     g.add(sun); ctx.lamp = sun;
   }
-  // a couple of pictures on interior walls
-  if (!o.open && !o.noArt && sides.includes('e')){
-    picture(g, ctx, W/2-0.08, 1.45, 0, -Math.PI/2);
-    if (W>5) picture(g, ctx, -W/2+0.08, 1.45, -0.4, Math.PI/2);
+  if (!o.open && !o.noArt && sides.includes('w') && !cut.includes('w')){
+    picture(g, ctx, -W/2+0.08, 1.45, 0.2, Math.PI/2);
   }
 }
 
@@ -1047,6 +1047,7 @@ function vehicle(g, ctx, bus){
   const wind = new THREE.Mesh(new THREE.PlaneGeometry(W-0.2, bus?0.7:0.55), glass);
   wind.position.set(0, bus?1.25:1.05, -L/2+0.15); g.add(wind);
   for (const side of [-1, 1]){
+    if (side>0) continue; // near side stays open so the camera is not inside the door
     const win = new THREE.Mesh(new THREE.PlaneGeometry(L*0.72, 0.48), glass);
     win.position.set(side*(W/2), bus?1.25:1.05, bus?0.2:-0.15);
     win.rotation.y = Math.PI/2; g.add(win);
