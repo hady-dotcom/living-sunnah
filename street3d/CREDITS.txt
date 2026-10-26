@@ -14,4 +14,9 @@ Sunnah World - Street view (3D) credits and licences
 3. three.js r170 (three.module.min.js and examples/jsm loaders and controls),
    MIT licence, (c) 2010-2024 three.js authors. See THREE_LICENSE.txt.
 
+4. Furniture, food, vehicles, trees and the column: Kenney (kenney.nl), CC0 1.0.
+   Furniture Kit, Food Kit, Car Kit, Nature Kit and a building column, used as
+   low-poly props in the close-up rooms (street3d/assets/kenney). Stylised, not
+   photographic. 1986 rooms omit flat screens, laptops and microwaves.
+
 No Google Maps or Street View data is used. Everything loads from this folder, with no CDN.

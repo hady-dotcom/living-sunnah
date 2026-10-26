@@ -4,6 +4,7 @@ import {OrbitControls} from './jsm/controls/OrbitControls.js';
 import {GLTFLoader} from './jsm/loaders/GLTFLoader.js';
 import * as SkeletonUtils from './jsm/utils/SkeletonUtils.js';
 import {mergeGeometries} from './jsm/utils/BufferGeometryUtils.js';
+import {loadAssets, buildSpace, disposeSpace, setScale, setPhone} from './spaces.js';
 const A=People.agents, HH=People.households, S=Sim.S, C=Clock, O=Outside, RG=window.R, $=id=>document.getElementById(id);
 const BASE=new URL('.',import.meta.url).href;
 const phone=Math.min(innerWidth,innerHeight)<600;
@@ -127,7 +128,8 @@ function prepPlaces(){ for(const b of data.b){ const c=centroid(b.p); const door
     if(b.m) masjid=rec; else if(b.gen||b.k==='house') houses.push(rec); else if(/commercial|retail/.test(b.k)||(b.k==='yes'&&b.h<8)) shops.push(rec); else works.push(rec); }
   if(!shops.length) shops=works.slice(0,5); }
 // ---------- people ----------
-async function loadModels(){ const L=new GLTFLoader(); const [r,m]=await Promise.all([L.loadAsync(BASE+'rogue.glb'),L.loadAsync(BASE+'mage.glb')]); models.casual=r.scene; models.robe=m.scene; for(const c of r.animations) clips[c.name]=c; }
+async function loadModels(){ const L=new GLTFLoader(); const [r,m]=await Promise.all([L.loadAsync(BASE+'rogue.glb'),L.loadAsync(BASE+'mage.glb')]); models.casual=r.scene; models.robe=m.scene; for(const c of r.animations) clips[c.name]=c;
+  const box=new THREE.Box3().setFromObject(models.casual); const h=box.max.y-box.min.y; if(h>0.2&&h<20) setScale((h*0.62)/1.7); }
 function dressFor(a){ const robe=(a.gender==='f'&&a.age>=12)||(a.gender==='m'&&a.age>=16&&hsh('thobe',a.id)%3===0); return robe?'robe':'casual'; }
 function makePerson(a){ const src=models[dressFor(a)]; const o=SkeletonUtils.clone(src); const s=a.age<5?0.45:a.age<12?0.65:a.age<16?0.85:1; o.scale.setScalar(s*0.62);
   const tint=new THREE.Color(a.cloth||'#777'); o.traverse(n=>{ if(n.isMesh){ n.castShadow=!phone; n.frustumCulled=false; n.material=n.material.clone(); if(/Body|Leg|Arm/.test(n.name)) n.material.color.lerp(tint,0.55); if(/Head/.test(n.name)&&a.gender==='f') n.material.color.set(0xffffff); } });
@@ -155,7 +157,14 @@ function findBone(o,name){ let b=null; o.traverse(n=>{ if(!b&&n.isBone&&n.name==
 function play(P,name){ if(P.cur===name||!P.acts[name])return; const nx=P.acts[name]; nx.reset().fadeIn(0.3).play(); if(P.cur&&P.acts[P.cur]) P.acts[P.cur].fadeOut(0.3); P.cur=name; }
 const PRAY=new Set(['pray','jumuah','taraweeh','tahajjud','eid','itikaf']);
 function pose(P,act,moving,mode){ if(moving){ play(P,mode==='run'?'Walking_B':'Walking_A'); return null; }
-  if(PRAY.has(act)) return prayerPhase(P); if(act==='sleep') { play(P,'Lie_Idle'); return null; }
+  const h=P.poseHint;
+  if(h==='lie'){ play(P,'Idle'); return null; }
+  if(h==='sit'){ play(P,'Sit_Chair_Idle'); return null; }
+  if(h==='floor'){ play(P,'Sit_Floor_Idle'); return null; }
+  if(h==='cheer'){ play(P,'Cheer'); return null; }
+  if(h==='use'){ play(P,P.acts['Use_Item']?'Use_Item':'Interact'); return null; }
+  if(h==='stand'){ play(P,'Idle'); return null; }
+  if(h==='pray'||PRAY.has(act)) return prayerPhase(P); if(act==='sleep') { play(P,'Lie_Idle'); return null; }
   if(['eat','learn','dhikr'].includes(act)) { play(P,'Sit_Floor_Idle'); return null; } if(['phone','visit'].includes(act)){ play(P,'Sit_Chair_Idle'); return null; }
   if(act==='work'||act==='school') { play(P,P.a.labour?'Use_Item':'Interact'); return null; } if(act==='play') { play(P,'Cheer'); return null; }
   play(P,'Idle'); return null; }
@@ -175,65 +184,104 @@ function makeAngel(color){ const g=new THREE.Group(); const m=new THREE.MeshBasi
   const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(...new THREE.Color(color).toArray().map(v=>v*255|0)),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})); halo.scale.set(0.9,0.9,1); halo.position.y=0.2;
   const light=new THREE.PointLight(color,0.6,2.5); light.position.y=0.2; g.add(body,head,w1,w2,halo,light); g.userData={w1,w2}; return g; }
 function makeQareen(){ const g=new THREE.Group(); const tx=glowTex(30,12,45); for(let i=0;i<9;i++){ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthWrite:false,opacity:0.55})); s.userData.ph=i*0.7; g.add(s); } return g; }
-// ---------- interiors ----------
-function room(kind){ const g=new THREE.Group(); const W=kind==='mosque'?18:7, D=kind==='mosque'?14:6, H=kind==='mosque'?6:2.8;
-  const floor=new THREE.Mesh(new THREE.PlaneGeometry(W,D),new THREE.MeshLambertMaterial({map:kind==='mosque'?patTex((x,n)=>{ x.fillStyle='#8c1d2b'; x.fillRect(0,0,n,n); x.fillStyle='#b7323f'; x.fillRect(0,0,n,n*0.82); x.strokeStyle='#e8c46a'; x.lineWidth=4; x.strokeRect(10,10,n-20,n*0.82-20); x.beginPath(); x.moveTo(n/2,16); x.lineTo(n-22,n*0.4); x.lineTo(n/2,n*0.75); x.lineTo(22,n*0.4); x.closePath(); x.stroke(); }):patTex((x,n)=>{ x.fillStyle='#b88a5a'; x.fillRect(0,0,n,n); x.strokeStyle='#9c7149'; for(let i=0;i<n;i+=16){ x.beginPath(); x.moveTo(0,i); x.lineTo(n,i); x.stroke(); } })}));
-  floor.material.map.repeat.set(kind==='mosque'?W/1.2:W/2,kind==='mosque'?D/1.4:D/2); floor.rotation.x=-Math.PI/2; floor.receiveShadow=true; g.add(floor);
-  const wm=new THREE.MeshLambertMaterial({color:kind==='mosque'?0xf4efe4:0xe9e1d3,side:THREE.BackSide}); const box=new THREE.Mesh(new THREE.BoxGeometry(W,H,D),wm); box.position.y=H/2; g.add(box);
-  // windows (glow by time of day)
-  const winM=new THREE.MeshBasicMaterial({color:0x9fd0ff}); g.userData.win=winM; for(const x of [-W/3,0,W/3]){ const w=new THREE.Mesh(new THREE.PlaneGeometry(kind==='mosque'?2:1.2,kind==='mosque'?2.6:1.1),winM); w.position.set(x,H*0.55,-D/2+0.02); g.add(w); }
-  const lamp=new THREE.PointLight(0xffe2b0,kind==='mosque'?3:1.6,kind==='mosque'?30:12); lamp.position.set(0,H-0.4,0); g.add(lamp); g.userData.lamp=lamp;
-  if(kind==='mosque'){ // mihrab, minbar, chandelier, calligraphy band
-    const mih=new THREE.Mesh(new THREE.CylinderGeometry(1.2,1.2,3.4,20,1,true,0,Math.PI),new THREE.MeshLambertMaterial({color:0x2e7d6b,side:THREE.DoubleSide})); mih.position.set(0,1.7,-D/2+0.05); mih.rotation.y=Math.PI; g.add(mih);
-    const arch=new THREE.Mesh(new THREE.TorusGeometry(1.2,0.12,8,20,Math.PI),new THREE.MeshLambertMaterial({color:0xe6c35c})); arch.position.set(0,3.4,-D/2+0.1); g.add(arch);
-    const mb=new THREE.Group(); for(let i=0;i<5;i++){ const s=new THREE.Mesh(new THREE.BoxGeometry(1,0.35,0.6),new THREE.MeshLambertMaterial({color:0x7a5230})); s.position.set(2.6,0.18+i*0.35,-D/2+1.6-i*0.6+1.2); mb.add(s);} g.add(mb);
-    const ch=new THREE.Mesh(new THREE.TorusGeometry(1.4,0.07,6,24),new THREE.MeshLambertMaterial({color:0xe6c35c,emissive:0x664400})); ch.rotation.x=Math.PI/2; ch.position.set(0,H-1.2,0); g.add(ch);
-    const band=new THREE.Mesh(new THREE.PlaneGeometry(W-1,0.6),new THREE.MeshBasicMaterial({map:patTex((x,n)=>{ x.fillStyle='#1f5e4f'; x.fillRect(0,0,n,n); x.fillStyle='#e6c35c'; x.font='bold 60px serif'; x.fillText('﷽',4,80); },128)})); band.material.map.repeat.set(10,1); band.position.set(0,H-0.6,-D/2+0.03); g.add(band);
-    const shelf=new THREE.Mesh(new THREE.BoxGeometry(2,1.2,0.4),new THREE.MeshLambertMaterial({color:0x6b4a2f})); shelf.position.set(-W/2+1.2,0.6,-2); g.add(shelf);
-  } else { // home: prayer mat, low table, sofa, TV/computer by era, rug
-    const mat=new THREE.Mesh(new THREE.PlaneGeometry(0.75,1.3),new THREE.MeshLambertMaterial({map:patTex((x,n)=>{ x.fillStyle='#1d4e89'; x.fillRect(0,0,n,n); x.fillStyle='#e6c35c'; x.beginPath(); x.moveTo(n/2,8); x.lineTo(n-10,40); x.lineTo(n-10,n-8); x.lineTo(10,n-8); x.lineTo(10,40); x.closePath(); x.lineWidth=5; x.strokeStyle='#e6c35c'; x.stroke(); })})); mat.rotation.x=-Math.PI/2; mat.position.set(-1.8,0.02,-1.6); g.add(mat); g.userData.mat=mat;
-    const tbl=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,0.35,20),new THREE.MeshLambertMaterial({color:0x7a5230})); tbl.position.set(1.2,0.18,0.6); g.add(tbl);
-    const sofa=new THREE.Mesh(new THREE.BoxGeometry(2.6,0.8,0.9),new THREE.MeshLambertMaterial({color:O.era==='1986'?0x8a5a2b:O.era==='2006'?0x6b7280:0x334155})); sofa.position.set(1.2,0.4,2.4); g.add(sofa);
-    const tv=new THREE.Mesh(O.era==='2026'?new THREE.BoxGeometry(1.6,0.9,0.06):new THREE.BoxGeometry(0.8,0.7,0.6),new THREE.MeshLambertMaterial({color:O.era==='1986'?0x5a3d22:0x111111,emissive:0x223344})); g.userData.tv=tv; tv.position.set(1.2,O.era==='2026'?1.3:0.75,-D/2+0.4); g.add(tv);
-    const shelfB=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.8,0.35),new THREE.MeshLambertMaterial({color:0x6b4a2f})); shelfB.position.set(-W/2+0.3,0.9,1.5); shelfB.rotation.y=Math.PI/2; g.add(shelfB);
-    for(let i=0;i<6;i++){ const bk=new THREE.Mesh(new THREE.BoxGeometry(0.12,0.3,0.22),new THREE.MeshLambertMaterial({color:[0x1d4e89,0x2e7d6b,0x8c1d2b,0xe6c35c][i%4]})); bk.position.set(-W/2+0.32,1.2,1.0+i*0.16); g.add(bk); }
-    const rug=new THREE.Mesh(new THREE.PlaneGeometry(2.6,1.8),new THREE.MeshLambertMaterial({color:0xa4483c})); rug.rotation.x=-Math.PI/2; rug.position.set(1.2,0.015,0.6); g.add(rug); }
-  g.userData.kind=kind; g.userData.W=W; g.userData.D=D; return g; }
+// ---------- which room this moment belongs in ----------
+function placeMeta(a,pid){
+  if(!pid||pid==='home') return {kind:'home',id:'home:'+a.hh,name:(HH[a.hh]&&HH[a.hh].surname?HH[a.hh].surname+' home':'home'),hh:a.hh};
+  if(pid==='away') return {kind:'away',id:'away',name:'away',hh:a.hh};
+  if(String(pid).startsWith('hh')){ const hh=+pid.slice(2); const host=HH[hh]; return {kind:'home',id:'visit:'+hh,name:host&&host.surname?host.surname+' home':'a visit',hh}; }
+  const pl=World.place(pid); if(!pl) return {kind:'work',id:String(pid),name:'work',hh:a.hh};
+  return {kind:pl.kind,id:pl.id,name:pl.name,hh:a.hh,size:pl.size||1};
+}
+function homeKindOf(hh){ const h=HH[hh]; const m=h&&h.members&&h.members[0]; return m&&m.home?m.home.kind:'house'; }
+function specFor(a,p){
+  if(!p) return null;
+  const b=p.b||{}; const act=b.act||'home'; const pid=b.pid||'home';
+  if(p.moving&&(p.mode==='walk'||!p.mode)) return null; // real Coopers Ave
+  const era=O.era; const pl=placeMeta(a,pid); const hh=pl.hh!=null?pl.hh:a.hh;
+  const ill=!!(a.plan&&a.plan.flags&&a.plan.flags.ill);
+  const base={era,act,occ:a.occ,age:a.age,gender:a.gender,homeKind:homeKindOf(hh),placeName:pl.name||'',placeId:pl.id,wealth:HH[a.hh]?HH[a.hh].wealth:40,size:pl.size||1,ill,hh};
+  const finish=(o)=>{ o.seed=o.seed>>>0; o.key=[o.type,o.era,o.seed].join(':'); return o; };
+  if(p.moving&&p.mode==='car') return finish({...base,type:'car',seed:hsh('car',a.id,era),label:'🚗 In the car'+(roadName(p)?' · '+roadName(p):''),outdoor:false});
+  if(p.moving&&p.mode==='bus') return finish({...base,type:'bus',seed:hsh('bus',era,a.id%4),label:'🚌 On the bus',outdoor:false});
+  if(act==='away'||pl.kind==='away') return finish({...base,type:'airport',seed:hsh('air',era),label:'✈️ Airport — travelling',outdoor:false});
+  const atHome=pl.kind==='home'; const atMosque=pl.kind==='mosque';
+  if(atMosque&&(act==='dhikr'||(act==='pray'&&hsh('wudu',a.id,b.s|0)%5===0))) return finish({...base,type:'wudu',seed:hsh('wudu',pl.id,era),label:'🕌 Wudu area — '+pl.name,outdoor:false});
+  if(atMosque&&['pray','jumuah','taraweeh','itikaf','eid'].includes(act)) return finish({...base,type:'prayerhall',seed:hsh('hall',pl.id,era),label:'🕌 Prayer hall — '+pl.name,outdoor:false});
+  if(atMosque&&act==='eat') return finish({...base,type:'iftar',seed:hsh('iftar',pl.id,era),label:'🍽️ Masjid dining room — '+pl.name,outdoor:false});
+  if(atMosque&&act==='learn') return finish({...base,type:a.occ==='imam'?'imam':'halaqah',seed:hsh('hal',pl.id,era,a.occ==='imam'?'i':'h'),label:(a.occ==='imam'?"🕌 Imam's office — ":'📚 Halaqah — ')+pl.name,outdoor:false});
+  if(act==='eid'||pl.kind==='eidground') return finish({...base,type:'eid',seed:hsh('eid',era),label:'🕌 Eid prayer ground',outdoor:true});
+  if(act==='sleep'||(ill&&atHome&&['pray','home','phone'].includes(act))) return finish({...base,type:'bedroom',seed:hsh('bed',hh,era,a.age<14?'k':'a'),label:a.age<14?'🛏️ Kids’ bedroom':'🛏️ Bedroom',outdoor:false});
+  if(act==='tahajjud'||(atHome&&(act==='pray'||act==='dhikr'))) return finish({...base,type:'musalla',variant:'home',seed:hsh('mus',hh,era),label:'🕌 Prayer corner at home',outdoor:false});
+  if(act==='eat'&&atHome) return finish({...base,type:'kitchen',seed:hsh('kit',hh,era),label:'🍳 Kitchen',outdoor:false});
+  if(act==='eat') return finish({...base,type:'restaurant',seed:hsh('rest',pl.id,era),label:'🍽️ Restaurant'+(pl.name?' — '+pl.name:''),outdoor:false});
+  if(act==='phone'||(atHome&&b.prop&&['tv','radio','pc','laptop','flip','bb','ipod','walkman','paper','letter','cards'].includes(b.prop))) return finish({...base,type:'living',seed:hsh('liv',hh,era),label:'🛋️ Living room',outdoor:false});
+  if(act==='visit') return finish({...base,type:'living',seed:hsh('liv',hh,era),label:'🛋️ Living room — visiting '+pl.name,outdoor:false});
+  if(act==='school'||(act==='work'&&a.occ==='teacher')||(act==='learn'&&pl.kind==='school')) return finish({...base,type:'classroom',seed:hsh('cls',pl.id,era),label:'🏫 Classroom — '+pl.name,outdoor:false});
+  if(act==='learn'&&pl.kind==='campus') return finish({...base,type:'lecture',seed:hsh('lec',pl.id,era),label:'🎓 Lecture room — '+pl.name,outdoor:false});
+  if(act==='learn') return finish({...base,type:'study',seed:hsh('stu',hh,era),label:'📚 Study',outdoor:false});
+  if(act==='work'||act==='market'){
+    if(a.occ==='nurse'||a.occ==='doctor'||pl.kind==='hospital') return finish({...base,type:'hospital',seed:hsh('hosp',pl.id,era,a.id%3),label:'🏥 '+(pl.name||'Hospital'),outdoor:false});
+    if(a.occ==='shop'||a.occ==='retail'||act==='market'||['market','mall','plaza'].includes(pl.kind)){ const mall=pl.kind==='mall'||a.occ==='retail'; return finish({...base,type:mall?'shopmall':'grocery',seed:hsh('shop',pl.id,era,mall?a.id%3:0),label:(mall?'👗 Shop — ':'🛒 Market — ')+(pl.name||''),outdoor:false}); }
+    if(a.occ==='warehouse'||pl.kind==='industry') return finish({...base,type:'warehouse',seed:hsh('wh',pl.id,era),label:'📦 Warehouse',outdoor:false});
+    if(a.occ==='airport'||pl.kind==='airport') return finish({...base,type:'airport',seed:hsh('air',pl.id,era,a.id%2),label:'✈️ '+(pl.name||'Airport'),outdoor:false});
+    if(a.occ==='driver') return finish({...base,type:'car',seed:hsh('car',a.id,era),label:'🚗 In the car — working',outdoor:false});
+    if(a.occ==='builder') return finish({...base,type:'site',seed:hsh('site',era,a.id%2),label:'🏗️ Work site',outdoor:true});
+    if(a.occ==='imam') return finish({...base,type:'imam',seed:hsh('imam',pl.id,era),label:"🕌 Imam's office — "+(pl.name||''),outdoor:false});
+    if(pl.kind==='school') return finish({...base,type:'classroom',seed:hsh('cls',pl.id,era),label:'🏫 '+pl.name,outdoor:false});
+    return finish({...base,type:'office',seed:hsh('off',pl.id,era,a.id%4),label:'🏢 Office — '+(pl.name||a.job||'work'),outdoor:false});
+  }
+  if((act==='play'||act==='outing')&&(pl.kind==='park'||pl.kind==='square')) return finish({...base,type:'park',seed:hsh('park',pl.id,era),label:'🌳 '+(pl.name||'Park'),outdoor:true});
+  if(act==='play') return finish({...base,type:'yard',seed:hsh('yard',hh,era),label:'🏡 Outside the house',outdoor:true});
+  if(act==='outing'){ const shop=['market','mall','plaza'].includes(pl.kind); const mall=pl.kind==='mall'; return finish({...base,type:shop?(mall?'shopmall':'grocery'):'park',seed:hsh('out',pl.id,era),label:(shop?(mall?'👗 Shop — ':'🛒 Market — '):'🌳 ')+(pl.name||'Outing'),outdoor:!shop}); }
+  if(act==='walk') return finish({...base,type:'street',seed:hsh('gate',pl.id,era),label:'🚶 Outside — '+(pl.name||'the street'),outdoor:true});
+  if(act==='pray'){ const home=atHome; return finish({...base,type:'musalla',variant:home?'home':'work',seed:hsh('mus',home?hh:pl.id,era,home?'h':'w'),label:home?'🕌 Prayer corner at home':'🕌 Quiet prayer room',outdoor:false}); }
+  if(pl.kind==='park'||pl.kind==='square') return finish({...base,type:'park',seed:hsh('park',pl.id,era),label:'🌳 '+(pl.name||'Park'),outdoor:true});
+  if(atHome){
+    if(/homework|Qur'an|reading/i.test(b.txt||'')) return finish({...base,type:'study',seed:hsh('stu',hh,era),label:'📚 Study',outdoor:false});
+    return finish({...base,type:'living',seed:hsh('liv',hh,era),label:'🛋️ Living room',outdoor:false});
+  }
+  if(pl.kind==='hospital') return finish({...base,type:'hospital',seed:hsh('hosp',pl.id,era),label:'🏥 '+pl.name,outdoor:false});
+  if(pl.kind==='school') return finish({...base,type:'classroom',seed:hsh('cls',pl.id,era),label:'🏫 '+pl.name,outdoor:false});
+  return finish({...base,type:'office',seed:hsh('off',pl.id,era),label:'🏢 '+(pl.name||'Indoors'),outdoor:false});
+}
+function dropRoom(){ if(!curRoom) return; scene.remove(curRoom); disposeSpace(curRoom); curRoom=null; clearRoomPeople(); spaceId=''; }
 // ---------- setup ----------
 async function init(){ const box=$('s3d'); renderer=new THREE.WebGLRenderer({antialias:!phone,powerPreference:'high-performance'}); renderer.setPixelRatio(Math.min(devicePixelRatio||1,phone?1.25:1.75)); renderer.shadowMap.enabled=!phone; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace;
   box.prepend(renderer.domElement); renderer.domElement.id='s3dc';
   scene=new THREE.Scene(); scene.fog=new THREE.Fog(0xbfd6ea,phone?120:200,phone?420:700);
   camera=new THREE.PerspectiveCamera(55,1,0.05,phone?500:800); controls=new OrbitControls(camera,renderer.domElement); controls.enableDamping=true; controls.minDistance=0.9; controls.maxDistance=260; controls.maxPolarAngle=Math.PI*0.495; controls.target.set(0,1,0); camera.position.set(6,4,8);
   hemi=new THREE.HemisphereLight(0xdfefff,0x6b7a52,1.2); scene.add(hemi); sun=new THREE.DirectionalLight(0xfff1d6,2.2); sun.castShadow=!phone; sun.shadow.mapSize.set(1024,1024); const sc=sun.shadow.camera; sc.left=sc.bottom=-40; sc.right=sc.top=40; sc.near=1; sc.far=300; scene.add(sun,sun.target);
-  S3.stage='fetch'; data=await (await fetch(BASE+'coopers.json')).json(); S3.stage='graph'; buildGraph(); S3.stage='places'; prepPlaces(); S3.stage='city'; buildCity(); S3.stage='models'; await loadModels(); S3.stage='extras';
+  S3.stage='fetch'; data=await (await fetch(BASE+'coopers.json')).json(); S3.stage='graph'; buildGraph(); S3.stage='places'; prepPlaces(); S3.stage='city'; buildCity(); S3.stage='models'; await loadModels(); setPhone(phone); S3.stage='assets';
+  const msg=$('s3dLoadMsg'); await loadAssets(new GLTFLoader(),(d,n)=>{ if(msg) msg.textContent='Loading rooms and furniture… '+d+' / '+n; }); S3.stage='extras';
   angels=[makeAngel(0xffd678),makeAngel(0xdfe8ff)]; qareen=makeQareen(); scene.add(angels[0],angels[1],qareen);
   const rg=new THREE.BufferGeometry(); const N=phone?600:1500; const rp=new Float32Array(N*3); for(let i=0;i<N;i++){ rp[i*3]=(Math.random()-0.5)*60; rp[i*3+1]=Math.random()*30; rp[i*3+2]=(Math.random()-0.5)*60; } rg.setAttribute('position',new THREE.BufferAttribute(rp,3)); rain=new THREE.Points(rg,new THREE.PointsMaterial({color:0xcfe0ff,size:0.12,transparent:true,opacity:0.7})); scene.add(rain);
   addEventListener('resize',size); size(); ready=true; S3.stage='ready'; }
 function size(){ if(!renderer)return; const w=innerWidth,h=innerHeight; renderer.setSize(w,h); camera.aspect=w/h; camera.updateProjectionMatrix(); }
 // ---------- per-frame ----------
-const tmpV=new THREE.Vector3(); let lastEra=null, lastT=performance.now(), extras=new Map(), roomPeople=[];
+const tmpV=new THREE.Vector3(); let lastEra=null, lastT=performance.now(), extras=new Map(), roomPeople=[], spaceId='', framed=false;
 function pos3(a,t){ const loc=Sim.locate(a,t); if(!loc) return null; const b=loc.b||{};
   if(loc.moving){ const from=loc.from||b; const p1=placeOf(a,from.pid).p, p2=placeOf(a,b.pid).p; const tm=(t-a.dayMid)/60000; const here=a._slot?a._slot(from):a.home, there=a._slot?a._slot(b):a.home; const tr=Sim.travelMin(here,there,a); const dep=b.s-tr.m; const f=Math.max(0,Math.min(1,(tm-dep)/tr.m));
     const r=route(p1,p2); const q=along(r,f); return {x:q.x,z:q.z,dir:q.dir,moving:true,mode:loc.mode,act:b.act,b,inside:false}; }
   const pl=placeOf(a,b.pid); const ins=pl.kind==='home'||pl.kind==='mosque'; let sp=pl.p; if(!ins){ const nn=nearest(pl.p); if(nn) sp=[nn.p[0]+1.5,nn.p[1]+1.5]; } return {x:sp[0],z:sp[1],dir:0,moving:false,act:b.act,b,inside:pl.kind==='home'||pl.kind==='mosque',kind:pl.kind,pid:b.pid}; }
-function frame(){ if(!S3.on)return; requestAnimationFrame(frame); if(!ready)return; const now=performance.now(), dt=Math.min(0.1,(now-lastT)/1000); lastT=now; const t=S.t, a=UI.selected; if(!a){ S3.exit(); return; }
-  if(lastEra!==O.era){ lastEra=O.era; scene.remove(city); buildCity(); if(fModel){ scene.remove(fModel.o); fModel=null; } }
+function frame(){ if(!S3.on){ framed=false; return; } requestAnimationFrame(frame); if(!ready)return; const now=performance.now(), dt=Math.min(0.1,(now-lastT)/1000); lastT=now; const t=S.t, a=UI.selected; if(!a){ S3.exit(); return; }
+  if(lastEra!==O.era){ lastEra=O.era; scene.remove(city); buildCity(); if(fModel){ scene.remove(fModel.o); fModel=null; } dropRoom(); }
   if(!fModel||fModel.a!==a){ if(fModel) scene.remove(fModel.o); fModel=makePerson(a); scene.add(fModel.o); followed=a; }
   const p=pos3(a,t); if(!p) return;
-  const inside=p.inside; const kind=p.kind==='mosque'?'mosque':p.kind==='home'?'home':'work';
-  if(inside){ if(!curRoom||curRoom.userData.kind!==kind||curRoom.userData.pid!==p.pid){ if(curRoom) scene.remove(curRoom); curRoom=room(kind==='work'?'home':kind); curRoom.userData.pid=p.pid; curRoom.position.set(0,-500,0); scene.add(curRoom); fillRoom(a,kind); camera.position.set(curRoom.position.x+3,curRoom.position.y+2.2,curRoom.position.z+4); }
-    city.visible=false; curRoom.visible=true; }
-  else { city.visible=true; if(curRoom){ scene.remove(curRoom); curRoom=null; clearRoomPeople(); } }
-  // place the followed person
-  const o=fModel.o; let tx,ty,tz;
-  if(inside){ const R0=curRoom.position; const W=curRoom.userData.W, D=curRoom.userData.D; const isPray=PRAY.has(p.act); tx=R0.x+(kind==='mosque'?0:isPray?-1.8:0); tz=R0.z+(kind==='mosque'?-D/2+3.2:isPray?-1.6:0.2); ty=R0.y; o.rotation.y=Math.PI; if(p.act==='sleep'){ tx=R0.x-1; tz=R0.z+1; } }
-  else { tx=p.x; tz=p.z; ty=0; if(p.moving) o.rotation.y=p.dir; }
-  const prevPos=o.position.clone(); o.position.set(tx,ty,tz); const moved=prevPos.distanceTo(o.position);
-  pose(fModel,p.act,p.moving&&p.mode!=='car',p.mode); setProp(fModel,(!p.moving&&p.b&&p.b.prop)||null); if(inside&&curRoom&&curRoom.userData.tv){ const glow=p.b&&['tv','pc'].includes(p.b.prop); const f=glow?0.5+0.5*Math.sin(now/140)*Math.sin(now/370):0; curRoom.userData.tv.material.emissive.setRGB(0.15+f*0.4,0.2+f*0.5,0.3+f*0.8); } fModel.mixer.update(dt); if(PRAY.has(p.act)&&!p.moving) applyPrayerBones(fModel); else fModel.phase=null;
-  o.visible=!(p.moving&&p.mode==='car'); if(p.moving&&p.mode==='car'){ /* show as driving: a car at the spot */ }
-  // camera follow (keep user orbit offset)
-  if(!S3.follow0){ const off=camera.position.clone().sub(controls.target); tmpV.set(tx,ty+1.1,tz); const dd=controls.target.distanceTo(tmpV); controls.target.lerp(tmpV,dd>3?1:1-Math.exp(-dt*8)); if(moved>2) camera.position.copy(controls.target).add(off); else camera.position.copy(controls.target).add(off); }
-  controls.maxDistance=inside?(kind==='mosque'?11:5):260; controls.update();
+  const spec=specFor(a,p); const id=spec?spec.key:'';
+  let snapCam=false;
+  if(id!==spaceId){ dropRoom(); spaceId=id; if(spec){ curRoom=buildSpace(spec); curRoom.position.set(0,-500,0); scene.add(curRoom); fillRoom(a,spec); snapCam=true; } }
+  city.visible=!curRoom;
+  const o=fModel.o; let tx,ty,tz; const rs=curRoom?curRoom.scale.x:1;
+  if(curRoom){ const R0=curRoom.position, an=curRoom.userData.anchor||{x:0,y:0,z:0,ry:Math.PI,pose:'stand'}; const nudge=an.pose==='sit'?0.28:0; tx=R0.x+(an.x+Math.sin(an.ry)*nudge)*rs; ty=R0.y+(an.y+(an.pose==='lie'?0.08:0))*rs; tz=R0.z+(an.z+Math.cos(an.ry)*nudge)*rs; o.rotation.order='YXZ'; o.rotation.set(an.pose==='lie'?-Math.PI/2:0, an.ry, 0); fModel.poseHint=an.pose; }
+  else { tx=p.x; tz=p.z; ty=0; fModel.poseHint=null; o.rotation.order='YXZ'; o.rotation.x=0; o.rotation.z=0; if(p.moving) o.rotation.y=p.dir; }
+  o.position.set(tx,ty,tz); o.visible=true;
+  const ph=pose(fModel,p.act,!curRoom&&p.moving,p.mode); setProp(fModel,(curRoom||!p.moving)&&p.b&&p.b.prop||null); paintScreens(now); fModel.mixer.update(dt); if(ph) applyPrayerBones(fModel); else fModel.phase=null;
+  const ud=curRoom&&curRoom.userData; const view=(ud?ud.view:8)*rs;
+  if(snapCam){ const udc=curRoom.userData, R0=curRoom.position, ry=o.rotation.y, fx=Math.sin(ry), fz=Math.cos(ry);
+  if(udc.outdoor){ const dist=view*1.05; controls.target.set(tx,ty+0.75,tz); camera.position.set(tx-fx*dist*0.65+dist*0.4, ty+dist*0.42, tz-fz*dist*0.65-dist*0.15); }
+  else { const m=0.38*rs; let cx=R0.x+udc.W/2*rs-m, cz=R0.z+udc.D/2*rs-m, cy=R0.y+Math.min(1.85, 1.65)*rs; if(Math.hypot(cx-tx,cz-tz)<0.9*rs) cx=R0.x-udc.W/2*rs+m; controls.target.set((tx+R0.x)*0.5, ty+0.55, (tz+R0.z)*0.5); camera.position.set(cx,cy,cz); } }
+  if(!S3.follow0){ const off=camera.position.clone().sub(controls.target); tmpV.set(tx,ty+1.1,tz); const dd=controls.target.distanceTo(tmpV); controls.target.lerp(tmpV,snapCam||dd>3?1:1-Math.exp(-dt*8)); camera.position.copy(controls.target).add(off); }
+  controls.maxDistance=curRoom?view*1.85:260; controls.update();
   // angels on the shoulders, Qareen behind
   const head=fModel.head; head&&head.getWorldPosition(tmpV); const hx=head?tmpV.x:tx, hy=head?tmpV.y:ty+1.4, hz=head?tmpV.z:tz; const ry=o.rotation.y; const rx=Math.cos(ry), rz=-Math.sin(ry); const bx=-Math.sin(ry), bz=-Math.cos(ry); const sc=fModel.o.scale.x/0.62;
   const bob=Math.sin(now/500)*0.03; const so=0.62*sc;
@@ -241,35 +289,40 @@ function frame(){ if(!S3.on)return; requestAnimationFrame(frame); if(!ready)retu
   for(const an of angels){ an.rotation.y=ry; an.visible=o.visible; const f=Math.sin(now/120)*0.4; an.userData.w1.rotation.y=f; an.userData.w2.rotation.y=-f; }
   const q=a._qlive!=null?a._qlive:(a._qs||0.3); qareen.visible=o.visible; qareen.children.forEach((s,i)=>{ const ph=now/900+s.userData.ph; s.position.set(hx+bx*0.55*sc+Math.sin(ph)*0.25, hy-0.35*sc+Math.cos(ph*1.3)*0.25, hz+bz*0.55*sc+Math.cos(ph)*0.25); const k=(0.6+q*1.3)*sc; s.scale.set(k,k*1.4,1); s.material.opacity=0.25+q*0.5; });
   // other people: outdoors moving nearby, or in the room
-  if(!inside) others(t,a,tx,tz,dt); else { for(const P of pool) P.o.visible=false; for(const P of roomPeople){ pose(P,P.act,false); P.mixer.update(dt); if(PRAY.has(P.act)) applyPrayerBones(P); else P.phase=null; } }
-  // cars
-  if(!inside){ const M=new THREE.Matrix4(), Q=new THREE.Quaternion(), Y=new THREE.Vector3(0,1,0); const hour=C.local(t).h; const busy=hour<6?0.3:1; carMesh.userData.cars.forEach((c,i)=>{ const r=c.r; let L=0; for(let k=1;k<r.p.length;k++) L+=Math.hypot(r.p[k][0]-r.p[k-1][0],r.p[k][1]-r.p[k-1][1]); c.L=L;
+  if(!curRoom) others(t,a,tx,tz,dt); else { for(const P of pool) P.o.visible=false; for(const P of roomPeople){ const rph=pose(P,P.act,false); P.mixer.update(dt); if(rph) applyPrayerBones(P); else P.phase=null; } }
+  // cars on the real streets
+  if(!curRoom){ const M=new THREE.Matrix4(), Q=new THREE.Quaternion(), Y=new THREE.Vector3(0,1,0); const hour=C.local(t).h; const busy=hour<6?0.3:1; carMesh.userData.cars.forEach((c,i)=>{ const r=c.r; let L=0; for(let k=1;k<r.p.length;k++) L+=Math.hypot(r.p[k][0]-r.p[k-1][0],r.p[k][1]-r.p[k-1][1]); c.L=L;
       let f=((t/1000)*c.sp*8/Math.max(L,40)+c.ph)%1; if(c.dir<0)f=1-f; const rr={path:r.p,cum:r.p.map((_,k)=>0),L}; let acc=0; rr.cum=r.p.map((q,k)=>k?(acc+=Math.hypot(q[0]-r.p[k-1][0],q[1]-r.p[k-1][1])):0); const g=along(rr,f);
       const off=(r.w/4)*c.dir; const nx=Math.cos(g.dir)*off, nz=-Math.sin(g.dir)*off; Q.setFromAxisAngle(Y,g.dir+(c.dir<0?Math.PI:0)); M.compose(new THREE.Vector3(g.x+nx,0.75,g.z+nz),Q,new THREE.Vector3(1,i/carMesh.count<busy?1:0.001,1)); carMesh.setMatrixAt(i,M); }); carMesh.instanceMatrix.needsUpdate=true; }
   // light from the sim sky
   const alt=C.sunAltitude(t), L=C.local(t); const az=(L.min/60-12.6)/12*Math.PI; const ca=Math.cos(alt*Math.PI/180);
-  sun.position.set(tx-Math.sin(az)*ca*120, Math.max(5,Math.sin(alt*Math.PI/180)*120), tz+Math.cos(az)*ca*120); sun.target.position.set(tx,0,tz);
+  const gy=curRoom?ty:0;
+  sun.position.set(tx-Math.sin(az)*ca*120, gy+Math.max(5,Math.sin(alt*Math.PI/180)*120), tz+Math.cos(az)*ca*120); sun.target.position.set(tx,gy,tz);
   const day=Math.max(0,Math.min(1,(alt+6)/18)); sun.intensity=2.4*Math.max(0,Math.min(1,alt/12)); hemi.intensity=0.15+day*1.05; const dusk=alt>-8&&alt<8;
   const sky=new THREE.Color().setHSL(0.6,0.55,0.06+day*0.6); if(dusk) sky.lerp(new THREE.Color(0xf29a6b),0.35*(1-Math.abs(alt)/8)); if(S.ctx.cloud) sky.lerp(new THREE.Color(0x9aa3ad),0.4*day);
-  scene.background=inside?new THREE.Color(0x111111):sky; scene.fog.color.copy(sky); const night=1-day;
+  const enclosed=curRoom&&!curRoom.userData.skyBg;
+  if(enclosed){ hemi.intensity=0.85; sun.intensity=0.28; scene.background=new THREE.Color(0x1a1c22); scene.fog.color.set(0x1a1c22); }
+  else { scene.background=sky; scene.fog.color.copy(sky); }
+  const night=1-day;
   for(const m of mats.walls.concat([mats.ind])) m.emissiveIntensity=night*0.9; for(const l of mats.lamps) l.material.opacity=night;
-  if(curRoom){ curRoom.userData.win.color.copy(sky); curRoom.userData.lamp.intensity=(curRoom.userData.kind==='mosque'?2:1.2)+night*1.5; }
-  // weather
-  rain.visible=!inside&&(S.ctx.rain||S.ctx.snow); if(rain.visible){ rain.material.color.set(S.ctx.snow?0xffffff:0xcfe0ff); rain.material.size=S.ctx.snow?0.2:0.08; const pa=rain.geometry.attributes.position; for(let i=0;i<pa.count;i++){ let y=pa.getY(i)-dt*(S.ctx.snow?2:22); if(y<0)y+=30; pa.setY(i,y); } pa.needsUpdate=true; rain.position.set(tx,0,tz); }
-  renderer.render(scene,camera); bubbles(a,hx,hy,hz,sc); hud(a,p,inside,kind); }
+  if(curRoom&&curRoom.userData.lamp&&curRoom.userData.lamp.isPointLight) curRoom.userData.lamp.intensity=(O.era==='1986'?2.5:1.9)+night*0.7;
+  if(curRoom&&curRoom.userData.glass) curRoom.userData.glass.color.copy(sky).lerp(new THREE.Color(0xd7eef8),0.4);
+  const openAir=!curRoom||curRoom.userData.outdoor;
+  rain.visible=openAir&&(S.ctx.rain||S.ctx.snow); if(rain.visible){ rain.material.color.set(S.ctx.snow?0xffffff:0xcfe0ff); rain.material.size=S.ctx.snow?0.2:0.08; const pa=rain.geometry.attributes.position; for(let i=0;i<pa.count;i++){ let y=pa.getY(i)-dt*(S.ctx.snow?2:22); if(y<0)y+=30; pa.setY(i,y); } pa.needsUpdate=true; rain.position.set(tx,curRoom?curRoom.position.y:0,tz); }
+  renderer.render(scene,camera); bubbles(a,hx,hy,hz,sc); hud(a,p); }
 function others(t,a,cx,cz,dt){ const near=[]; for(const x of A){ if(x===a)continue; const loc=x._p3t===t?x._p3:(x._p3t=t,x._p3=pos3cheap(x,t)); if(!loc||!loc.moving||loc.mode==='car')continue; const d=Math.hypot(loc.x-cx,loc.z-cz); if(d<(phone?80:140)) near.push([d,x,loc]); }
   near.sort((m,n)=>m[0]-n[0]); const n=Math.min(near.length,phone?8:16);
   while(pool.length<n){ const P=makePerson(near[pool.length][1]); scene.add(P.o); pool.push(P); }
   pool.forEach((P,i)=>{ if(i>=n){ P.o.visible=false; return; } const [d,x,loc]=near[i]; P.o.visible=true; P.o.position.set(loc.x,0,loc.z); P.o.rotation.y=loc.dir; pose(P,'walk',true,'walk'); P.mixer.update(dt); }); }
 function pos3cheap(x,t){ try{ return pos3(x,t); }catch(e){ return null; } }
 function clearRoomPeople(){ for(const P of roomPeople) scene.remove(P.o); roomPeople=[]; }
-function fillRoom(a,kind){ clearRoomPeople(); const R0=curRoom.position, D=curRoom.userData.D; const t=S.t; let list=[];
-  if(kind==='home'){ list=HH[a.hh].members.filter(m=>m!==a); }
-  else if(kind==='mosque'){ for(const x of A){ if(x===a)continue; const l=Sim.locate(x,t); if(l&&!l.moving&&l.b&&World.place(l.b.pid)&&World.place(l.b.pid).kind==='mosque') list.push(x); if(list.length>=(phone?10:22))break; } }
-  list.slice(0,phone?8:22).forEach((x,i)=>{ const P=makePerson(x); const l=Sim.locate(x,t); P.act=l&&l.b?l.b.act:'home';
-    if(kind==='mosque'){ const row=Math.floor((i+1)/7), col=(i+1)%7-3; P.o.position.set(R0.x+col*1.1,R0.y,R0.z-D/2+3.2+row*1.6); P.o.rotation.y=Math.PI; }
-    else { const sp=[[1.2,1.6],[0.2,0.6],[2.1,0.6],[1.2,-0.3],[-0.6,1.8]][i%5]; P.o.position.set(R0.x+sp[0],R0.y,R0.z+sp[1]); P.o.rotation.y=Math.atan2(1.2-sp[0],0.6-sp[1]); if(P.act==='home')P.act=i%2?'eat':'visit'; }
-    scene.add(P.o); roomPeople.push(P); }); }
+function fillRoom(a,spec){ clearRoomPeople(); if(!curRoom||!spec) return; const R0=curRoom.position, sc=curRoom.scale.x, spots=curRoom.userData.spots||[]; const cap=Math.min(spots.length, phone?6:spots.length); if(!cap) return;
+  const t=S.t, list=[];
+  for(const x of A){ if(x===a||x.here===false) continue; const loc=Sim.locate(x,t); if(!loc||loc.moving) continue; const sp=specFor(x,loc); if(sp&&sp.key===spec.key){ list.push({x,act:loc.b&&loc.b.act}); if(list.length>=cap) break; } }
+  list.forEach((it,i)=>{ const spot=spots[i]; if(!spot) return; const P=makePerson(it.x); P.act=it.act||'home'; P.poseHint=spot.pose; const nudge=spot.pose==='sit'?0.28:0; P.o.position.set(R0.x+(spot.x+Math.sin(spot.ry)*nudge)*sc, R0.y+spot.y*sc, R0.z+(spot.z+Math.cos(spot.ry)*nudge)*sc); P.o.rotation.y=spot.ry; scene.add(P.o); roomPeople.push(P); }); }
+function paintScreens(now){ const screens=curRoom&&curRoom.userData.screens; if(!screens||!screens.length) return; const prop=fModel&&fModel.propK; const hot=!!(prop&&['tv','pc','laptop'].includes(prop)); const type=curRoom.userData.type; const live=hot||['living','office','study','car','bus','bedroom'].includes(type); const pulse=live?(hot?0.55+0.45*Math.abs(Math.sin(now/180)):0.42):0.05; const era=O.era;
+  const r=era==='1986'?0.22*pulse:0.22*pulse, g=era==='1986'?0.62*pulse:0.48*pulse, b=era==='1986'?0.2*pulse:0.9*pulse;
+  for(const s of screens) if(s.material) s.material.color.setRGB(r,g,b); }
 // ---------- 3D bubbles from the commentary engine ----------
 let lastB='';
 function bubbles(a,hx,hy,hz,sc){ const el=$('s3dBub'); const L=Iso.lines?Iso.lines(a):[]; const last=k=>{ for(let i=L.length-1;i>=Math.max(0,L.length-14);i--) if(k.includes(L[i].k)) return L[i]; return null; };
@@ -279,13 +332,18 @@ function bubbles(a,hx,hy,hz,sc){ const el=$('s3dBub'); const L=Iso.lines?Iso.lin
   tmpV.set(hx,hy,hz).project(camera); const hsx=(tmpV.x*0.5+0.5)*innerWidth; tmpV.copy(angels[0].position).project(camera); const angL=(tmpV.x*0.5+0.5)*innerWidth<hsx;
   for(const d of el.children){ const k=d.dataset.k; if(k==='angel') tmpV.copy(d.classList.contains('leftNote')?angels[1].position:angels[0].position); else if(k==='q') tmpV.copy(qareen.children[0].position); else tmpV.set(hx,hy+0.75*sc,hz);
     tmpV.project(camera); const x=(tmpV.x*0.5+0.5)*innerWidth, y=(-tmpV.y*0.5+0.5)*innerHeight; const vis=tmpV.z<1; d.style.display=vis?'block':'none'; let tx='-50%', ox=0, oy=-40; if(k!=='thought'){ const left=k==='q'?!angL:(d.classList.contains('leftNote')?!angL:angL); tx=left?'-100%':'0'; ox=left?-40:40; oy=k==='q'?50:-45; if(k==='q') ox+=hsx-x+(left?-50:50); } const bw=d.offsetWidth||160; let lx=x+ox-(tx==='-100%'?bw:tx==='-50%'?bw/2:0); lx=Math.max(4,Math.min(innerWidth-bw-4,lx)); d.style.transform=`translate(${Math.round(lx)}px,${Math.round(y+oy)}px) translate(0,-100%)`; } }
-function hud(a,p,inside,kind){ const el=$('s3dWhere'); const txt=(inside?(kind==='mosque'?'🕌 Inside the masjid prayer hall':kind==='home'?'🏠 Inside at home':'🏢 Inside at work'):p.moving?(p.mode==='car'?'🚗 Driving':'🚶 Walking on '+(roadName(p)||'the footpath')):'📍 Outside')+' · '+(p.b&&p.b.txt||''); if(el.textContent!==txt) el.textContent=txt; }
+function hud(a,p){ const el=$('s3dWhere'); const where=curRoom&&curRoom.userData.label?curRoom.userData.label:(p.moving?(p.mode==='car'?'🚗 Driving':p.mode==='bus'?'🚌 On the bus':'🚶 Walking on '+(roadName(p)||'the footpath')):'📍 Outside'); const txt=where+' · '+(p.b&&p.b.txt||''); if(el.textContent!==txt) el.textContent=txt; }
 function roadName(p){ let best='',bd=30; for(const r of data.r){ if(!r.n)continue; for(const q of r.p){ const d=Math.hypot(q[0]-p.x,q[1]-p.z); if(d<bd){bd=d;best=r.n;} } } return best; }
 // ---------- enter / exit ----------
 S3.enter=async function(a){ if(a) UI.select(a,false); if(!UI.selected) return; S3.on=true; document.body.classList.add('s3d'); $('s3d').style.display='block'; $('inner').classList.add('open'); Iso.on3d=true; Iso.inner(true);
-  if(!renderer){ $('s3dWhere').textContent='Loading the 3D street (first time only)…'; await init(); } size(); lastEra=O.era; lastT=performance.now(); frame(); };
+  if(!renderer){ $('s3dWhere').textContent='Loading the 3D street (first time only)…'; await init(); } size(); lastEra=O.era; lastT=performance.now(); if(!framed){ framed=true; frame(); } };
 S3.exit=function(){ S3.on=false; document.body.classList.remove('s3d'); $('s3d').style.display='none'; Iso.on3d=false; if(!Iso.on) $('inner').classList.remove('open'); };
-S3.dbg=()=>{ const b=new THREE.Box3().setFromObject(fModel.o); return {box:[b.min.toArray(),b.max.toArray()],pos:fModel.o.position.toArray(),cam:camera.position.toArray(),tg:controls.target.toArray(),vis:fModel.o.visible,ry:fModel.o.rotation.y}; };
+S3.dbg=()=>{ const b=new THREE.Box3().setFromObject(fModel.o); return {box:[b.min.toArray(),b.max.toArray()],pos:fModel.o.position.toArray(),cam:camera.position.toArray(),tg:controls.target.toArray(),vis:fModel.o.visible,ry:fModel.o.rotation.y,space:curRoom&&curRoom.userData.key,label:curRoom&&curRoom.userData.label,type:curRoom&&curRoom.userData.type}; };
+S3.specFor=specFor;
+S3.sample=function(n=10){ const t=S.t, by=new Map(); for(const a of A){ if(a.here===false||a.age<8) continue; const loc=Sim.locate(a,t); if(!loc) continue; const sp=specFor(a,loc); if(!sp) continue; if(!by.has(sp.key)) by.set(sp.key,{id:a.id,name:a.first,type:sp.type,key:sp.key,label:sp.label,act:loc.b&&loc.b.act}); }
+  const all=[...by.values()]; const picked=[], seen=new Set(); for(const it of all){ if(picked.length>=n) break; if(seen.has(it.type)) continue; seen.add(it.type); picked.push(it); }
+  for(const it of all){ if(picked.length>=n) break; if(!picked.includes(it)) picked.push(it); } return picked; };
+S3.space=()=>curRoom?{key:curRoom.userData.key,type:curRoom.userData.type,label:curRoom.userData.label}:null;
 S3.camTo=function(d,polar,behind){ // for screenshots
   const tg=controls.target; let az=Math.atan2(camera.position.x-tg.x,camera.position.z-tg.z); if(fModel&&behind!==false){ const ry=fModel.o.rotation.y; az=Math.atan2(-Math.sin(ry),-Math.cos(ry))+(behind||0.5); } camera.position.set(tg.x+Math.sin(az)*Math.sin(polar)*d, tg.y+Math.cos(polar)*d, tg.z+Math.cos(az)*Math.sin(polar)*d); };
 $('s3dExit').onclick=()=>S3.exit(); $('s3dPeople').onclick=()=>Panels.show('dir'); $('s3d2d').onclick=()=>{ S3.exit(); Iso.enter(); };
