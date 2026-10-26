@@ -272,7 +272,7 @@ function retint(o, dict){
     if (m.userData && m.userData.room) return m;
     if (m.transparent && m.opacity < 0.98){
       if (!dict.glass){
-        dict.glass = m.clone(); dict.glass.userData.room = 1; dict.glass.depthWrite = false; dict.glass.transparent = true; dict.glass.opacity = Math.min(0.55, m.opacity||0.45);
+        dict.glass = m.clone(); dict.glass.userData.room = 1; dict.glass.depthWrite = false; dict.glass.transparent = true; dict.glass.opacity = 0.28;
       }
       return dict.glass;
     }
@@ -346,6 +346,95 @@ function fit(name, target){
   const m = Math.max(s.x, s.y, s.z) || 1;
   return target / m;
 }
+// y is the bottom. Shared room materials so these merge with the furniture.
+function box(g, mat, w, h, d, x, y, z, ry){
+  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), mat);
+  m.position.set(x, y + h/2, z);
+  if (ry) m.rotation.y = ry;
+  g.add(m);
+  return m;
+}
+function towel(g, ctx, x, y, z, ry, hang){
+  const cloth = ctx.pack.furn.carpet;
+  const band = ctx.pack.furn.carpetWhite;
+  if (hang){
+    box(g, cloth, 0.3, 0.48, 0.04, x, y-0.24, z, ry);
+    box(g, band, 0.3, 0.07, 0.05, x, y+0.2, z, ry);
+    return;
+  }
+  box(g, cloth, 0.34, 0.05, 0.42, x, y, z, ry);
+  box(g, band, 0.34, 0.018, 0.2, x, y+0.05, z, ry);
+}
+function yardAround(g, ctx){
+  const W = ctx.W, D = ctx.D;
+  const gm = new THREE.MeshLambertMaterial({map:grassTex((ctx.seed||1)%3)});
+  gm.userData.room = 1;
+  const lawn = new THREE.Mesh(new THREE.PlaneGeometry(W+18, D+16), gm);
+  lawn.rotation.x = -Math.PI/2;
+  lawn.position.set(0, -0.04, 0.8);
+  g.add(lawn);
+  const skyMat = new THREE.MeshBasicMaterial({color:0x9ec8ea, side:THREE.DoubleSide});
+  skyMat.userData.room = 1;
+  const sky = new THREE.Mesh(new THREE.PlaneGeometry(W+26, 10), skyMat);
+  sky.position.set(0, 4.4, -D/2-6.2);
+  g.add(sky);
+  const hedge = new THREE.Mesh(new THREE.BoxGeometry(W+6, 0.65, 0.3), ctx.pack.furn.carpetDarker);
+  hedge.position.set(0, 0.32, -D/2-1.15);
+  g.add(hedge);
+  const kinds = ['tree_oak','tree_default','tree_pineRoundA','tree_detailed'];
+  const n = PHONE ? 2 : 4;
+  for (let i=0;i<n;i++){
+    const name = kinds[(i+(ctx.seed||0))%kinds.length];
+    const x = -W/2 - 0.4 + i * ((W+2) / Math.max(1, n-1));
+    prop(g, ctx, name, x, 0, -D/2-2.5, i*0.4, 3.2/Math.max(0.5, dim(name).y));
+  }
+  const skyW = new THREE.Mesh(new THREE.PlaneGeometry(D+18, 10), skyMat);
+  skyW.rotation.y = Math.PI/2;
+  skyW.position.set(-W/2-6.5, 4.2, 0.4);
+  g.add(skyW);
+  prop(g, ctx, 'tree_default', -W/2-2.1, 0, Math.min(1.2, D/2-1.2), 0.3, 3.0/Math.max(0.5, dim('tree_default').y));
+  prop(g, ctx, 'tree_pineSmallA', -W/2-1.5, 0, 0.2, 0.6, 2.6/Math.max(0.4, dim('tree_pineSmallA').y));
+}
+const SACRED = new Set(['prayerhall','musalla','wudu','halaqah','eid','imam']);
+function eraBits(g, ctx, x, y, z){
+  if (SACRED.has(ctx.type)){
+    prop(g, ctx, 'books', x, y, z, 0.3, fit('books', 0.22));
+    prop(g, ctx, 'cup-tea', x+0.14, y, z+0.06, 0, fit('cup-tea', 0.12));
+    return;
+  }
+  if (ctx.era==='1986'){
+    prop(g, ctx, 'radio', x, y, z, 0.2, 0.5);
+    prop(g, ctx, 'books', x-0.1, y, z+0.08, 0.4, fit('books', 0.2));
+    prop(g, ctx, 'cup-tea', x+0.14, y, z-0.02, 0, fit('cup-tea', 0.12));
+  } else if (ctx.era==='2006'){
+    prop(g, ctx, 'books', x-0.06, y, z, 0.3, fit('books', 0.2));
+    prop(g, ctx, 'mug', x+0.12, y, z+0.04, 0, fit('mug', 0.12));
+    prop(g, ctx, 'speaker', x, y, z-0.06, 0, 0.32);
+  } else {
+    prop(g, ctx, 'books', x-0.04, y, z+0.05, 0.5, fit('books', 0.18));
+    prop(g, ctx, 'mug', x+0.12, y, z, 0, fit('mug', 0.12));
+    prop(g, ctx, 'plantSmall2', x-0.1, y, z-0.04, 0, 0.6);
+  }
+}
+function dress(g, ctx, o){
+  if (o.open) return;
+  yardAround(g, ctx);
+  if (!o.rug){
+    const rw = Math.min(2.8, Math.max(1.3, ctx.W*0.5));
+    const rd = Math.min(1.8, Math.max(1.0, ctx.D*0.36));
+    const rm = new THREE.Mesh(new THREE.PlaneGeometry(rw, rd), ctx.pack.furn.carpet);
+    rm.rotation.x = -Math.PI/2;
+    rm.position.set(0.1, 0.012, 0.15);
+    g.add(rm);
+  }
+  if (!o.noShoes && ctx.W >= 4){
+    const x = -ctx.W/2 + 1.15;
+    const z = ctx.D/2 - 0.42;
+    prop(g, ctx, 'bookcaseOpenLow', x, 0, z, Math.PI/2, 1.2);
+    prop(g, ctx, 'rugDoormat', x+0.7, 0, ctx.D/2-0.38, 0, 1.1);
+    prop(g, ctx, 'books', x+0.08, dim('bookcaseOpenLow').y*0.42, z, 0.4, fit('books', 0.16));
+  }
+}
 
 function shell(g, ctx, o){
   const W = o.W, D = o.D;
@@ -363,7 +452,13 @@ function shell(g, ctx, o){
   // Those walls are left out so it can never sit inside them.
   const cut = o.open ? '' : (o.cut==null ? 'se' : o.cut);
   const nx = Math.round(W), nz = Math.round(D);
-  const win = o.windows || {};
+  let win = o.windows || {};
+  if (!o.open && !cut.includes('n') && !(win.n && win.n.length)){
+    win = Object.assign({}, win, {n:[1, Math.max(1, nx-2)]});
+  }
+  if (!o.open && !cut.includes('w') && !(win.w && win.w.length)){
+    win = Object.assign({}, win, {w:[Math.min(1, Math.max(0, nz-1))]});
+  }
   const door = o.door || {};
   const H = 1.29;
   const place = (name, x, y, z, ry)=> tile(g, ctx, name, x, y, z, ry);
@@ -415,7 +510,9 @@ function shell(g, ctx, o){
   }
   if (!o.open && !o.noArt && sides.includes('w') && !cut.includes('w')){
     picture(g, ctx, -W/2+0.08, 1.45, 0.2, Math.PI/2);
+    if (D > 4.5) picture(g, ctx, -W/2+0.08, 1.4, -0.9, Math.PI/2);
   }
+  dress(g, ctx, o);
 }
 
 function setAnchor(ctx, a){ ctx.anchor = a; }
@@ -464,10 +561,12 @@ function kitchen(g, ctx){
     if (k==='fridge') prop(g, ctx, ctx.era==='1986'?'kitchenFridgeSmall':'kitchenFridge', x, 0, z+0.1, 0);
     else if (k==='sink') prop(g, ctx, 'kitchenSink', x, 0, z, 0);
     else if (k==='stove'){ prop(g, ctx, 'kitchenStove', x, 0, z, 0); prop(g, ctx, 'hoodModern', x, 1.35, z-0.05, 0, 0.8); }
-    else { prop(g, ctx, 'kitchenCabinet', x, 0, z, 0); if (i%2===0) prop(g, ctx, 'kitchenCabinetUpper', x, 1.22, back+0.2, 0); }
+    else { prop(g, ctx, 'kitchenCabinet', x, 0, z, 0); if (i%2===0) prop(g, ctx, 'kitchenCabinetUpper', x, dim('kitchenCabinet').y+0.48, back+0.14, 0); }
   });
   if (ctx.era!=='1986') prop(g, ctx, 'kitchenMicrowave', -W/2+0.7, dim('kitchenCabinet').y, back+0.35, 0, 0.9);
   else prop(g, ctx, 'radio', -W/2+0.7, dim('kitchenCabinet').y, back+0.35, 0);
+  towel(g, ctx, -W/2+0.06, 1.2, 0.15, Math.PI/2, true);
+  prop(g, ctx, 'carton', -W/2+0.4, 0, 0.15, 0.3, fit('carton', 0.32));
   prop(g, ctx, 'kitchenBlender', W/2-0.85, dim('kitchenCabinet').y, back+0.4, 0, 0.85);
   prop(g, ctx, 'toaster', 0.9, dim('kitchenCabinet').y, back+0.42, 0.4, 0.8);
   if (ctx.era!=='1986' || lay!==0) prop(g, ctx, 'kitchenCoffeeMachine', 1.35, dim('kitchenCabinet').y, back+0.4, 0, 0.75);
@@ -479,12 +578,14 @@ function kitchen(g, ctx){
   prop(g, ctx, ctx.era==='1986'?'cup-tea':'mug', tx+0.16, th, tz-0.05, 0, fit('mug', 0.16));
   prop(g, ctx, 'loaf', tx+0.02, th, tz-0.12, 0.5, fit('loaf', 0.28));
   prop(g, ctx, 'bowl-soup', tx-0.18, th, tz-0.1, 0, fit('bowl', 0.18));
+  prop(g, ctx, 'cutting-board', tx+0.22, th, tz+0.1, 0.5, fit('cutting-board', 0.3));
   const ch = ctx.era==='2026' ? 'chairModernCushion' : 'chair';
   prop(g, ctx, ch, tx, 0, tz+0.78, Math.PI);
   prop(g, ctx, ch, tx-0.7, 0, tz+0.1, Math.PI/2);
   prop(g, ctx, 'chair', tx+0.75, 0, tz, -Math.PI/2);
   prop(g, ctx, 'pottedPlant', W/2-0.35, 0, D/2-0.4, 0);
   prop(g, ctx, 'trashcan', -W/2+0.3, 0, D/2-0.35, 0);
+  prop(g, ctx, 'chair', tx, 0, tz-0.78, 0);
   if (lay===2) prop(g, ctx, 'kitchenBar', 1.3, 0, 1.1, Math.PI/2);
   setAnchor(ctx, {x:tx, y:0, z:tz+0.78, ry:Math.PI, pose:'sit'});
   spot(ctx, tx-0.7, 0, tz+0.1, Math.PI/2, 'sit');
@@ -526,6 +627,13 @@ function living(g, ctx){
   prop(g, ctx, 'rugDoormat', 0, 0, D/2-0.35, 0);
   if (ctx.era!=='2026') prop(g, ctx, 'speaker', -1.1, 0, -D/2+0.4, 0, 0.8);
   if ((ctx.wealth||40) < 32) prop(g, ctx, 'cardboardBoxClosed', W/2-0.55, 0, sz, 0.2);
+  prop(g, ctx, 'pillow', lay===1?-0.85:-0.4, sd.y*0.55, sz, 0.3, 0.85);
+  prop(g, ctx, 'pillowBlue', 0.45, sd.y*0.5, sz+0.04, -0.4, 0.8);
+  prop(g, ctx, 'books', -0.18, th, 0.2, 0.4, fit('books', 0.22));
+  prop(g, ctx, ctx.era==='1986'?'cup-tea':'mug', 0.22, th, -0.06, 0, fit('mug', 0.13));
+  prop(g, ctx, 'sideTableDrawers', W/2-0.48, 0, 0.15, -Math.PI/2);
+  eraBits(g, ctx, W/2-0.48, dim('sideTableDrawers').y, 0.15);
+  prop(g, ctx, 'rugRound', -1.05, 0, 0.85, 0, 0.75);
   const sitZ = sz - sd.z*0.15 - 0.15;
   setAnchor(ctx, {x: lay===1?-0.35:0.05, y:0, z:sitZ, ry:Math.PI, pose:'sit'});
   spot(ctx, 0.7, 0, sitZ, Math.PI, 'sit');
@@ -539,7 +647,7 @@ function bedroom(g, ctx){
   const apt = ctx.homeKind==='tower';
   const W = apt?4: (kid?5:6), D = apt?4:5;
   const floors = [0x7a5230,0x8d5a32,0xa06a3c,0x5c3b24];
-  shell(g, ctx, {W, D, floor:woodTex(floors[(ctx.seed>>>2)%4], lay), windows:{n:[1]}, door:{side:'s', i:1},
+  shell(g, ctx, {W, D, floor:woodTex(floors[(ctx.seed>>>2)%4], lay), windows:{n:[1, Math.max(2, Math.round(W)-2)], w:[Math.max(1, Math.round(D)-2)]}, door:{side:'s', i:1}, noShoes:true,
     rug:{w:1.5, d:0.9, x: kid?0.6:-1.1, z:0.4}});
   const bedName = kid ? (lay===2?'bedBunk':'bedSingle') : (lay===1?'bedSingle':'bedDouble');
   const bd = dim(bedName);
@@ -562,6 +670,10 @@ function bedroom(g, ctx){
   }
   if (kid) prop(g, ctx, 'bear', bx+0.45, bd.y*0.8, bz, 0.6, 0.7);
   prop(g, ctx, 'pottedPlant', -W/2+0.4, 0, -D/2+0.45, 0, 0.8);
+  prop(g, ctx, 'cardboardBoxOpen', bx+bd.x*0.35, 0, bz+bd.z*0.55, 0.4, 0.85);
+  prop(g, ctx, kid?'pillowBlueLong':'pillowLong', bx+0.2, bd.y*0.62, bz, 0.4, 0.7);
+  prop(g, ctx, 'books', bx+bd.x/2+0.32, dim('sideTable').y+0.16, bz-0.02, 0.6, fit('books', 0.2));
+  if (ctx.era!=='1986') prop(g, ctx, 'mug', bx+bd.x/2+0.2, dim('sideTable').y, bz+0.02, 0, fit('mug', 0.12));
   const lie = ctx.act==='sleep' || ctx.act==='tahajjud' && false;
   if (ctx.act==='pray' || ctx.act==='dhikr'){
     setAnchor(ctx, {x:W/2-1.15, y:0, z:D/2-1.35, ry:Math.PI, pose: ctx.ill?'sit':'pray'});
@@ -586,6 +698,9 @@ function musalla(g, ctx){
   prop(g, ctx, 'lampRoundFloor', W/2-0.4, 0, -0.4, 0);
   prop(g, ctx, 'rugDoormat', 0, 0, D/2-0.3, 0);
   if (!work) prop(g, ctx, 'pillow', 0.7, 0, 0.5, 0.4, 0.8);
+  prop(g, ctx, 'rugRectangle', -0.85, 0, 0.55, 0.15, 0.7);
+  prop(g, ctx, 'bookcaseOpenLow', W/2-0.4, 0, 0.85, -Math.PI/2, 1.15);
+  eraBits(g, ctx, -W/2+0.32, dim('bookcaseOpen').y, -0.2);
   sign(g, work?'Prayer room':'Prayer corner', 0, 2.15, -D/2+0.1, 0, true);
   setAnchor(ctx, {x:0, y:0, z:0.15, ry:Math.PI, pose: ctx.act==='dhikr'?'floor':'pray'});
   spot(ctx, -0.7, 0, 0.7, Math.PI, 'pray');
@@ -626,7 +741,13 @@ function prayerHall(g, ctx){
   // shoe racks at the entrance
   prop(g, ctx, 'bench', -1.4, 0, D/2-0.7, Math.PI/2);
   prop(g, ctx, 'bench', 1.6, 0, D/2-0.7, Math.PI/2);
+  prop(g, ctx, 'bookcaseOpenLow', -2.5, 0, D/2-0.55, Math.PI/2, 1.4);
+  prop(g, ctx, 'bookcaseOpenLow', 2.6, 0, D/2-0.55, -Math.PI/2, 1.4);
+  prop(g, ctx, 'books', -2.35, dim('bookcaseOpenLow').y*0.5, D/2-0.55, 0.4, fit('books', 0.2));
+  prop(g, ctx, 'rugRectangle', -3.1, 0, 0.4, 0, 0.7);
+  prop(g, ctx, 'rugRectangle', 3.2, 0, 0.2, 0.2, 0.65);
   prop(g, ctx, 'rugDoormat', 0, 0, D/2-0.45, 0);
+  prop(g, ctx, 'pottedPlant', W/2-0.55, 0, -1.2, 0, 1.1);
   sign(g, ctx.placeName || 'Prayer hall', 0, 2.2, -D/2+0.12, 0, true);
   const onMinbar = ctx.occ==='imam' && ctx.act==='jumuah';
   if (onMinbar) setAnchor(ctx, {x:2.5, y:0.9, z:-D/2+1.7, ry:Math.PI, pose:'stand'});
@@ -640,26 +761,61 @@ function prayerHall(g, ctx){
 }
 
 function wudu(g, ctx){
-  const W = 7, D = 5;
-  shell(g, ctx, {W, D, floor:tileTex('#d5ebe4','#b7d0c8',1), windows:{n:[1,3,5]}, door:{side:'s', i:3}, noArt:true});
+  const W = 8, D = 6;
+  shell(g, ctx, {W, D, floor:tileTex('#d5ebe4','#b7d0c8',1), windows:{n:[0,7]}, door:{side:'s', i:3}, noArt:true, noShoes:true,
+    rug:{w:3.6, d:2.3, x:0.15, z:0.4}});
   const sinks = PHONE?3:4;
+  const cabSc = 0.82 / dim('bathroomCabinet').y;
+  const cabW = dim('bathroomCabinet').x * cabSc;
+  const gap = 0.1;
+  const span = sinks*cabW + (sinks-1)*gap;
+  const x0 = -span/2 + cabW/2;
+  const zCab = -D/2 + (dim('bathroomCabinet').z*cabSc)/2 + 0.1;
+  const top = dim('bathroomCabinet').y * cabSc;
+  box(g, ctx.pack.furn.carpetWhite, span+0.3, 0.85, 0.045, 0, top, -D/2+0.06, 0);
   for (let i=0;i<sinks;i++){
-    const x = -2.2 + i*1.45;
-    prop(g, ctx, i%2?'bathroomSinkSquare':'bathroomSink', x, 0.72, -D/2+0.55, 0, 1.15);
-    prop(g, ctx, 'bathroomCabinet', x, 0, -D/2+0.4, 0, 0.9);
-    prop(g, ctx, 'bathroomMirror', x, 1.55, -D/2+0.12, 0, 0.8);
-    prop(g, ctx, 'stoolBarSquare', x, 0, -D/2+1.25, 0, 0.85);
+    const x = x0 + i*(cabW+gap);
+    prop(g, ctx, 'bathroomCabinet', x, 0, zCab, 0, cabSc);
+    const sinkName = i%2 ? 'bathroomSinkSquare' : 'bathroomSink';
+    const sinkSc = Math.min(0.75, (cabW*0.7)/Math.max(0.2, dim(sinkName).x));
+    prop(g, ctx, sinkName, x, top, zCab+0.02, 0, sinkSc);
+    const rim = top + 0.08;
+    prop(g, ctx, 'bathroomMirror', x, rim, -D/2+0.1, 0, 1.05);
+    box(g, ctx.pack.furn.wood, cabW*0.92, 0.045, dim('bathroomCabinet').z*cabSc+0.08, x, top-0.02, zCab, 0);
+    const stool = i%2 ? 'stoolBar' : 'stoolBarSquare';
+    const stoolSc = 1.2;
+    const seatZ = zCab + dim('bathroomCabinet').z*cabSc/2 + 0.38;
+    prop(g, ctx, stool, x, 0, seatZ, Math.PI, stoolSc);
+    prop(g, ctx, 'rugDoormat', x, 0, seatZ+0.32, 0, 1.3);
+    towel(g, ctx, x+cabW*0.28, top, zCab+0.05, 0.35, false);
+    box(g, ctx.pack.furn.woodDark, 0.07, 0.04, 0.05, x-cabW*0.24, top, zCab+0.06, 0.2);
+    if (i===0) setAnchor(ctx, {x, y:0, z:seatZ+0.02, ry:Math.PI, pose:'use'});
+    else spot(ctx, x, 0, seatZ+0.02, Math.PI, 'use');
   }
-  prop(g, ctx, 'benchCushion', 0, 0, 1.15, Math.PI/2, 1.3);
-  prop(g, ctx, 'bench', -2.4, 0, 0.9, Math.PI/2);
-  prop(g, ctx, 'rugDoormat', -2.2, 0, D/2-0.4, 0);
-  prop(g, ctx, 'rugDoormat', 2.2, 0, D/2-0.4, 0);
-  prop(g, ctx, 'coatRack', 2.6, 0, 0.2, 0);
-  prop(g, ctx, 'plantSmall1', 2.7, 0, -1.4, 0, 1.4);
-  sign(g, 'Wudu', 0, 2.2, -D/2+0.1, 0, true);
-  setAnchor(ctx, {x:-2.2, y:0, z:-D/2+1.25, ry:Math.PI, pose:'use'});
-  for (let i=1;i<sinks;i++) spot(ctx, -2.2+i*1.45, 0, -D/2+1.25, Math.PI, 'use');
-  spot(ctx, 0.4, 0, 1.15, Math.PI/2, 'sit');
+  for (const z of [-0.55, 0.15, 0.85]) towel(g, ctx, -W/2+0.07, 1.25, z, Math.PI/2, true);
+  const rz = D/2-0.62;
+  prop(g, ctx, 'bookcaseOpenLow', -W/2+0.65, 0, rz, Math.PI/2, 1.5);
+  prop(g, ctx, 'bookcaseOpenLow', -W/2+1.5, 0, rz, Math.PI/2, 1.5);
+  prop(g, ctx, 'books', -W/2+0.75, dim('bookcaseOpenLow').y*0.55, rz, 0.6, fit('books', 0.18));
+  prop(g, ctx, 'books', -W/2+1.6, dim('bookcaseOpenLow').y*0.4, rz, 1.1, fit('books', 0.16));
+  prop(g, ctx, 'rugDoormat', 0.4, 0, D/2-0.4, 0, 1.45);
+  prop(g, ctx, 'rugRectangle', 1.7, 0, 0.9, 0.2, 0.85);
+  prop(g, ctx, 'benchCushion', 0.2, 0, 1.25, Math.PI/2, 1.65);
+  prop(g, ctx, 'bench', -2.2, 0, 0.45, Math.PI/2, 1.5);
+  prop(g, ctx, 'cardboardBoxOpen', 1.35, 0, 0.15, 0.5, 0.75);
+  prop(g, ctx, 'stoolBarSquare', 1.85, 0, -0.55, 0.4, 1.15);
+  prop(g, ctx, 'rugRound', -1.4, 0, 0.15, 0, 0.7);
+  spot(ctx, 0.2, 0, 1.45, Math.PI/2, 'sit');
+  prop(g, ctx, 'sideTable', -W/2+0.5, 0, -1.05, Math.PI/2, 1.15);
+  towel(g, ctx, -W/2+0.5, dim('sideTable').y*1.15, -0.95, 0.2, false);
+  towel(g, ctx, -W/2+0.42, dim('sideTable').y*1.15+0.05, -1.2, 0.8, false);
+  prop(g, ctx, 'washer', -W/2+0.75, 0, -D/2+0.9, Math.PI/2, 1.15);
+  prop(g, ctx, 'pottedPlant', W/2-0.45, 0, -D/2+0.75, 0, 1.2);
+  prop(g, ctx, 'plantSmall1', 2.4, 0, 0.55, 0, 1.35);
+  prop(g, ctx, 'coatRackStanding', 2.9, 0, 1.4, 0, 1.05);
+  prop(g, ctx, 'trashcan', -W/2+0.4, 0, 1.45, 0, 1.05);
+  prop(g, ctx, 'chair', 2.3, 0, 1.55, -0.8);
+  sign(g, 'Wudu', 0, 2.32, -D/2+0.08, 0, true);
 }
 
 function office(g, ctx){
@@ -690,8 +846,14 @@ function office(g, ctx){
   });
   prop(g, ctx, 'bookcaseOpen', -W/2+0.32, 0, -0.2, Math.PI/2);
   prop(g, ctx, 'bookcaseOpen', -W/2+0.32, 0, 0.7, Math.PI/2);
+  prop(g, ctx, 'books', -W/2+0.52, 0.45, 0.7, 0.2, fit('books', 0.22));
   prop(g, ctx, 'pottedPlant', W/2-0.4, 0, -D/2+0.5, 0);
   prop(g, ctx, 'trashcan', W/2-0.35, 0, D/2-0.4, 0);
+  prop(g, ctx, 'coatRackStanding', W/2-0.4, 0, 0.15, 0);
+  prop(g, ctx, 'sideTableDrawers', W/2-0.48, 0, -0.85, -Math.PI/2);
+  eraBits(g, ctx, W/2-0.48, dim('sideTableDrawers').y, -0.85);
+  prop(g, ctx, 'chair', 1.5, 0, 1.35, -0.5);
+  prop(g, ctx, 'cardboardBoxClosed', -1.6, 0, D/2-0.85, 0.3, 0.8);
   if (ctx.era==='2026') prop(g, ctx, 'plantSmall3', 2.2, 0, -D/2+0.45, 0, 1.2);
   sign(g, (ctx.placeName||'Office').replace(/,.*/,''), 0, 2.15, -D/2+0.08, 0, false);
 }
@@ -711,11 +873,16 @@ function classroom(g, ctx){
     const x = -2.4 + c*1.6, z = -0.4 + r*1.45;
     prop(g, ctx, 'desk', x, 0, z, 0, 0.9);
     prop(g, ctx, 'chairDesk', x, 0, z+0.62, Math.PI, 0.95);
+    prop(g, ctx, 'books', x-0.1, dim('desk').y*0.9, z-0.05, 0.3, fit('books', 0.2));
+    if ((r+c)%2===0) prop(g, ctx, 'cardboardBoxClosed', x+0.22, 0, z+0.95, 0.4, 0.55);
     spot(ctx, x, 0, z+0.62, Math.PI, 'sit');
   }
   prop(g, ctx, 'bookcaseClosed', W/2-0.35, 0, -0.5, -Math.PI/2);
   prop(g, ctx, 'books', W/2-0.55, 0.4, -0.4, 0, fit('books', 0.25));
   prop(g, ctx, 'pottedPlant', -W/2+0.4, 0, -D/2+0.5, 0);
+  prop(g, ctx, 'coatRackStanding', W/2-0.4, 0, 1.4, 0);
+  prop(g, ctx, 'trashcan', -W/2+0.4, 0, 1.6, 0);
+  eraBits(g, ctx, -2.3, dim('desk').y, -D/2+1.15);
   sign(g, (ctx.placeName||'Classroom').replace(/,.*/,''), 0, 2.2, -D/2+0.08, 0, false);
   const pupil = ctx.occ==='pupil' || ctx.age<18;
   if (pupil) setAnchor(ctx, {x:-2.4, y:0, z:0.22, ry:Math.PI, pose:'sit'});
@@ -758,6 +925,9 @@ function shop(g, ctx, mall){
     addScreen(reg, dim('computerScreen'), ctx.era, ctx);
   } else prop(g, ctx, 'radio', 1.5, dim('sideTable').y, D/2-1.15, 0, 0.7);
   prop(g, ctx, 'pottedPlant', -W/2+0.35, 0, D/2-0.45, 0);
+  prop(g, ctx, 'cardboardBoxClosed', -W/2+0.9, 0, -D/2+0.7, 0.2, 0.9);
+  prop(g, ctx, 'cardboardBoxOpen', 1.8, 0, 0.8, 0.4, 0.85);
+  prop(g, ctx, 'bench', -2.4, 0, D/2-1.15, Math.PI/2, 1.2);
   sign(g, (ctx.placeName|| (mall?'Shop':'Market')).replace(/,.*/,''), 0, 2.2, -D/2+0.08, 0, false);
   const worker = ctx.occ==='shop' || ctx.occ==='retail' || ctx.act==='work';
   if (worker) setAnchor(ctx, {x:0.2, y:0, z:D/2-0.7, ry:Math.PI, pose:'stand'});
@@ -787,7 +957,10 @@ function restaurant(g, ctx){
   if (ctx.era==='1986') prop(g, ctx, 'loungeSofa', -W/2+0.7, 0, -D/2+0.7, 0.4, 0.8);
   prop(g, ctx, 'kitchenBar', W/2-0.7, 0, -0.4, -Math.PI/2);
   prop(g, ctx, 'pot-stew', W/2-0.7, dim('kitchenBar').y, -0.3, 0, fit('pot-stew', 0.32));
+  prop(g, ctx, 'loaf', W/2-0.85, dim('kitchenBar').y, -0.55, 0.4, fit('loaf', 0.24));
+  prop(g, ctx, 'apple', W/2-0.5, dim('kitchenBar').y, -0.15, 0, fit('apple', 0.12));
   prop(g, ctx, 'pottedPlant', -W/2+0.35, 0, D/2-0.4, 0);
+  prop(g, ctx, 'coatRackStanding', W/2-0.4, 0, D/2-0.7, 0);
   sign(g, 'Restaurant', 0, 2.15, -D/2+0.08, 0, false);
 }
 
@@ -799,6 +972,7 @@ function hospital(g, ctx){
     const x = -2.4 + i*2.3;
     prop(g, ctx, 'bedSingle', x, 0, -0.7, Math.PI/2, 0.92);
     prop(g, ctx, 'sideTable', x+0.15, 0, 0.55, 0);
+    towel(g, ctx, x+0.15, dim('sideTable').y, 0.55, 0.2, false);
     prop(g, ctx, 'chair', x-0.9, 0, 0.45, Math.PI/2);
     // curtain
     const cur = new THREE.Mesh(new THREE.PlaneGeometry(0.08, 1.7), new THREE.MeshLambertMaterial({color: i%2?0xc5ddd4:0xd7ebe4, side:THREE.DoubleSide}));
@@ -811,8 +985,13 @@ function hospital(g, ctx){
     spot(ctx, x, dim('bedSingle').y*0.5, -0.7, Math.PI/2, 'lie');
   }
   prop(g, ctx, 'cabinetBedDrawer', W/2-0.4, 0, -D/2+0.6, -Math.PI/2);
+  prop(g, ctx, 'bookcaseClosed', W/2-0.4, 0, 0.4, -Math.PI/2);
+  towel(g, ctx, -W/2+0.07, 1.3, -0.7, Math.PI/2, true);
+  towel(g, ctx, -W/2+0.07, 1.3, 0.1, Math.PI/2, true);
   prop(g, ctx, 'trashcan', W/2-0.4, 0, 1.4, 0);
   prop(g, ctx, 'chairDesk', -W/2+0.8, 0, D/2-0.8, Math.PI);
+  prop(g, ctx, 'pottedPlant', -W/2+0.4, 0, -D/2+0.55, 0);
+  prop(g, ctx, 'benchCushion', 0.4, 0, D/2-1.05, Math.PI/2, 1.3);
   sign(g, (ctx.placeName||'Hospital').replace(/,.*/,''), 0, 2.2, -D/2+0.08, 0, false);
   setAnchor(ctx, {x:-2.4+0.7, y:0, z:0.15, ry:-Math.PI/2, pose:'stand'});
 }
@@ -837,6 +1016,9 @@ function study(g, ctx){
   prop(g, ctx, 'bookcaseOpen', W/2-0.3, 0, -0.2, -Math.PI/2);
   prop(g, ctx, 'bookcaseOpenLow', -W/2+0.28, 0, 0.6, Math.PI/2);
   prop(g, ctx, 'pottedPlant', W/2-0.35, 0, D/2-0.4, 0, 0.8);
+  prop(g, ctx, 'chair', 1.15, 0, 0.85, -0.7);
+  prop(g, ctx, 'rugRectangle', 0.9, 0, 0.7, 0.2, 0.6);
+  eraBits(g, ctx, -0.2, dh, -0.62);
   setAnchor(ctx, {x:-0.3, y:0, z:0.15, ry:Math.PI, pose:'sit'});
   spot(ctx, 0.8, 0, 0.8, -0.8, 'stand');
 }
@@ -853,7 +1035,11 @@ function halaqah(g, ctx){
   }
   prop(g, ctx, 'tableCoffee', 0, 0, 0, 0, 0.8);
   prop(g, ctx, 'books', 0, dim('tableCoffee').y, 0, 0.2, fit('books', 0.28));
+  prop(g, ctx, 'cup-tea', 0.16, dim('tableCoffee').y, 0.08, 0, fit('cup-tea', 0.12));
+  prop(g, ctx, 'cup', -0.14, dim('tableCoffee').y, -0.06, 0, fit('cup', 0.12));
   prop(g, ctx, 'bookcaseOpen', -W/2+0.3, 0, -0.4, Math.PI/2);
+  prop(g, ctx, 'bookcaseOpenLow', W/2-0.4, 0, 0.8, -Math.PI/2, 1.15);
+  prop(g, ctx, 'pottedPlant', W/2-0.4, 0, -D/2+0.5, 0, 0.9);
   sign(g, 'Halaqah', 0, 2.15, -D/2+0.08, 0, true);
   setAnchor(ctx, {x:0, y:0, z:1.05, ry:Math.PI, pose:'floor'});
 }
@@ -868,6 +1054,8 @@ function iftar(g, ctx){
     prop(g, ctx, 'plate-dinner', -0.3, th, z, 0, fit('plate-dinner', 0.26));
     prop(g, ctx, 'bowl', 0.25, th, z, 0, fit('bowl', 0.18));
     prop(g, ctx, 'loaf', 0, th, z+0.15, 0, fit('loaf', 0.26));
+    prop(g, ctx, 'apple', 0.12, th, z-0.12, 0, fit('apple', 0.12));
+    prop(g, ctx, 'cup', -0.12, th, z+0.12, 0, fit('cup', 0.12));
     prop(g, ctx, 'chair', -1.15, 0, z, Math.PI/2);
     prop(g, ctx, 'chair', 1.15, 0, z, -Math.PI/2);
     spot(ctx, 1.15, 0, z, -Math.PI/2, 'sit');
@@ -887,6 +1075,9 @@ function warehouse(g, ctx){
   }
   prop(g, ctx, 'bookcaseOpen', W/2-0.4, 0, -1, -Math.PI/2, 1.3);
   prop(g, ctx, 'bookcaseOpen', W/2-0.4, 0, 0.4, -Math.PI/2, 1.3);
+  prop(g, ctx, 'bookcaseOpenLow', -W/2+0.45, 0, -0.4, Math.PI/2, 1.3);
+  prop(g, ctx, 'bench', 0.2, 0, D/2-1.2, Math.PI/2, 1.4);
+  prop(g, ctx, 'coatRackStanding', -W/2+0.45, 0, 1.8, 0);
   prop(g, ctx, 'pallet' in LIB ? 'pallet' : 'cardboardBoxOpen', -W/2+0.8, 0, 1.5, 0, 1.6);
   sign(g, 'Warehouse', 0, 2.2, -D/2+0.08, 0, false);
   setAnchor(ctx, {x:-0.4, y:0, z:0.4, ry:0.6, pose:'use'});
@@ -899,11 +1090,21 @@ function airport(g, ctx){
   for (let i=0;i<3;i++){
     prop(g, ctx, 'benchCushion', -2.6+i*2.5, 0, 0.2, Math.PI/2, 1.15);
     spot(ctx, -2.2+i*2.5, 0, 0.2, Math.PI/2, 'sit');
+    prop(g, ctx, 'cardboardBoxClosed', -2.3+i*2.5, 0, 1.35, 0.3+i, 0.85);
+  }
+  prop(g, ctx, 'kitchenBar', 0.2, 0, -D/2+1.15, 0, 1.35);
+  if (ctx.era==='1986') prop(g, ctx, 'radio', 0.7, dim('kitchenBar').y, -D/2+1.15, 0, 0.55);
+  else {
+    const sc = prop(g, ctx, 'computerScreen', 0.7, dim('kitchenBar').y, -D/2+1.15, Math.PI, 0.6);
+    addScreen(sc, dim('computerScreen'), ctx.era, ctx);
   }
   prop(g, ctx, 'pottedPlant', -W/2+0.45, 0, -D/2+0.55, 0, 1.3);
   prop(g, ctx, 'pottedPlant', W/2-0.45, 0, -D/2+0.55, 0, 1.3);
+  prop(g, ctx, 'plantSmall2', 3.1, 0, -0.6, 0, 1.2);
   prop(g, ctx, 'cardboardBoxClosed', 2.4, 0, 1.3, 0.2);
+  prop(g, ctx, 'cardboardBoxOpen', 2.7, dim('cardboardBoxClosed').y*0.8, 1.15, 0.5, 0.8);
   prop(g, ctx, 'trashcan', -3.2, 0, 1.6, 0);
+  prop(g, ctx, 'bench', 0.4, 0, 1.7, Math.PI/2, 1.2);
   sign(g, ctx.act==='away'?'Departures':'Airport', 0, 2.2, -D/2+0.1, 0, true);
   setAnchor(ctx, {x:-2.2, y:0, z:0.35, ry:Math.PI/2, pose: ctx.act==='work'?'stand':'sit'});
 }
@@ -919,6 +1120,9 @@ function imamOffice(g, ctx){
   prop(g, ctx, 'bookcaseOpen', -W/2+0.3, 0, 0.3, Math.PI/2);
   prop(g, ctx, 'bookcaseClosed', -W/2+0.3, 0, -0.7, Math.PI/2);
   prop(g, ctx, 'rugRectangle', 1.15, 0, 0.6, 0, 0.75);
+  prop(g, ctx, 'chair', 1.15, 0, 1.25, -2.2);
+  eraBits(g, ctx, 0.05, dh, -0.72);
+  prop(g, ctx, 'pottedPlant', W/2-0.4, 0, -D/2+0.5, 0, 0.85);
   sign(g, "Imam's office", 0, 2.15, -D/2+0.08, 0, true);
   setAnchor(ctx, {x:-0.2, y:0, z:0.05, ry:Math.PI, pose:'sit'});
   spot(ctx, 1.1, 0, 1.3, -2, 'sit');
@@ -964,6 +1168,10 @@ function yard(g, ctx){
   prop(g, ctx, 'table', -1.2, 0, 0.5, 0);
   prop(g, ctx, 'chair', -1.2, 0, 1.4, Math.PI);
   prop(g, ctx, 'chair', -2.1, 0, 0.5, Math.PI/2);
+  prop(g, ctx, 'chair', -0.3, 0, 0.5, -Math.PI/2);
+  prop(g, ctx, 'mug', -1.05, dim('table').y, 0.45, 0, fit('mug', 0.14));
+  prop(g, ctx, 'plate', -1.35, dim('table').y, 0.6, 0, fit('plate', 0.22));
+  prop(g, ctx, 'cardboardBoxClosed', 0.4, 0, -0.6, 0.2, 0.9);
   prop(g, ctx, ctx.seed%2?'sedan':'van', 2.4, 0, -1.6, Math.PI/2, 1.6);
   prop(g, ctx, 'pottedPlant', -4.2, 0, -D/2+0.8, 0, 1.2);
   prop(g, ctx, 'plantSmall1', 4, 0, 2, 0, 2.2);
@@ -1058,6 +1266,7 @@ function vehicle(g, ctx, bus){
     prop(g, ctx, 'loungeChair', -0.38, 0.08, -0.55, Math.PI, 0.72);
     prop(g, ctx, 'loungeChair', 0.38, 0.08, -0.55, Math.PI, 0.72);
     prop(g, ctx, 'loungeSofa', 0, 0.08, 0.85, 0, 0.7);
+    prop(g, ctx, 'cardboardBoxClosed', 0.15, 0.28, 0.7, 0.4, 0.45);
     // dash
     const dash = new THREE.Mesh(new THREE.BoxGeometry(W-0.25, 0.28, 0.35), ctx.era==='1986'?ctx.pack.furn.wood:dark);
     dash.position.set(0, 0.72, -L/2+0.45); g.add(dash);

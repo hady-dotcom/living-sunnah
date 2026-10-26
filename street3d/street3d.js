@@ -181,9 +181,9 @@ function findB(P,n){ P.bones=P.bones||{}; if(!(n in P.bones)) P.bones[n]=findBon
 function makeAngel(color){ const g=new THREE.Group(); const m=new THREE.MeshBasicMaterial({color}); const body=new THREE.Mesh(new THREE.ConeGeometry(0.09,0.26,10),m); body.position.y=0.13; const head=new THREE.Mesh(new THREE.SphereGeometry(0.06,12,8),m); head.position.y=0.31;
   const wingM=new THREE.MeshBasicMaterial({color,transparent:true,opacity:0.7,side:THREE.DoubleSide}); const ws=new THREE.Shape(); ws.moveTo(0,0); ws.quadraticCurveTo(0.18,0.2,0.22,0.02); ws.quadraticCurveTo(0.12,0.04,0,-0.06);
   const w1=new THREE.Mesh(new THREE.ShapeGeometry(ws),wingM); w1.position.set(0.03,0.2,-0.03); const w2=w1.clone(); w2.scale.x=-1; w2.position.x=-0.03;
-  const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(...new THREE.Color(color).toArray().map(v=>v*255|0)),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})); halo.scale.set(0.9,0.9,1); halo.position.y=0.2;
+  const halo=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex(...new THREE.Color(color).toArray().map(v=>v*255|0)),transparent:true,depthWrite:false,blending:THREE.AdditiveBlending})); halo.scale.set(0.42,0.42,1); halo.position.y=0.28;
   const light=new THREE.PointLight(color,0.6,2.5); light.position.y=0.2; g.add(body,head,w1,w2,halo,light); g.userData={w1,w2}; return g; }
-function makeQareen(){ const g=new THREE.Group(); const tx=glowTex(30,12,45); for(let i=0;i<9;i++){ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthWrite:false,opacity:0.55})); s.userData.ph=i*0.7; g.add(s); } return g; }
+function makeQareen(){ const g=new THREE.Group(); const tx=glowTex(70,28,110); for(let i=0;i<3;i++){ const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tx,transparent:true,depthWrite:false,depthTest:false,opacity:0.35})); s.userData.ph=i*1.7; g.add(s); } return g; }
 // ---------- which room this moment belongs in ----------
 function placeMeta(a,pid){
   if(!pid||pid==='home') return {kind:'home',id:'home:'+a.hh,name:(HH[a.hh]&&HH[a.hh].surname?HH[a.hh].surname+' home':'home'),hh:a.hh};
@@ -245,14 +245,15 @@ function specFor(a,p){
   return finish({...base,type:'office',seed:hsh('off',pl.id,era),label:'🏢 '+(pl.name||'Indoors'),outdoor:false});
 }
 function dropRoom(){ if(!curRoom) return; scene.remove(curRoom); disposeSpace(curRoom); curRoom=null; clearRoomPeople(); spaceId=''; }
+function shotDist(){ const fov=(camera.fov||55)*Math.PI/180; return 1.38/(2*Math.tan(fov/2)*0.26); }
 function clearCam(cam, room, rs){ const ud=room.userData, R0=room.position;
-  if(ud.outdoor){ if(cam.y<R0.y+0.7) cam.y=R0.y+0.7; return; }
-  const hx=(ud.W||6)/2*rs+0.62*rs, hz=(ud.D||5)/2*rs+0.62*rs, hy=2.5*rs;
-  const dx=cam.x-R0.x, dy=cam.y-R0.y, dz=cam.z-R0.z;
-  if(Math.abs(dx)>=hx||Math.abs(dz)>=hz||dy>=hy||dy<-0.25) return;
-  if(ud.type==='car'||ud.type==='bus'){ cam.x=R0.x+hx; return; }
-  if((hx-dx)<(hz-dz)) cam.x=R0.x+hx; else cam.z=R0.z+hz;
-  if(cam.y<R0.y+0.85*rs) cam.y=R0.y+0.85*rs; }
+  if(cam.y<R0.y+0.45) cam.y=R0.y+0.45;
+  if(ud.outdoor||ud.type==='car'||ud.type==='bus') return;
+  // Only the standing north and west walls are solid. South and east are open.
+  const hx=(ud.W||6)/2*rs, hz=(ud.D||5)/2*rs, t=0.42*rs;
+  const dx=cam.x-R0.x, dz=cam.z-R0.z;
+  if(dz<-hz+t && Math.abs(dx)<hx+t) cam.z=R0.z-hz+t+0.2;
+  if(dx<-hx+t && Math.abs(dz)<hz+t) cam.x=R0.x-hx+t+0.2; }
 // ---------- setup ----------
 async function init(){ const box=$('s3d'); renderer=new THREE.WebGLRenderer({antialias:!phone,powerPreference:'high-performance'}); renderer.setPixelRatio(Math.min(devicePixelRatio||1,phone?1.25:1.75)); renderer.shadowMap.enabled=!phone; renderer.shadowMap.type=THREE.PCFSoftShadowMap; renderer.outputColorSpace=THREE.SRGBColorSpace;
   box.prepend(renderer.domElement); renderer.domElement.id='s3dc';
@@ -285,11 +286,11 @@ function frame(){ if(!S3.on){ framed=false; return; } requestAnimationFrame(fram
   o.position.set(tx,ty,tz); o.visible=true;
   const ph=pose(fModel,p.act,!curRoom&&p.moving,p.mode); setProp(fModel,(curRoom||!p.moving)&&p.b&&p.b.prop||null); paintScreens(now); fModel.mixer.update(dt); if(ph) applyPrayerBones(fModel); else fModel.phase=null;
   const ud=curRoom&&curRoom.userData; const view=(ud?ud.view:8)*rs;
-  const aimY=ty+(ud&&ud.anchor&&ud.anchor.pose==='lie'?0.25:1.0);
-  if(snapCam&&curRoom){ const R0=curRoom.position, W=(ud.W||6)*rs, D=(ud.D||5)*rs; controls.target.set(tx,aimY,tz);
-    if(ud.outdoor){ const dist=Math.max(3.8, Math.max(W,D)*0.42); camera.position.set(tx+dist*0.38, ty+dist*0.48, tz+dist*0.78); }
-    else if(ud.type==='car'||ud.type==='bus'){ camera.position.set(R0.x+W/2+Math.max(1.2,W*0.9), ty+0.55+0.45*rs, tz+D*0.02); }
-    else { const dist=Math.max(W,D)*0.95; camera.position.set(R0.x+W*0.5+dist*0.2, R0.y+dist*0.48, R0.z+D*0.5+dist*0.36); } }
+  const aimY=ty+(ud&&ud.anchor&&ud.anchor.pose==='lie'?0.9:1.0);
+  if(snapCam&&curRoom){ const lie=ud.anchor&&ud.anchor.pose==='lie'; const veh=ud.type==='car'||ud.type==='bus'; const dist=shotDist()*(lie?0.92:veh?1.08:1); controls.target.set(tx,aimY,tz);
+    const side=veh?new THREE.Vector3(1.05,0.58,0.32):ud.outdoor?new THREE.Vector3(0.42,0.28,0.86):lie?new THREE.Vector3(0.38,0.62,0.68):new THREE.Vector3(0.52,0.36,0.78);
+    side.normalize().multiplyScalar(dist);
+    camera.position.set(tx+side.x, aimY+side.y, tz+side.z); }
   if(!S3.follow0){ const off=camera.position.clone().sub(controls.target); tmpV.set(tx,aimY,tz); const dd=controls.target.distanceTo(tmpV); controls.target.lerp(tmpV,snapCam||dd>3?1:1-Math.exp(-dt*8)); camera.position.copy(controls.target).add(off); }
   if(curRoom) clearCam(camera.position, curRoom, rs);
   controls.maxDistance=curRoom?Math.max(view*2.4,12):260; controls.update();
@@ -297,9 +298,9 @@ function frame(){ if(!S3.on){ framed=false; return; } requestAnimationFrame(fram
   // angels on the shoulders, Qareen behind
   const head=fModel.head; head&&head.getWorldPosition(tmpV); const hx=head?tmpV.x:tx, hy=head?tmpV.y:ty+1.4, hz=head?tmpV.z:tz; const ry=o.rotation.y; const rx=Math.cos(ry), rz=-Math.sin(ry); const bx=-Math.sin(ry), bz=-Math.cos(ry); const sc=fModel.o.scale.x/0.62;
   const bob=Math.sin(now/500)*0.03; const so=0.62*sc;
-  angels[0].position.set(hx-rx*so,hy+0.05*sc+bob,hz-rz*so); angels[1].position.set(hx+rx*so,hy+0.05*sc-bob,hz+rz*so); angels[0].scale.setScalar(2.05*sc); angels[1].scale.setScalar(2.05*sc); // right = person's right (model faces +z)
+  angels[0].position.set(hx-rx*so,hy+0.02*sc+bob,hz-rz*so); angels[1].position.set(hx+rx*so,hy+0.02*sc-bob,hz+rz*so); angels[0].scale.setScalar(1.05*sc); angels[1].scale.setScalar(1.05*sc); // right = person's right (model faces +z)
   for(const an of angels){ an.rotation.y=ry; an.visible=o.visible; const f=Math.sin(now/120)*0.4; an.userData.w1.rotation.y=f; an.userData.w2.rotation.y=-f; }
-  const q=a._qlive!=null?a._qlive:(a._qs||0.3); qareen.visible=o.visible; qareen.children.forEach((s,i)=>{ const ph=now/900+s.userData.ph; s.position.set(hx+bx*0.7*sc+Math.sin(ph)*0.28, hy-0.15*sc+Math.cos(ph*1.3)*0.28, hz+bz*0.7*sc+Math.cos(ph)*0.28); const k=(0.85+q*1.5)*sc; s.scale.set(k,k*1.35,1); s.material.opacity=0.35+q*0.5; });
+  const q=a._qlive!=null?a._qlive:(a._qs||0.3); qareen.visible=o.visible; qareen.children.forEach((s,i)=>{ const ph=now/700+s.userData.ph; const k=(0.18+q*0.08)*sc; s.position.set(hx+rx*so*0.92+Math.sin(ph)*0.04*sc, hy-0.32*sc+Math.cos(ph*1.4)*0.03*sc, hz+rz*so*0.92+Math.cos(ph)*0.035*sc); s.scale.set(k,k*1.15,1); s.material.opacity=0.22+q*0.2; });
   // other people: outdoors moving nearby, or in the room
   if(!curRoom) others(t,a,tx,tz,dt); else { for(const P of pool) P.o.visible=false; for(const P of roomPeople){ const rph=pose(P,P.act,false); P.mixer.update(dt); if(rph) applyPrayerBones(P); else P.phase=null; } }
   // cars on the real streets
@@ -313,7 +314,7 @@ function frame(){ if(!S3.on){ framed=false; return; } requestAnimationFrame(fram
   const day=Math.max(0,Math.min(1,(alt+6)/18)); sun.intensity=2.4*Math.max(0,Math.min(1,alt/12)); hemi.intensity=0.15+day*1.05; const dusk=alt>-8&&alt<8;
   const sky=new THREE.Color().setHSL(0.6,0.55,0.06+day*0.6); if(dusk) sky.lerp(new THREE.Color(0xf29a6b),0.35*(1-Math.abs(alt)/8)); if(S.ctx.cloud) sky.lerp(new THREE.Color(0x9aa3ad),0.4*day);
   const enclosed=curRoom&&!curRoom.userData.skyBg;
-  if(enclosed){ hemi.intensity=0.9; sun.intensity=0.35; scene.background=new THREE.Color(0xc5d0d6); scene.fog.color.set(0xc5d0d6); }
+  if(enclosed){ hemi.intensity=0.9; sun.intensity=0.45; scene.background=new THREE.Color(0x9ec8ea); scene.fog.color.set(0xb7d0c4); }
   else { scene.background=sky; scene.fog.color.copy(sky); }
   const night=1-day;
   for(const m of mats.walls.concat([mats.ind])) m.emissiveIntensity=night*0.9; for(const l of mats.lamps) l.material.opacity=night;
@@ -350,7 +351,9 @@ function roadName(p){ let best='',bd=30; for(const r of data.r){ if(!r.n)continu
 S3.enter=async function(a){ if(a) UI.select(a,false); if(!UI.selected) return; S3.on=true; document.body.classList.add('s3d'); $('s3d').style.display='block'; $('inner').classList.add('open'); Iso.on3d=true; Iso.inner(true);
   if(!renderer){ $('s3dWhere').textContent='Loading the 3D street (first time only)…'; await init(); } size(); lastEra=O.era; lastT=performance.now(); if(!framed){ framed=true; frame(); } };
 S3.exit=function(){ S3.on=false; document.body.classList.remove('s3d'); $('s3d').style.display='none'; Iso.on3d=false; if(!Iso.on) $('inner').classList.remove('open'); };
-S3.dbg=()=>{ const b=new THREE.Box3().setFromObject(fModel.o); return {box:[b.min.toArray(),b.max.toArray()],pos:fModel.o.position.toArray(),cam:camera.position.toArray(),tg:controls.target.toArray(),vis:fModel.o.visible,ry:fModel.o.rotation.y,space:curRoom&&curRoom.userData.key,label:curRoom&&curRoom.userData.label,type:curRoom&&curRoom.userData.type}; };
+S3.dbg=()=>{ const b=new THREE.Box3().setFromObject(fModel.o); const c=new THREE.Vector3(); let minX=1,maxX=-1,minY=1,maxY=-1;
+  for(const x of [b.min.x,b.max.x]) for(const y of [b.min.y,b.max.y]) for(const z of [b.min.z,b.max.z]){ c.set(x,y,z).project(camera); if(c.x<minX)minX=c.x; if(c.x>maxX)maxX=c.x; if(c.y<minY)minY=c.y; if(c.y>maxY)maxY=c.y; }
+  return {box:[b.min.toArray(),b.max.toArray()],pos:fModel.o.position.toArray(),cam:camera.position.toArray(),tg:controls.target.toArray(),vis:fModel.o.visible,ry:fModel.o.rotation.y,space:curRoom&&curRoom.userData.key,label:curRoom&&curRoom.userData.label,type:curRoom&&curRoom.userData.type,fracH:+((maxY-minY)/2).toFixed(3),fracW:+((maxX-minX)/2).toFixed(3)}; };
 S3.specFor=specFor;
 S3.sample=function(n=10){ const t=S.t, by=new Map(); for(const a of A){ if(a.here===false||a.age<8) continue; const loc=Sim.locate(a,t); if(!loc) continue; const sp=specFor(a,loc); if(!sp) continue; if(!by.has(sp.key)) by.set(sp.key,{id:a.id,name:a.first,type:sp.type,key:sp.key,label:sp.label,act:loc.b&&loc.b.act}); }
   const all=[...by.values()]; const picked=[], seen=new Set(); for(const it of all){ if(picked.length>=n) break; if(seen.has(it.type)) continue; seen.add(it.type); picked.push(it); }
